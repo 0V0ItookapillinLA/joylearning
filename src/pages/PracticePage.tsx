@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { MapPin, ChevronLeft, ChevronUp, ChevronDown, X, Video } from 'lucide-react';
+import { Lightbulb, ChevronLeft, ChevronUp, ChevronDown, X, Video } from 'lucide-react';
 import avatarInterviewer from '@/assets/avatar-interviewer.png';
 import { useAIPractice } from '@/hooks/useAIPractice';
 
@@ -42,11 +42,28 @@ const PracticePage = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [realtimeSubtitle, setRealtimeSubtitle] = useState('');
   const [aiSubtitle, setAiSubtitle] = useState('');
+  const [sceneTransitioning, setSceneTransitioning] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
-  const { messages, isLoading, sendMessage } = useAIPractice();
 
   const currentScene = scenes[currentSceneIndex];
+
+  // Handle automatic scene progression
+  const handleSceneComplete = () => {
+    if (currentSceneIndex < scenes.length - 1) {
+      setSceneTransitioning(true);
+      setTimeout(() => {
+        setCurrentSceneIndex(prev => prev + 1);
+        setIsSceneExpanded(true);
+        setSceneTransitioning(false);
+      }, 500);
+    } else {
+      navigate('/practice/complete');
+    }
+  };
+  
+  const { messages, isLoading, sendMessage } = useAIPractice({
+    onSceneComplete: handleSceneComplete,
+  });
 
   // Update AI subtitle when messages change
   useEffect(() => {
@@ -58,16 +75,6 @@ const PracticePage = () => {
     }
   }, [messages]);
 
-  // Auto-hide scene banner after 5 seconds
-  useEffect(() => {
-    if (isSceneExpanded) {
-      const timer = setTimeout(() => {
-        setIsSceneExpanded(false);
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [isSceneExpanded, currentSceneIndex]);
-
   const handleTalkPress = () => {
     setIsRecording(true);
     setRealtimeSubtitle('正在聆听...');
@@ -76,9 +83,9 @@ const PracticePage = () => {
 
   const handleTalkRelease = () => {
     setIsRecording(false);
-    // Simulate sending message
+    // Simulate sending message with scene context
     if (realtimeSubtitle && realtimeSubtitle !== '正在聆听...') {
-      sendMessage(realtimeSubtitle);
+      sendMessage(realtimeSubtitle, currentScene);
     }
     setRealtimeSubtitle('');
   };
@@ -87,28 +94,30 @@ const PracticePage = () => {
     navigate('/practice/complete');
   };
 
-  const handleComplete = () => {
-    // Move to next scene or complete
-    if (currentSceneIndex < scenes.length - 1) {
-      setCurrentSceneIndex(currentSceneIndex + 1);
-      setIsSceneExpanded(true);
-    } else {
-      navigate('/practice/complete');
-    }
-  };
-
   const handleBack = () => {
     navigate(-1);
   };
 
   const handleHint = () => {
-    // Generate hint based on current context
-    const hints = [
-      '试着询问客户目前仓储方面遇到的具体痛点',
-      '可以介绍我们的冷链一体化解决方案的优势',
-      '强调售后服务和运输时效的保障',
-      '可以提供一些成功案例来增强说服力',
-    ];
+    // Generate hint based on current scene context
+    const sceneHints: Record<number, string[]> = {
+      1: [
+        '试着从客户朋友圈的冷链需求话题切入',
+        '询问客户最近的生意情况，建立亲切感',
+        '了解客户目前的物流使用情况和痛点',
+      ],
+      2: [
+        '针对客户的价格顾虑，强调性价比和长期价值',
+        '介绍运输效率方面的保障措施',
+        '说明售后服务的具体内容和响应时间',
+      ],
+      3: [
+        '提供老客户专属优惠方案',
+        '介绍长期合作的阶梯式优惠',
+        '在让步的同时争取更长的合作周期',
+      ],
+    };
+    const hints = sceneHints[currentScene.id] || ['继续与客户保持良好沟通'];
     setCurrentHint(hints[Math.floor(Math.random() * hints.length)]);
     setShowHint(true);
   };
@@ -158,7 +167,10 @@ const PracticePage = () => {
               onClick={() => setIsSceneExpanded(!isSceneExpanded)}
               className="w-full flex items-center justify-between px-4 py-3 text-foreground"
             >
-              <span className="font-semibold text-sm">{currentScene.title}</span>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-sm">{currentScene.title}</span>
+                <span className="text-xs text-muted-foreground">({currentSceneIndex + 1}/{scenes.length})</span>
+              </div>
               {isSceneExpanded ? (
                 <ChevronUp className="w-4 h-4" />
               ) : (
@@ -186,7 +198,7 @@ const PracticePage = () => {
             <div className="bg-card/95 backdrop-blur rounded-xl shadow-xl p-4 border">
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div className="flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-primary" />
+                  <Lightbulb className="w-5 h-5 text-primary" />
                   <span className="font-semibold text-foreground">提示</span>
                 </div>
                 <button 
@@ -246,7 +258,7 @@ const PracticePage = () => {
             onClick={handleHint}
             className="w-12 h-12 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors flex-shrink-0"
           >
-            <MapPin className="w-5 h-5 text-muted-foreground" />
+            <Lightbulb className="w-5 h-5 text-muted-foreground" />
           </button>
           
           {/* End Button */}
@@ -297,16 +309,18 @@ const PracticePage = () => {
               </div>
             )}
           </div>
-          
-          {/* Complete Button */}
-          <Button
-            onClick={handleComplete}
-            className="h-10 px-4 rounded-full bg-primary hover:bg-primary/90 text-sm"
-          >
-            完成
-          </Button>
         </div>
       </div>
+      
+      {/* Scene Transition Overlay */}
+      {sceneTransitioning && (
+        <div className="absolute inset-0 bg-background/80 flex items-center justify-center z-50">
+          <div className="text-center">
+            <p className="text-lg font-semibold text-foreground">🎉 目标达成！</p>
+            <p className="text-sm text-muted-foreground mt-2">正在进入下一幕...</p>
+          </div>
+        </div>
+      )}
       </div>
     </div>
   );

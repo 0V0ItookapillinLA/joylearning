@@ -3,23 +3,48 @@ import { toast } from '@/hooks/use-toast';
 
 type Message = { role: 'user' | 'assistant'; content: string };
 
+export interface SceneContext {
+  id: number;
+  title: string;
+  description: string;
+  goal: string;
+}
+
+interface UseAIPracticeOptions {
+  onSceneComplete?: () => void;
+}
+
 const AI_PRACTICE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-practice`;
 
-export const useAIPractice = () => {
+export const useAIPractice = (options?: UseAIPracticeOptions) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentScene, setCurrentScene] = useState<SceneContext | null>(null);
 
-  const sendMessage = useCallback(async (userMessage: string) => {
+  const sendMessage = useCallback(async (userMessage: string, scene?: SceneContext) => {
     if (!userMessage.trim()) return;
+
+    const activeScene = scene || currentScene;
+    if (scene) {
+      setCurrentScene(scene);
+    }
 
     const userMsg: Message = { role: 'user', content: userMessage };
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
 
     let assistantContent = '';
+    let sceneCompleted = false;
 
     const updateAssistant = (chunk: string) => {
       assistantContent += chunk;
+      
+      // Check for scene completion marker
+      if (assistantContent.includes('[SCENE_COMPLETE]')) {
+        sceneCompleted = true;
+        assistantContent = assistantContent.replace('[SCENE_COMPLETE]', '').trim();
+      }
+      
       setMessages(prev => {
         const last = prev[prev.length - 1];
         if (last?.role === 'assistant') {
@@ -43,7 +68,10 @@ export const useAIPractice = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: allMessages }),
+        body: JSON.stringify({ 
+          messages: allMessages,
+          scene: activeScene 
+        }),
       });
 
       if (!response.ok || !response.body) {
@@ -103,6 +131,13 @@ export const useAIPractice = () => {
           } catch { /* ignore */ }
         }
       }
+
+      // Trigger scene complete callback if goal was achieved
+      if (sceneCompleted && options?.onSceneComplete) {
+        setTimeout(() => {
+          options.onSceneComplete?.();
+        }, 1500); // Delay to let user read the response
+      }
     } catch (error) {
       console.error('AI practice error:', error);
       toast({
@@ -115,10 +150,11 @@ export const useAIPractice = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [messages]);
+  }, [messages, currentScene, options]);
 
   const resetConversation = useCallback(() => {
     setMessages([]);
+    setCurrentScene(null);
   }, []);
 
   return {
@@ -126,5 +162,6 @@ export const useAIPractice = () => {
     isLoading,
     sendMessage,
     resetConversation,
+    currentScene,
   };
 };
