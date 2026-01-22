@@ -22,19 +22,21 @@ const PlanDetail = () => {
       />
       
       {/* Banner */}
-      <div className="gradient-banner mx-4 mt-4 rounded-2xl p-6 flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-foreground whitespace-pre-line leading-tight">
-          {plan.bannerTitle}
-        </h2>
-        <img 
-          src={avatarBusiness} 
-          alt="Training" 
-          className="w-28 h-28 object-contain"
-        />
+      <div className="max-w-md mx-auto px-4 mt-4">
+        <div className="gradient-banner rounded-2xl p-6 flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-foreground whitespace-pre-line leading-tight">
+            {plan.bannerTitle}
+          </h2>
+          <img 
+            src={avatarBusiness} 
+            alt="Training" 
+            className="w-28 h-28 object-contain"
+          />
+        </div>
       </div>
       
       {/* Chapter Tabs */}
-      <div className="border-b border-border">
+      <div className="max-w-md mx-auto px-4 border-b border-border">
         <ChapterTabs 
           chapters={chapters}
           activeChapter={activeChapter}
