@@ -130,7 +130,7 @@ const PracticePage = () => {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    navigate('/plan/2'); // Navigate back to course page
   };
 
   const handleHint = () => {
