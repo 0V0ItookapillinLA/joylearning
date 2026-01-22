@@ -2,22 +2,16 @@ import { useState, useRef, useEffect } from 'react';
 import TabBar from '@/components/TabBar';
 import { Send, Mic, MicOff, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Message } from '@/types';
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
+import { useAIChat } from '@/hooks/useAIChat';
 import avatarAi from '@/assets/avatar-ai.png';
 import avatarUser from '@/assets/avatar-user.png';
 
 const ChatPage = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: '你好！我是你的AI学习助手，有什么可以帮助你的吗？',
-      timestamp: new Date(),
-    },
-  ]);
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  const { messages, isLoading, sendMessage } = useAIChat();
   
   const { 
     isListening, 
@@ -44,33 +38,15 @@ const ChatPage = () => {
   }, [transcript]);
 
   const handleSend = () => {
-    if (!input.trim()) return;
+    if (!input.trim() || isLoading) return;
     
     // Stop listening if active
     if (isListening) {
       stopListening();
     }
     
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: 'user',
-      content: input,
-      timestamp: new Date(),
-    };
-    
-    setMessages(prev => [...prev, userMessage]);
+    sendMessage(input);
     setInput('');
-    
-    // Simulate AI response
-    setTimeout(() => {
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: '这是一个模拟的AI回复。在实际应用中，这里会连接到真正的AI服务来生成回复。',
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, aiMessage]);
-    }, 1000);
   };
 
   const toggleListening = () => {
@@ -81,6 +57,12 @@ const ChatPage = () => {
     }
   };
 
+  // Combine initial greeting with AI messages
+  const displayMessages = [
+    { role: 'assistant' as const, content: '你好！我是你的AI销售专家助手，拥有20年销售经验。无论是销售技巧、客户沟通还是团队管理，都可以向我咨询！' },
+    ...messages
+  ];
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
@@ -88,7 +70,7 @@ const ChatPage = () => {
         <div className="flex items-center justify-center h-14 px-4 max-w-md mx-auto">
           <div className="flex items-center gap-2">
             <img src={avatarAi} alt="AI" className="w-8 h-8 rounded-full" />
-            <h1 className="text-lg font-semibold text-foreground">AI助手</h1>
+            <h1 className="text-lg font-semibold text-foreground">AI销售专家</h1>
           </div>
         </div>
       </header>
@@ -96,9 +78,9 @@ const ChatPage = () => {
       {/* Messages */}
       <main className="flex-1 overflow-y-auto pb-44 pt-4">
         <div className="max-w-md mx-auto px-4 space-y-4">
-          {messages.map((message) => (
+          {displayMessages.map((message, index) => (
             <div
-              key={message.id}
+              key={index}
               className={`flex gap-3 animate-fade-in ${
                 message.role === 'user' ? 'flex-row-reverse' : ''
               }`}
@@ -115,7 +97,12 @@ const ChatPage = () => {
                     : 'bg-card shadow-card rounded-tl-sm'
                 }`}
               >
-                <p className="text-sm leading-relaxed">{message.content}</p>
+                <p className="text-sm leading-relaxed">
+                  {message.content}
+                  {isLoading && index === displayMessages.length - 1 && message.role === 'assistant' && (
+                    <span className="inline-block w-1 h-4 ml-1 bg-current animate-pulse" />
+                  )}
+                </p>
               </div>
             </div>
           ))}
@@ -151,13 +138,14 @@ const ChatPage = () => {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 placeholder={isListening ? "正在听..." : "输入消息..."}
-                className="w-full bg-muted rounded-full px-4 py-2.5 pr-11 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                disabled={isLoading}
+                className="w-full bg-muted rounded-full px-4 py-2.5 pr-11 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
               />
               <Button
                 size="icon"
                 variant={isListening ? "destructive" : "ghost"}
                 onClick={toggleListening}
-                disabled={!isSupported}
+                disabled={!isSupported || isLoading}
                 className={`absolute right-1 top-1/2 -translate-y-1/2 rounded-full w-8 h-8 transition-all ${
                   isListening ? 'animate-pulse' : ''
                 }`}
@@ -172,10 +160,14 @@ const ChatPage = () => {
             <Button
               size="icon"
               onClick={handleSend}
-              disabled={!input.trim()}
+              disabled={!input.trim() || isLoading}
               className="rounded-full w-10 h-10 bg-primary hover:bg-primary/90"
             >
-              <Send className="w-4 h-4" />
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
             </Button>
           </div>
         </div>
