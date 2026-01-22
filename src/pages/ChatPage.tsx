@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import TabBar from '@/components/TabBar';
-import { Send, Mic } from 'lucide-react';
+import { Send, Mic, MicOff, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Message } from '@/types';
+import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
 import avatarAi from '@/assets/avatar-ai.png';
 import avatarUser from '@/assets/avatar-user.png';
 
@@ -17,6 +18,15 @@ const ChatPage = () => {
   ]);
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  const { 
+    isListening, 
+    transcript, 
+    startListening, 
+    stopListening, 
+    isSupported,
+    error: speechError 
+  } = useSpeechRecognition();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -26,8 +36,20 @@ const ChatPage = () => {
     scrollToBottom();
   }, [messages]);
 
+  // Update input when transcript changes
+  useEffect(() => {
+    if (transcript) {
+      setInput(prev => prev + transcript);
+    }
+  }, [transcript]);
+
   const handleSend = () => {
     if (!input.trim()) return;
+    
+    // Stop listening if active
+    if (isListening) {
+      stopListening();
+    }
     
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -51,6 +73,14 @@ const ChatPage = () => {
     }, 1000);
   };
 
+  const toggleListening = () => {
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
@@ -64,7 +94,7 @@ const ChatPage = () => {
       </header>
       
       {/* Messages */}
-      <main className="flex-1 overflow-y-auto pb-36 pt-4">
+      <main className="flex-1 overflow-y-auto pb-44 pt-4">
         <div className="max-w-md mx-auto px-4 space-y-4">
           {messages.map((message) => (
             <div
@@ -96,6 +126,23 @@ const ChatPage = () => {
       {/* Input */}
       <div className="fixed bottom-24 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-md z-40">
         <div className="bg-card/80 backdrop-blur-lg rounded-2xl border border-border/50 shadow-lg p-3">
+          {/* Voice Recording Indicator */}
+          {isListening && (
+            <div className="flex items-center gap-2 mb-2 px-2">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-destructive"></span>
+              </span>
+              <span className="text-xs text-muted-foreground">正在录音...</span>
+            </div>
+          )}
+          
+          {speechError && (
+            <div className="text-xs text-destructive mb-2 px-2">
+              {speechError === 'not-allowed' ? '请允许麦克风权限' : speechError}
+            </div>
+          )}
+          
           <div className="flex items-center gap-3">
             <div className="flex-1 relative">
               <input
@@ -103,15 +150,23 @@ const ChatPage = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="输入消息..."
+                placeholder={isListening ? "正在听..." : "输入消息..."}
                 className="w-full bg-muted rounded-full px-4 py-2.5 pr-11 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
               />
               <Button
                 size="icon"
-                variant="ghost"
-                className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full w-8 h-8"
+                variant={isListening ? "destructive" : "ghost"}
+                onClick={toggleListening}
+                disabled={!isSupported}
+                className={`absolute right-1 top-1/2 -translate-y-1/2 rounded-full w-8 h-8 transition-all ${
+                  isListening ? 'animate-pulse' : ''
+                }`}
               >
-                <Mic className="w-4 h-4 text-muted-foreground" />
+                {isListening ? (
+                  <MicOff className="w-4 h-4" />
+                ) : (
+                  <Mic className="w-4 h-4 text-muted-foreground" />
+                )}
               </Button>
             </div>
             <Button
