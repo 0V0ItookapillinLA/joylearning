@@ -15,11 +15,7 @@ const PlanDetail = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      <Header 
-        title="JoyLearning" 
-        rightAction="dropdown" 
-        rightLabel="新人训"
-      />
+      <Header title="JoyLearning" />
       
       {/* Banner */}
       <div className="max-w-md mx-auto px-4 mt-4">
