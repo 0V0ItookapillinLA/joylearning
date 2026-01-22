@@ -95,7 +95,8 @@ const PracticeOnboarding = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-background flex flex-col">
+    <div className="fixed inset-0 bg-background flex justify-center">
+      <div className="w-full max-w-md flex flex-col relative">
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-foreground/60 z-10" />
 
@@ -301,6 +302,7 @@ const PracticeOnboarding = () => {
             <span className="text-sm text-muted-foreground">不再显示新手引导</span>
           </label>
         </div>
+      </div>
       </div>
     </div>
   );
