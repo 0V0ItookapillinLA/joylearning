@@ -3,3 +3,7 @@ project_id = "zquqynsevyvivtwzrzaz"
 [functions.ai-practice]
 enabled = true
 verify_jwt = false
+
+[functions.ai-chat]
+enabled = true
+verify_jwt = false
