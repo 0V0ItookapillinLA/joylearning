@@ -118,7 +118,8 @@ const PracticePage = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-background flex flex-col">
+    <div className="fixed inset-0 bg-background flex justify-center">
+      <div className="w-full max-w-md flex flex-col relative">
       {/* Main Content Area */}
       <div className="flex-1 relative overflow-hidden bg-muted">
         {/* Background Avatar */}
@@ -305,6 +306,7 @@ const PracticePage = () => {
             完成
           </Button>
         </div>
+      </div>
       </div>
     </div>
   );
