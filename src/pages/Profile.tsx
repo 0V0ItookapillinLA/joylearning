@@ -4,6 +4,7 @@ import TabBar from '@/components/TabBar';
 import RadarChart from '@/components/RadarChart';
 import TrendChart from '@/components/TrendChart';
 import HistoryCard from '@/components/HistoryCard';
+import RecommendedCourses from '@/components/RecommendedCourses';
 import { userProfile, abilityScores, evaluationText, historyRecords } from '@/data/mockData';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileBarChart, Target } from 'lucide-react';
@@ -83,6 +84,9 @@ const Profile = () => {
               <p className="text-xs text-muted-foreground mb-4">单维度统计满分100分</p>
               <RadarChart data={abilityScores} />
             </div>
+            
+            {/* Recommended Courses */}
+            <RecommendedCourses />
             
             {/* Trend Chart */}
             <TrendChart />
