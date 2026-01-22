@@ -86,7 +86,7 @@ const PracticePage = () => {
   };
 
   const handleEnd = () => {
-    navigate('/history/1');
+    navigate('/practice/complete');
   };
 
   // Combine initial greeting with AI messages
