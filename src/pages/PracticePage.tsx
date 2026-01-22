@@ -1,35 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Mic, MicOff, Phone, Video, VideoOff, Lightbulb, TrendingUp, Clock, ThumbsUp, Send } from 'lucide-react';
-import avatarAi from '@/assets/avatar-ai.png';
+import { MapPin, ChevronLeft, Mic, MicOff, Send } from 'lucide-react';
+import avatarBusiness from '@/assets/avatar-business.png';
 import { useAIPractice } from '@/hooks/useAIPractice';
-
-interface FeedbackTip {
-  id: number;
-  icon: 'lightbulb' | 'trending' | 'clock' | 'thumbsup';
-  message: string;
-  type: 'tip' | 'encouragement' | 'warning';
-}
-
-const feedbackTips: Omit<FeedbackTip, 'id'>[] = [
-  { icon: 'lightbulb', message: '试着用具体数据支撑你的观点', type: 'tip' },
-  { icon: 'trending', message: '语速适中，继续保持！', type: 'encouragement' },
-  { icon: 'lightbulb', message: '可以多问一些开放性问题', type: 'tip' },
-  { icon: 'thumbsup', message: '很好的开场白！', type: 'encouragement' },
-  { icon: 'clock', message: '注意控制每段回复的长度', type: 'warning' },
-  { icon: 'lightbulb', message: '尝试突出产品的差异化优势', type: 'tip' },
-  { icon: 'trending', message: '表达清晰流畅，非常棒！', type: 'encouragement' },
-  { icon: 'lightbulb', message: '记得倾听客户的需求', type: 'tip' },
-];
 
 const PracticePage = () => {
   const navigate = useNavigate();
-  const [isMuted, setIsMuted] = useState(false);
-  const [isVideoOn, setIsVideoOn] = useState(true);
+  const [isRecording, setIsRecording] = useState(false);
   const [input, setInput] = useState('');
-  const [currentTip, setCurrentTip] = useState<FeedbackTip | null>(null);
-  const [tipVisible, setTipVisible] = useState(false);
+  const [showChat, setShowChat] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const { messages, isLoading, sendMessage } = useAIPractice();
@@ -39,45 +19,12 @@ const PracticePage = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Show random tips periodically
+  // Show chat after first message
   useEffect(() => {
-    const showRandomTip = () => {
-      const randomTip = feedbackTips[Math.floor(Math.random() * feedbackTips.length)];
-      setCurrentTip({ ...randomTip, id: Date.now() });
-      setTipVisible(true);
-      
-      setTimeout(() => {
-        setTipVisible(false);
-      }, 4000);
-    };
-
-    const initialTimeout = setTimeout(showRandomTip, 3000);
-    const interval = setInterval(() => {
-      showRandomTip();
-    }, 8000 + Math.random() * 4000);
-
-    return () => {
-      clearTimeout(initialTimeout);
-      clearInterval(interval);
-    };
-  }, []);
-
-  const getTipIcon = (icon: FeedbackTip['icon']) => {
-    switch (icon) {
-      case 'lightbulb': return <Lightbulb className="w-4 h-4" />;
-      case 'trending': return <TrendingUp className="w-4 h-4" />;
-      case 'clock': return <Clock className="w-4 h-4" />;
-      case 'thumbsup': return <ThumbsUp className="w-4 h-4" />;
+    if (messages.length > 0) {
+      setShowChat(true);
     }
-  };
-
-  const getTipStyles = (type: FeedbackTip['type']) => {
-    switch (type) {
-      case 'tip': return 'bg-primary/90 text-primary-foreground';
-      case 'encouragement': return 'bg-green-500/90 text-white';
-      case 'warning': return 'bg-amber-500/90 text-white';
-    }
-  };
+  }, [messages]);
 
   const handleSend = () => {
     if (!input.trim() || isLoading) return;
@@ -85,129 +32,158 @@ const PracticePage = () => {
     setInput('');
   };
 
+  const handleTalkPress = () => {
+    setIsRecording(true);
+    // TODO: Implement speech recognition
+  };
+
+  const handleTalkRelease = () => {
+    setIsRecording(false);
+    // TODO: Send recorded audio
+  };
+
   const handleEnd = () => {
     navigate('/practice/complete');
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  const handleHint = () => {
+    // TODO: Show hint
+    console.log('Show hint');
+  };
+
   // Combine initial greeting with AI messages
   const displayMessages = [
-    { role: 'assistant' as const, content: '你好，我是AI陪练助手。现在开始我们的销售场景练习。请向我推销一款新产品。' },
+    { role: 'assistant' as const, content: '你好，我是AI面试官。请先做一个简单的自我介绍吧。' },
     ...messages
   ];
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <div className="max-w-md mx-auto w-full flex flex-col flex-1">
-        {/* Video Area - Dark section for video call */}
-        <div className="relative flex-1 bg-foreground rounded-b-3xl overflow-hidden mx-2 mt-2">
-          {/* Feedback Tip Overlay */}
-          {currentTip && (
-            <div 
-              className={`absolute top-4 left-4 right-4 z-10 transition-all duration-500 ${
-                tipVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
-              }`}
-            >
-              <div className={`flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg ${getTipStyles(currentTip.type)}`}>
-                {getTipIcon(currentTip.icon)}
-                <span className="text-sm font-medium">{currentTip.message}</span>
+        {/* Video/Avatar Area */}
+        <div className="flex-1 relative overflow-hidden">
+          {/* Background Avatar */}
+          <div className="absolute inset-0 flex items-center justify-center bg-muted">
+            <img 
+              src={avatarBusiness} 
+              alt="AI面试官" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+          
+          {/* Back Button */}
+          <button 
+            onClick={handleBack}
+            className="absolute top-4 left-4 w-10 h-10 rounded-full bg-card/80 backdrop-blur flex items-center justify-center shadow-lg z-10"
+          >
+            <ChevronLeft className="w-5 h-5 text-foreground" />
+          </button>
+
+          {/* Chat Overlay - Only shown when there are messages */}
+          {showChat && (
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-foreground/90 via-foreground/70 to-transparent p-4 pt-20">
+              <div className="space-y-3 max-h-48 overflow-y-auto hide-scrollbar mb-4">
+                {displayMessages.map((msg, index) => (
+                  <div
+                    key={index}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm ${
+                        msg.role === 'user'
+                          ? 'bg-primary text-primary-foreground rounded-br-sm'
+                          : 'bg-card text-card-foreground rounded-bl-sm'
+                      }`}
+                    >
+                      {msg.content}
+                      {isLoading && index === displayMessages.length - 1 && msg.role === 'assistant' && (
+                        <span className="inline-block w-1 h-4 ml-1 bg-current animate-pulse" />
+                      )}
+                    </div>
+                  </div>
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
+              
+              {/* Text Input */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                  placeholder="输入回复..."
+                  disabled={isLoading}
+                  className="flex-1 bg-card/90 text-card-foreground rounded-full px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
+                />
+                <Button
+                  size="icon"
+                  onClick={handleSend}
+                  disabled={isLoading || !input.trim()}
+                  className="rounded-full w-10 h-10"
+                >
+                  <Send className="w-4 h-4" />
+                </Button>
               </div>
             </div>
           )}
-          
-          {/* AI Avatar */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="relative">
-              <div className={`w-32 h-32 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 ${isLoading ? 'animate-pulse' : 'animate-pulse-soft'}`} />
-              <img 
-                src={avatarAi} 
-                alt="AI" 
-                className="absolute inset-0 w-32 h-32 rounded-full object-cover"
-              />
+
+          {/* Recording Indicator */}
+          {isRecording && (
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+              <div className="bg-destructive/90 text-destructive-foreground px-6 py-3 rounded-full flex items-center gap-2 animate-pulse">
+                <Mic className="w-5 h-5" />
+                <span className="text-sm font-medium">正在录音...</span>
+              </div>
             </div>
-          </div>
-          
-          {/* Self Video Preview */}
-          <div className="absolute top-16 right-4 w-24 h-32 bg-muted rounded-xl overflow-hidden shadow-lg">
-            <div className="w-full h-full bg-gradient-to-br from-muted to-muted-foreground/20 flex items-center justify-center">
-              <Video className="w-8 h-8 text-muted-foreground/50" />
-            </div>
-          </div>
-          
-          {/* Chat Overlay */}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-foreground via-foreground/95 to-transparent p-4 pt-16">
-            <div className="space-y-3 max-h-48 overflow-y-auto hide-scrollbar mb-4">
-              {displayMessages.map((msg, index) => (
-                <div
-                  key={index}
-                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm ${
-                      msg.role === 'user'
-                        ? 'bg-primary text-primary-foreground rounded-br-sm'
-                        : 'bg-card text-card-foreground rounded-bl-sm'
-                    }`}
-                  >
-                    {msg.content}
-                    {isLoading && index === displayMessages.length - 1 && msg.role === 'assistant' && (
-                      <span className="inline-block w-1 h-4 ml-1 bg-current animate-pulse" />
-                    )}
-                  </div>
-                </div>
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
-            
-            {/* Input */}
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="输入回复..."
-                disabled={isLoading}
-                className="flex-1 bg-card/90 text-card-foreground rounded-full px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
-              />
-              <Button
-                size="icon"
-                onClick={handleSend}
-                disabled={isLoading || !input.trim()}
-                className="rounded-full w-10 h-10"
-              >
-                <Send className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
+          )}
         </div>
-        
-        {/* Controls - White background */}
-        <div className="bg-background p-6 safe-bottom">
-          <div className="flex items-center justify-center gap-6">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsMuted(!isMuted)}
-              className={`w-14 h-14 rounded-full ${isMuted ? 'bg-destructive/20 text-destructive' : 'bg-muted text-muted-foreground'}`}
+
+        {/* Bottom Controls */}
+        <div className="bg-background p-4 pb-8 safe-bottom">
+          <div className="flex items-center justify-center gap-3">
+            {/* Hint Button */}
+            <button 
+              onClick={handleHint}
+              className="w-12 h-12 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors"
             >
-              {isMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
-            </Button>
+              <MapPin className="w-5 h-5 text-muted-foreground" />
+            </button>
             
+            {/* End Button */}
             <Button
-              size="icon"
+              variant="outline"
               onClick={handleEnd}
-              className="w-16 h-16 rounded-full bg-destructive hover:bg-destructive/90"
+              className="h-12 px-6 rounded-full border-destructive text-destructive hover:bg-destructive/5"
             >
-              <Phone className="w-7 h-7 rotate-[135deg]" />
+              结束
             </Button>
             
+            {/* Talk Button */}
             <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsVideoOn(!isVideoOn)}
-              className={`w-14 h-14 rounded-full ${!isVideoOn ? 'bg-destructive/20 text-destructive' : 'bg-muted text-muted-foreground'}`}
+              className={`h-12 px-10 rounded-full transition-all ${
+                isRecording 
+                  ? 'bg-destructive hover:bg-destructive/90' 
+                  : 'bg-primary hover:bg-primary/90'
+              }`}
+              onMouseDown={handleTalkPress}
+              onMouseUp={handleTalkRelease}
+              onMouseLeave={handleTalkRelease}
+              onTouchStart={handleTalkPress}
+              onTouchEnd={handleTalkRelease}
             >
-              {isVideoOn ? <Video className="w-6 h-6" /> : <VideoOff className="w-6 h-6" />}
+              {isRecording ? (
+                <>
+                  <MicOff className="w-4 h-4 mr-2" />
+                  松开发送
+                </>
+              ) : (
+                '点击说话'
+              )}
             </Button>
           </div>
         </div>
