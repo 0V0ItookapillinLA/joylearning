@@ -42,14 +42,15 @@ const getRandomSuggestion = (): string => {
 const ImprovementSection = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState<RelatedCourse[]>(() => getRandomCourses(2));
-  const [suggestion, setSuggestion] = useState<string>(() => getRandomSuggestion());
   const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  // Get a random suggestion once on mount
+  const [suggestion] = useState<string>(() => getRandomSuggestion());
 
   const handleRefresh = useCallback(() => {
     setIsRefreshing(true);
     setTimeout(() => {
       setCourses(getRandomCourses(2));
-      setSuggestion(getRandomSuggestion());
       setIsRefreshing(false);
     }, 300);
   }, []);
