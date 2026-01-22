@@ -114,13 +114,12 @@ const PracticeOnboarding = () => {
           </button>
         </div>
 
-        {/* Skip button */}
         <div className="absolute top-4 right-4 z-30">
           <Button
             variant="ghost"
             size="sm"
             onClick={handleSkip}
-            className="text-card bg-card/80 backdrop-blur hover:bg-card/90 px-4"
+            className="text-foreground bg-card/80 backdrop-blur hover:bg-card/90 px-4"
           >
             跳过
           </Button>
