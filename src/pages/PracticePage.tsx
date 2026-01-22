@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '@/components/Header';
-import TabBar from '@/components/TabBar';
 import { Button } from '@/components/ui/button';
-import { Mic, MicOff, Phone, Video, VideoOff, Lightbulb, TrendingUp, Clock, ThumbsUp } from 'lucide-react';
+import { Mic, MicOff, Phone, Video, VideoOff, Lightbulb, TrendingUp, Clock, ThumbsUp, Send } from 'lucide-react';
 import avatarAi from '@/assets/avatar-ai.png';
+import { useAIPractice } from '@/hooks/useAIPractice';
 
 interface FeedbackTip {
   id: number;
@@ -28,12 +27,17 @@ const PracticePage = () => {
   const navigate = useNavigate();
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOn, setIsVideoOn] = useState(true);
-  const [messages, setMessages] = useState<Array<{ role: 'ai' | 'user'; content: string }>>([
-    { role: 'ai', content: '你好，我是AI陪练助手。现在开始我们的销售场景练习。请向我推销一款新产品。' },
-  ]);
   const [input, setInput] = useState('');
   const [currentTip, setCurrentTip] = useState<FeedbackTip | null>(null);
   const [tipVisible, setTipVisible] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  const { messages, isLoading, sendMessage } = useAIPractice();
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   // Show random tips periodically
   useEffect(() => {
@@ -42,16 +46,12 @@ const PracticePage = () => {
       setCurrentTip({ ...randomTip, id: Date.now() });
       setTipVisible(true);
       
-      // Hide tip after 4 seconds
       setTimeout(() => {
         setTipVisible(false);
       }, 4000);
     };
 
-    // Show first tip after 3 seconds
     const initialTimeout = setTimeout(showRandomTip, 3000);
-    
-    // Then show tips every 8-12 seconds
     const interval = setInterval(() => {
       showRandomTip();
     }, 8000 + Math.random() * 4000);
@@ -80,21 +80,20 @@ const PracticePage = () => {
   };
 
   const handleSend = () => {
-    if (!input.trim()) return;
-    setMessages(prev => [...prev, { role: 'user' as const, content: input }]);
+    if (!input.trim() || isLoading) return;
+    sendMessage(input);
     setInput('');
-    
-    setTimeout(() => {
-      setMessages(prev => [...prev, { 
-        role: 'ai' as const, 
-        content: '你的表达很清晰。请继续补充产品的核心优势和差异化特点。' 
-      }]);
-    }, 1500);
   };
 
   const handleEnd = () => {
     navigate('/history/1');
   };
+
+  // Combine initial greeting with AI messages
+  const displayMessages = [
+    { role: 'assistant' as const, content: '你好，我是AI陪练助手。现在开始我们的销售场景练习。请向我推销一款新产品。' },
+    ...messages
+  ];
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -118,7 +117,7 @@ const PracticePage = () => {
           {/* AI Avatar */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="relative">
-              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 animate-pulse-soft" />
+              <div className={`w-32 h-32 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 ${isLoading ? 'animate-pulse' : 'animate-pulse-soft'}`} />
               <img 
                 src={avatarAi} 
                 alt="AI" 
@@ -137,7 +136,7 @@ const PracticePage = () => {
           {/* Chat Overlay */}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-foreground via-foreground/95 to-transparent p-4 pt-16">
             <div className="space-y-3 max-h-48 overflow-y-auto hide-scrollbar mb-4">
-              {messages.map((msg, index) => (
+              {displayMessages.map((msg, index) => (
                 <div
                   key={index}
                   className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
@@ -150,9 +149,13 @@ const PracticePage = () => {
                     }`}
                   >
                     {msg.content}
+                    {isLoading && index === displayMessages.length - 1 && msg.role === 'assistant' && (
+                      <span className="inline-block w-1 h-4 ml-1 bg-current animate-pulse" />
+                    )}
                   </div>
                 </div>
               ))}
+              <div ref={messagesEndRef} />
             </div>
             
             {/* Input */}
@@ -163,14 +166,16 @@ const PracticePage = () => {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="输入回复..."
-                className="flex-1 bg-card/90 text-card-foreground rounded-full px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                disabled={isLoading}
+                className="flex-1 bg-card/90 text-card-foreground rounded-full px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
               />
               <Button
                 size="icon"
                 onClick={handleSend}
+                disabled={isLoading || !input.trim()}
                 className="rounded-full w-10 h-10"
               >
-                <Mic className="w-4 h-4" />
+                <Send className="w-4 h-4" />
               </Button>
             </div>
           </div>
