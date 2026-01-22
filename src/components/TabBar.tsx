@@ -7,13 +7,13 @@ const TabBar = () => {
   
   const tabs = [
     { path: '/', icon: PlaySquare, label: '课程中心' },
-    { path: '/chat', icon: null, label: 'AI助手', isAvatar: true },
     { path: '/profile', icon: User, label: '我的' },
+    { path: '/chat', icon: null, label: 'AI助手', isAvatar: true },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-border safe-bottom z-50">
-      <div className="max-w-md mx-auto flex items-center justify-around py-2">
+    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-md">
+      <div className="bg-card/70 backdrop-blur-xl border border-border/50 rounded-2xl shadow-lg flex items-center justify-around py-2 px-2">
         {tabs.map((tab) => {
           const isActive = location.pathname === tab.path || 
             (tab.path === '/' && location.pathname.startsWith('/plan')) ||
@@ -23,14 +23,14 @@ const TabBar = () => {
             <NavLink
               key={tab.path}
               to={tab.path}
-              className={`flex flex-col items-center gap-1 px-6 py-2 rounded-xl transition-all ${
+              className={`flex flex-col items-center gap-1 px-5 py-2 rounded-xl transition-all ${
                 isActive 
-                  ? 'bg-accent text-primary' 
+                  ? 'bg-primary/10 text-primary' 
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               {tab.isAvatar ? (
-                <div className="w-6 h-6 rounded-full overflow-hidden">
+                <div className="w-5 h-5 rounded-full overflow-hidden">
                   <img src={avatarAi} alt="AI" className="w-full h-full object-cover" />
                 </div>
               ) : tab.icon ? (
