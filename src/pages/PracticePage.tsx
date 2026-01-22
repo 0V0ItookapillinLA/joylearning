@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Lightbulb, ChevronLeft, ChevronUp, ChevronDown, X, Video } from 'lucide-react';
+import { Lightbulb, ChevronLeft, ChevronUp, ChevronDown, X, Video, Mic, MicOff } from 'lucide-react';
 import avatarInterviewer from '@/assets/avatar-interviewer.png';
 import { useAIPractice } from '@/hooks/useAIPractice';
+import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
+import { toast } from '@/hooks/use-toast';
 
 interface Scene {
   id: number;
@@ -40,11 +42,20 @@ const PracticePage = () => {
   const [showHint, setShowHint] = useState(false);
   const [currentHint, setCurrentHint] = useState('');
   const [isRecording, setIsRecording] = useState(false);
-  const [realtimeSubtitle, setRealtimeSubtitle] = useState('');
   const [aiSubtitle, setAiSubtitle] = useState('');
   const [sceneTransitioning, setSceneTransitioning] = useState(false);
+  const [finalTranscript, setFinalTranscript] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
+  
+  // Speech recognition hook
+  const { 
+    isListening, 
+    transcript, 
+    startListening, 
+    stopListening, 
+    isSupported: isSpeechSupported,
+    error: speechError 
+  } = useSpeechRecognition();
   const currentScene = scenes[currentSceneIndex];
 
   // Handle automatic scene progression
@@ -75,19 +86,43 @@ const PracticePage = () => {
     }
   }, [messages]);
 
+  // Sync speech recognition state with recording state
+  useEffect(() => {
+    setIsRecording(isListening);
+  }, [isListening]);
+
+  // Show speech error
+  useEffect(() => {
+    if (speechError) {
+      toast({
+        title: '语音识别错误',
+        description: speechError,
+        variant: 'destructive',
+      });
+    }
+  }, [speechError]);
+
   const handleTalkPress = () => {
-    setIsRecording(true);
-    setRealtimeSubtitle('正在聆听...');
-    // TODO: Implement speech recognition
+    if (!isSpeechSupported) {
+      toast({
+        title: '不支持语音识别',
+        description: '请使用Chrome或Edge浏览器',
+        variant: 'destructive',
+      });
+      return;
+    }
+    setFinalTranscript('');
+    startListening();
   };
 
   const handleTalkRelease = () => {
-    setIsRecording(false);
-    // Simulate sending message with scene context
-    if (realtimeSubtitle && realtimeSubtitle !== '正在聆听...') {
-      sendMessage(realtimeSubtitle, currentScene);
+    stopListening();
+    // Send the final transcript to AI
+    const textToSend = transcript || finalTranscript;
+    if (textToSend && textToSend.trim()) {
+      sendMessage(textToSend.trim(), currentScene);
+      setFinalTranscript('');
     }
-    setRealtimeSubtitle('');
   };
 
   const handleEnd = () => {
@@ -231,9 +266,12 @@ const PracticePage = () => {
         {isRecording && (
           <div className="absolute bottom-32 left-4 right-4 z-20">
             <div className="bg-card/95 backdrop-blur rounded-lg px-4 py-3 shadow-lg">
-              <p className="text-xs text-muted-foreground mb-1">您正在说：</p>
+              <div className="flex items-center gap-2 mb-1">
+                <Mic className="w-4 h-4 text-primary animate-pulse" />
+                <p className="text-xs text-muted-foreground">正在聆听...</p>
+              </div>
               <p className="text-sm text-foreground">
-                {realtimeSubtitle}
+                {transcript || '请开始说话...'}
                 <span className="inline-block w-0.5 h-4 ml-1 bg-primary animate-pulse" />
               </p>
             </div>
@@ -243,11 +281,12 @@ const PracticePage = () => {
 
       {/* Bottom Controls */}
       <div className="bg-background p-4 pb-6 safe-bottom">
-        {/* Real-time subtitle display area */}
-        {realtimeSubtitle && !isRecording && (
-          <div className="mb-3 px-2">
-            <p className="text-sm text-muted-foreground text-center">
-              {realtimeSubtitle}
+        {/* Speech not supported warning */}
+        {!isSpeechSupported && (
+          <div className="mb-3 px-2 py-2 bg-destructive/10 rounded-lg">
+            <p className="text-xs text-destructive text-center flex items-center justify-center gap-1">
+              <MicOff className="w-3 h-3" />
+              您的浏览器不支持语音识别，请使用Chrome或Edge
             </p>
           </div>
         )}
