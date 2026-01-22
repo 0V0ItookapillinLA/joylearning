@@ -1,10 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import TabBar from '@/components/TabBar';
 import { Button } from '@/components/ui/button';
-import { Mic, MicOff, Phone, Video, VideoOff } from 'lucide-react';
+import { Mic, MicOff, Phone, Video, VideoOff, Lightbulb, TrendingUp, Clock, ThumbsUp } from 'lucide-react';
 import avatarAi from '@/assets/avatar-ai.png';
+
+interface FeedbackTip {
+  id: number;
+  icon: 'lightbulb' | 'trending' | 'clock' | 'thumbsup';
+  message: string;
+  type: 'tip' | 'encouragement' | 'warning';
+}
+
+const feedbackTips: Omit<FeedbackTip, 'id'>[] = [
+  { icon: 'lightbulb', message: '试着用具体数据支撑你的观点', type: 'tip' },
+  { icon: 'trending', message: '语速适中，继续保持！', type: 'encouragement' },
+  { icon: 'lightbulb', message: '可以多问一些开放性问题', type: 'tip' },
+  { icon: 'thumbsup', message: '很好的开场白！', type: 'encouragement' },
+  { icon: 'clock', message: '注意控制每段回复的长度', type: 'warning' },
+  { icon: 'lightbulb', message: '尝试突出产品的差异化优势', type: 'tip' },
+  { icon: 'trending', message: '表达清晰流畅，非常棒！', type: 'encouragement' },
+  { icon: 'lightbulb', message: '记得倾听客户的需求', type: 'tip' },
+];
 
 const PracticePage = () => {
   const navigate = useNavigate();
@@ -14,6 +32,52 @@ const PracticePage = () => {
     { role: 'ai', content: '你好，我是AI陪练助手。现在开始我们的销售场景练习。请向我推销一款新产品。' },
   ]);
   const [input, setInput] = useState('');
+  const [currentTip, setCurrentTip] = useState<FeedbackTip | null>(null);
+  const [tipVisible, setTipVisible] = useState(false);
+
+  // Show random tips periodically
+  useEffect(() => {
+    const showRandomTip = () => {
+      const randomTip = feedbackTips[Math.floor(Math.random() * feedbackTips.length)];
+      setCurrentTip({ ...randomTip, id: Date.now() });
+      setTipVisible(true);
+      
+      // Hide tip after 4 seconds
+      setTimeout(() => {
+        setTipVisible(false);
+      }, 4000);
+    };
+
+    // Show first tip after 3 seconds
+    const initialTimeout = setTimeout(showRandomTip, 3000);
+    
+    // Then show tips every 8-12 seconds
+    const interval = setInterval(() => {
+      showRandomTip();
+    }, 8000 + Math.random() * 4000);
+
+    return () => {
+      clearTimeout(initialTimeout);
+      clearInterval(interval);
+    };
+  }, []);
+
+  const getTipIcon = (icon: FeedbackTip['icon']) => {
+    switch (icon) {
+      case 'lightbulb': return <Lightbulb className="w-4 h-4" />;
+      case 'trending': return <TrendingUp className="w-4 h-4" />;
+      case 'clock': return <Clock className="w-4 h-4" />;
+      case 'thumbsup': return <ThumbsUp className="w-4 h-4" />;
+    }
+  };
+
+  const getTipStyles = (type: FeedbackTip['type']) => {
+    switch (type) {
+      case 'tip': return 'bg-primary/90 text-primary-foreground';
+      case 'encouragement': return 'bg-green-500/90 text-white';
+      case 'warning': return 'bg-amber-500/90 text-white';
+    }
+  };
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -37,6 +101,20 @@ const PracticePage = () => {
       <div className="max-w-md mx-auto w-full flex flex-col flex-1">
         {/* Video Area */}
         <div className="relative flex-1 bg-gradient-to-b from-foreground to-foreground/90">
+          {/* Feedback Tip Overlay */}
+          {currentTip && (
+            <div 
+              className={`absolute top-4 left-4 right-4 z-10 transition-all duration-500 ${
+                tipVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+              }`}
+            >
+              <div className={`flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg ${getTipStyles(currentTip.type)}`}>
+                {getTipIcon(currentTip.icon)}
+                <span className="text-sm font-medium">{currentTip.message}</span>
+              </div>
+            </div>
+          )}
+          
           {/* AI Avatar */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="relative">
