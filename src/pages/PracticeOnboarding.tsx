@@ -100,11 +100,11 @@ const PracticeOnboarding = () => {
       <div className="absolute inset-0 bg-foreground/60 z-10" />
 
       {/* Background / Avatar Area */}
-      <div className="flex-1 relative overflow-hidden">
+      <div className="flex-1 relative overflow-hidden bg-muted">
         <img 
           src={avatarInterviewer} 
           alt="AI面试官" 
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-contain object-top bg-muted"
         />
         
         {/* Back Button */}

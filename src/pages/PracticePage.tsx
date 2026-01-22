@@ -64,12 +64,12 @@ const PracticePage = () => {
   return (
     <div className="fixed inset-0 bg-background flex flex-col">
       {/* Video/Avatar Area */}
-      <div className="flex-1 relative overflow-hidden">
-        {/* Background Avatar */}
+      <div className="flex-1 relative overflow-hidden bg-muted">
+        {/* Background Avatar - Mobile optimized */}
         <img 
           src={avatarInterviewer} 
           alt="AI面试官" 
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-contain object-top bg-muted"
         />
         
         {/* Back Button */}
