@@ -94,33 +94,35 @@ const ChatPage = () => {
       </main>
       
       {/* Input */}
-      <div className="fixed bottom-16 left-0 right-0 bg-background border-t border-border p-4 safe-bottom">
-        <div className="max-w-md mx-auto flex items-center gap-3">
-          <div className="flex-1 relative">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="输入消息..."
-              className="w-full bg-muted rounded-full px-5 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-            />
+      <div className="fixed bottom-24 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-md z-40">
+        <div className="bg-card/80 backdrop-blur-lg rounded-2xl border border-border/50 shadow-lg p-3">
+          <div className="flex items-center gap-3">
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                placeholder="输入消息..."
+                className="w-full bg-muted rounded-full px-4 py-2.5 pr-11 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+              />
+              <Button
+                size="icon"
+                variant="ghost"
+                className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full w-8 h-8"
+              >
+                <Mic className="w-4 h-4 text-muted-foreground" />
+              </Button>
+            </div>
             <Button
               size="icon"
-              variant="ghost"
-              className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full w-9 h-9"
+              onClick={handleSend}
+              disabled={!input.trim()}
+              className="rounded-full w-10 h-10 bg-primary hover:bg-primary/90"
             >
-              <Mic className="w-4 h-4 text-muted-foreground" />
+              <Send className="w-4 h-4" />
             </Button>
           </div>
-          <Button
-            size="icon"
-            onClick={handleSend}
-            disabled={!input.trim()}
-            className="rounded-full w-11 h-11 bg-primary hover:bg-primary/90"
-          >
-            <Send className="w-4 h-4" />
-          </Button>
         </div>
       </div>
       
