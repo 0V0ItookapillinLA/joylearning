@@ -213,10 +213,6 @@ const ConversationWithFeedback = () => {
         })}
       </div>
       
-      <button className="flex items-center gap-1 text-sm text-primary mt-4 w-full justify-end">
-        查看详细聊天记录
-        <ChevronRight className="w-4 h-4" />
-      </button>
     </div>
   );
 };
