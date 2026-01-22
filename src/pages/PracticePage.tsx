@@ -149,13 +149,13 @@ const PracticePage = () => {
         {/* Scene Announcement - Top */}
         <div className="absolute top-16 left-4 right-4 z-20">
           <div 
-            className={`bg-destructive/95 backdrop-blur rounded-xl shadow-xl overflow-hidden transition-all duration-300 ${
+            className={`bg-card/95 backdrop-blur rounded-xl shadow-xl overflow-hidden transition-all duration-300 border ${
               isSceneExpanded ? 'max-h-80' : 'max-h-12'
             }`}
           >
             <button 
               onClick={() => setIsSceneExpanded(!isSceneExpanded)}
-              className="w-full flex items-center justify-between px-4 py-3 text-destructive-foreground"
+              className="w-full flex items-center justify-between px-4 py-3 text-foreground"
             >
               <span className="font-semibold text-sm">{currentScene.title}</span>
               {isSceneExpanded ? (
@@ -166,7 +166,7 @@ const PracticePage = () => {
             </button>
             
             {isSceneExpanded && (
-              <div className="px-4 pb-4 text-destructive-foreground/90">
+              <div className="px-4 pb-4 text-foreground/90">
                 <p className="text-xs leading-relaxed mb-2">
                   {currentScene.description}
                 </p>
