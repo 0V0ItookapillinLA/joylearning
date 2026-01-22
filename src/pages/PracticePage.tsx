@@ -97,10 +97,10 @@ const PracticePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-foreground flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <div className="max-w-md mx-auto w-full flex flex-col flex-1">
-        {/* Video Area */}
-        <div className="relative flex-1 bg-gradient-to-b from-foreground to-foreground/90">
+        {/* Video Area - Dark section for video call */}
+        <div className="relative flex-1 bg-foreground rounded-b-3xl overflow-hidden mx-2 mt-2">
           {/* Feedback Tip Overlay */}
           {currentTip && (
             <div 
@@ -128,7 +128,7 @@ const PracticePage = () => {
           </div>
           
           {/* Self Video Preview */}
-          <div className="absolute top-20 right-4 w-24 h-32 bg-muted rounded-xl overflow-hidden shadow-lg">
+          <div className="absolute top-16 right-4 w-24 h-32 bg-muted rounded-xl overflow-hidden shadow-lg">
             <div className="w-full h-full bg-gradient-to-br from-muted to-muted-foreground/20 flex items-center justify-center">
               <Video className="w-8 h-8 text-muted-foreground/50" />
             </div>
@@ -176,14 +176,14 @@ const PracticePage = () => {
           </div>
         </div>
         
-        {/* Controls */}
-        <div className="bg-foreground p-6 safe-bottom">
+        {/* Controls - White background */}
+        <div className="bg-background p-6 safe-bottom">
           <div className="flex items-center justify-center gap-6">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setIsMuted(!isMuted)}
-              className={`w-14 h-14 rounded-full ${isMuted ? 'bg-destructive/20 text-destructive' : 'bg-card/10 text-card'}`}
+              className={`w-14 h-14 rounded-full ${isMuted ? 'bg-destructive/20 text-destructive' : 'bg-muted text-muted-foreground'}`}
             >
               {isMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
             </Button>
@@ -200,7 +200,7 @@ const PracticePage = () => {
               variant="ghost"
               size="icon"
               onClick={() => setIsVideoOn(!isVideoOn)}
-              className={`w-14 h-14 rounded-full ${!isVideoOn ? 'bg-destructive/20 text-destructive' : 'bg-card/10 text-card'}`}
+              className={`w-14 h-14 rounded-full ${!isVideoOn ? 'bg-destructive/20 text-destructive' : 'bg-muted text-muted-foreground'}`}
             >
               {isVideoOn ? <Video className="w-6 h-6" /> : <VideoOff className="w-6 h-6" />}
             </Button>
