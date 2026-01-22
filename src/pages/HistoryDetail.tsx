@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import TabBar from '@/components/TabBar';
 import RadarChart from '@/components/RadarChart';
+import ImprovementSection from '@/components/ImprovementSection';
 import { Button } from '@/components/ui/button';
 import { abilityScores, evaluationText, strengthsData, weaknessesData, conversationRecords } from '@/data/mockData';
 import { FileBarChart, Target, ThumbsUp, ThumbsDown, MessageSquare, ChevronRight } from 'lucide-react';
@@ -49,6 +50,9 @@ const HistoryDetail = () => {
             </p>
           </div>
         </div>
+        
+        {/* Improvement Suggestions & Related Knowledge */}
+        <ImprovementSection />
         
         {/* Radar Chart */}
         <div className="bg-card rounded-xl p-4 shadow-card">
