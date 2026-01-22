@@ -33,7 +33,6 @@ const PracticeComplete = () => {
     // TODO: Submit feedback to backend
     console.log('Submitted:', { rating, feedback });
     setDrawerOpen(false);
-    navigate('/profile');
   };
 
   const handleViewReport = () => {
