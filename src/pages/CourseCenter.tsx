@@ -6,7 +6,7 @@ import { plans } from '@/data/mockData';
 const CourseCenter = () => {
   return (
     <div className="min-h-screen bg-background pb-24">
-      <Header title="JoyLearning" showBack={true} />
+      <Header title="JoyLearning" showBack={false} />
       
       <main className="max-w-md mx-auto px-4 py-4">
         <div className="space-y-4">
