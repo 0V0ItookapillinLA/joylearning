@@ -3,9 +3,10 @@ import Header from '@/components/Header';
 import TabBar from '@/components/TabBar';
 import RadarChart from '@/components/RadarChart';
 import ImprovementSection from '@/components/ImprovementSection';
+import ConversationWithFeedback from '@/components/ConversationWithFeedback';
 import { Button } from '@/components/ui/button';
-import { abilityScores, evaluationText, strengthsData, weaknessesData, conversationRecords } from '@/data/mockData';
-import { FileBarChart, Target, ThumbsUp, ThumbsDown, MessageSquare, ChevronRight } from 'lucide-react';
+import { abilityScores, evaluationText, strengthsData, weaknessesData } from '@/data/mockData';
+import { FileBarChart, Target, ThumbsUp, ThumbsDown } from 'lucide-react';
 
 const HistoryDetail = () => {
   const { id } = useParams();
@@ -96,27 +97,8 @@ const HistoryDetail = () => {
           </div>
         </div>
         
-        {/* Conversation Records */}
-        <div className="bg-card rounded-xl p-4 shadow-card">
-          <div className="flex items-center gap-2 mb-3">
-            <MessageSquare className="w-4 h-4 text-primary" />
-            <h3 className="font-medium text-foreground">会话记录</h3>
-          </div>
-          <div className="space-y-3">
-            {conversationRecords.map((record, index) => (
-              <div key={index} className="border-l-2 border-primary/30 pl-3">
-                <p className="text-xs font-medium text-primary mb-1">
-                  {record.role === 'AI' ? 'AI' : '我'}
-                </p>
-                <p className="text-sm text-muted-foreground line-clamp-3">{record.content}</p>
-              </div>
-            ))}
-          </div>
-          <button className="flex items-center gap-1 text-sm text-primary mt-4 w-full justify-end">
-            查看详细聊天记录
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
+        {/* Conversation Records with Feedback */}
+        <ConversationWithFeedback />
       </main>
       
       <TabBar />
