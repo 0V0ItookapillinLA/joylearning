@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, Lightbulb, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import avatarInterviewer from '@/assets/avatar-interviewer.png';
@@ -267,7 +267,7 @@ const PracticeOnboarding = () => {
           {/* Hint Button */}
           <div className={step.highlight === 'hint' ? '' : 'opacity-30'}>
             <button className={`w-12 h-12 rounded-full bg-muted flex items-center justify-center ${getHighlightStyles('hint')}`}>
-              <MapPin className="w-5 h-5 text-muted-foreground" />
+              <Lightbulb className="w-5 h-5 text-muted-foreground" />
             </button>
           </div>
           
