@@ -42,11 +42,11 @@ export const learningItems: LearningItem[] = [
 ];
 
 export const historyRecords: HistoryRecord[] = [
-  { id: '1', title: '新人销售知识培训课', type: 'exam', duration: '36:00min', date: '2025-09-11 12:00', score: 82.7 },
-  { id: '2', title: '新人销售知识培训课', type: 'exam', duration: '36:00min', date: '2025-09-11 12:00', score: 78.5 },
-  { id: '3', title: '新人销售知识培训课', type: 'exam', duration: '36:00min', date: '2025-09-11 12:00', score: 91.2 },
-  { id: '4', title: '新人销售知识培训课', type: 'practice', duration: '36:00min', date: '2025-09-11 12:00', score: 85.0 },
-  { id: '5', title: '新人销售知识培训课', type: 'practice', duration: '36:00min', date: '2025-09-11 12:00', score: 88.3 },
+  { id: '1', title: '新人销售知识培训课', type: 'exam', duration: '36:00min', date: '2025-09-11 12:00', score: 82.7, planName: '新人应知应会' },
+  { id: '2', title: '新人销售知识培训课', type: 'exam', duration: '36:00min', date: '2025-09-11 12:00', score: 78.5, planName: '新人应知应会' },
+  { id: '3', title: '新人销售知识培训课', type: 'exam', duration: '36:00min', date: '2025-09-11 12:00', score: 91.2, planName: '全量销售AI陪练' },
+  { id: '4', title: '新人销售知识培训课', type: 'practice', duration: '36:00min', date: '2025-09-11 12:00', score: 85.0, planName: '全量销售AI陪练' },
+  { id: '5', title: '新人销售知识培训课', type: 'practice', duration: '36:00min', date: '2025-09-11 12:00', score: 88.3, planName: '新人应知应会' },
 ];
 
 export const abilityScores: AbilityScore[] = [

@@ -34,6 +34,7 @@ export interface HistoryRecord {
   duration: string;
   date: string;
   score?: number;
+  planName?: string;
 }
 
 export interface AbilityScore {

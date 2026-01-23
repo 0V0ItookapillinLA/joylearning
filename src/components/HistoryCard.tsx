@@ -20,7 +20,14 @@ const HistoryCard = ({ record }: HistoryCardProps) => {
   const IconComponent = config.icon;
 
   return (
-    <div className="bg-card rounded-xl p-4 shadow-card border-l-4 border-l-primary animate-fade-in">
+    <div className="bg-card rounded-xl p-4 shadow-card border-l-4 border-l-primary animate-fade-in relative">
+      {/* Plan Badge */}
+      {record.planName && (
+        <div className="absolute -top-1 -right-1 bg-primary/10 text-primary text-xs px-2 py-1 rounded-bl-lg rounded-tr-xl font-medium">
+          {record.planName}
+        </div>
+      )}
+      
       <div className="flex items-center justify-between">
         <div className="flex items-start gap-3 flex-1">
           <div className={`p-2 rounded-lg ${config.bgColor}`}>
@@ -28,7 +35,7 @@ const HistoryCard = ({ record }: HistoryCardProps) => {
           </div>
           
           <div className="flex-1 min-w-0">
-            <h4 className="font-medium text-foreground text-sm mb-1 truncate">{record.title}</h4>
+            <h4 className="font-medium text-foreground text-sm mb-1 truncate pr-20">{record.title}</h4>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <span className={`px-2 py-0.5 rounded ${config.bgColor} ${config.color}`}>
                 {config.label}
