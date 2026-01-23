@@ -10,7 +10,7 @@ const CheckInCalendar = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      <Header title="打卡日历" showBack={true} />
+      <Header title="Joylearning" showBack={true} />
       
       <div className="max-w-md mx-auto">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
