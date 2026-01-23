@@ -13,7 +13,7 @@ const HistoryDetail = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      <Header title="JoyLearning" rightAction="menu" backPath="/history" />
+      <Header title="JoyLearning" rightAction="menu" backPath="/profile?tab=history" />
       
       {/* Title Bar */}
       <div className="max-w-md mx-auto px-4 py-4 flex items-center justify-between">

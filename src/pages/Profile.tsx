@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import TabBar from '@/components/TabBar';
 import RadarChart from '@/components/RadarChart';
@@ -12,8 +12,17 @@ import { FileBarChart, Target, ChevronRight } from 'lucide-react';
 import avatarUser from '@/assets/avatar-user.png';
 
 const Profile = () => {
-  const [activeTab, setActiveTab] = useState('report');
+  const [searchParams] = useSearchParams();
+  const defaultTab = searchParams.get('tab') || 'report';
+  const [activeTab, setActiveTab] = useState(defaultTab);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'history' || tab === 'report') {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen bg-background pb-24">
