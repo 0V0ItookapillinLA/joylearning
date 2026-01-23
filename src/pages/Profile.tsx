@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import TabBar from '@/components/TabBar';
 import RadarChart from '@/components/RadarChart';
@@ -7,11 +8,12 @@ import HistoryCard from '@/components/HistoryCard';
 import RecommendedCourses from '@/components/RecommendedCourses';
 import { userProfile, abilityScores, evaluationText, historyRecords } from '@/data/mockData';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FileBarChart, Target } from 'lucide-react';
+import { FileBarChart, Target, ChevronRight } from 'lucide-react';
 import avatarUser from '@/assets/avatar-user.png';
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('report');
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -25,16 +27,22 @@ const Profile = () => {
             alt={userProfile.name} 
             className="w-14 h-14 rounded-full object-cover"
           />
-          <div>
+          <div className="flex-1">
             <h2 className="font-semibold text-foreground">
               {userProfile.name}
               <span className="text-muted-foreground font-normal ml-1">
                 (账号：{userProfile.account})
               </span>
             </h2>
-            <p className="text-sm text-primary">
-              学习时长 <span className="font-semibold">{userProfile.studyHours}</span> 小时
-            </p>
+            <div 
+              className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => navigate('/checkin')}
+            >
+              <p className="text-sm text-primary">
+                学习时长 <span className="font-semibold">{userProfile.studyHours}</span> 小时
+              </p>
+              <ChevronRight className="w-4 h-4 text-primary" />
+            </div>
           </div>
         </div>
       </div>
