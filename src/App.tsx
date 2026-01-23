@@ -7,6 +7,7 @@ import CourseCenter from "./pages/CourseCenter";
 import PlanDetail from "./pages/PlanDetail";
 import ChatPage from "./pages/ChatPage";
 import Profile from "./pages/Profile";
+import History from "./pages/History";
 import HistoryDetail from "./pages/HistoryDetail";
 import PracticeOnboarding from "./pages/PracticeOnboarding";
 import PracticeDetail from "./pages/PracticeDetail";
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/plan/:id" element={<PlanDetail />} />
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/history" element={<History />} />
           <Route path="/history/:id" element={<HistoryDetail />} />
           <Route path="/practice/onboarding" element={<PracticeOnboarding />} />
           <Route path="/practice/detail" element={<PracticeDetail />} />
