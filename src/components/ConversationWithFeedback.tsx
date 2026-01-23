@@ -70,9 +70,15 @@ const conversationWithFeedback: ConversationMessage[] = [
 
 const ConversationWithFeedback = () => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [filterType, setFilterType] = useState<FeedbackType>(null);
 
   const toggleExpand = (index: number) => {
     setExpandedIndex(expandedIndex === index ? null : index);
+  };
+
+  const toggleFilter = (type: FeedbackType) => {
+    setFilterType(filterType === type ? null : type);
+    setExpandedIndex(null); // Reset expanded state when filter changes
   };
 
   const getFeedbackStyle = (type: FeedbackType) => {
@@ -117,6 +123,19 @@ const ConversationWithFeedback = () => {
   const improvementCount = userMessages.filter(m => m.feedback?.type === 'improvement').length;
   const goodCount = userMessages.filter(m => m.feedback?.type === 'good').length;
 
+  // Group conversations into rounds (AI message + user response)
+  const conversationRounds: { ai: ConversationMessage | null; user: ConversationMessage | null; roundIndex: number }[] = [];
+  for (let i = 0; i < conversationWithFeedback.length; i += 2) {
+    const ai = conversationWithFeedback[i]?.role === 'AI' ? conversationWithFeedback[i] : null;
+    const user = conversationWithFeedback[i + 1]?.role === 'user' ? conversationWithFeedback[i + 1] : null;
+    conversationRounds.push({ ai, user, roundIndex: Math.floor(i / 2) });
+  }
+
+  // Filter rounds based on selected filter type
+  const filteredRounds = filterType
+    ? conversationRounds.filter(round => round.user?.feedback?.type === filterType)
+    : conversationRounds;
+
   return (
     <div className="bg-card rounded-xl p-4 shadow-card">
       <div className="flex items-center gap-2 mb-3">
@@ -124,90 +143,133 @@ const ConversationWithFeedback = () => {
         <h3 className="font-medium text-foreground">会话记录分析</h3>
       </div>
       
-      {/* Summary Stats */}
+      {/* Summary Stats - Clickable Filters */}
       <div className="flex gap-2 mb-4 flex-wrap">
-        <span className="text-xs px-2 py-1 rounded-full bg-destructive/10 text-destructive">
+        <button
+          onClick={() => toggleFilter('error')}
+          className={cn(
+            "text-xs px-2 py-1 rounded-full transition-all",
+            filterType === 'error'
+              ? "bg-destructive text-destructive-foreground ring-2 ring-destructive/30"
+              : "bg-destructive/10 text-destructive hover:bg-destructive/20"
+          )}
+        >
           {errorCount} 处错误
-        </span>
-        <span className="text-xs px-2 py-1 rounded-full bg-status-pending/10 text-status-pending">
+        </button>
+        <button
+          onClick={() => toggleFilter('improvement')}
+          className={cn(
+            "text-xs px-2 py-1 rounded-full transition-all",
+            filterType === 'improvement'
+              ? "bg-status-pending text-white ring-2 ring-status-pending/30"
+              : "bg-status-pending/10 text-status-pending hover:bg-status-pending/20"
+          )}
+        >
           {improvementCount} 处可优化
-        </span>
-        <span className="text-xs px-2 py-1 rounded-full bg-status-complete/10 text-status-complete">
+        </button>
+        <button
+          onClick={() => toggleFilter('good')}
+          className={cn(
+            "text-xs px-2 py-1 rounded-full transition-all",
+            filterType === 'good'
+              ? "bg-status-complete text-white ring-2 ring-status-complete/30"
+              : "bg-status-complete/10 text-status-complete hover:bg-status-complete/20"
+          )}
+        >
           {goodCount} 处表现良好
-        </span>
+        </button>
       </div>
 
-      {/* Conversation List */}
-      <div className="space-y-3">
-        {conversationWithFeedback.map((record, index) => {
-          const style = getFeedbackStyle(record.feedback?.type || null);
-          const isExpanded = expandedIndex === index;
-          const hasFeedback = record.feedback && record.feedback.type !== 'good' && (record.feedback.issue || record.feedback.suggestion);
+      {/* Conversation List - By Rounds */}
+      <div className="space-y-4">
+        {filteredRounds.map((round, roundIdx) => {
+          const globalIndex = round.roundIndex * 2;
           
           return (
-            <div 
-              key={index} 
-              className={cn(
-                "border-l-2 pl-3 transition-all duration-200",
-                style.border,
-                record.feedback && style.bg,
-                hasFeedback && "cursor-pointer hover:bg-accent/50 rounded-r-lg -ml-0.5 pl-3.5"
-              )}
-              onClick={() => hasFeedback && toggleExpand(index)}
-            >
-              {/* Message Header */}
-              <div className="flex items-center gap-2 mb-1">
-                <p className="text-xs font-medium text-primary">
-                  {record.role === 'AI' ? 'AI' : '我'}
-                </p>
-                {record.feedback?.type && (
-                  <span className={cn("text-xs px-1.5 py-0.5 rounded-full flex items-center gap-1", style.badge)}>
-                    {style.icon && <style.icon className="w-3 h-3" />}
-                    <span>{style.label}</span>
-                  </span>
-                )}
-                {hasFeedback && (
-                  <span className="ml-auto">
-                    {isExpanded ? (
-                      <ChevronUp className="w-4 h-4 text-muted-foreground" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                    )}
-                  </span>
-                )}
-              </div>
-              
-              {/* Message Content */}
-              <p className={cn(
-                "text-sm text-muted-foreground",
-                !isExpanded && "line-clamp-3"
-              )}>
-                {record.content}
-              </p>
-              
-              {/* Expanded Feedback */}
-              {isExpanded && hasFeedback && (
-                <div className="mt-3 space-y-2 animate-fade-in">
-                  {record.feedback?.issue && (
-                    <div className="bg-background/60 rounded-lg p-3 border border-border/50">
-                      <p className="text-xs font-medium text-destructive flex items-center gap-1 mb-1">
-                        <AlertCircle className="w-3 h-3" />
-                        问题分析
-                      </p>
-                      <p className="text-sm text-foreground">{record.feedback.issue}</p>
-                    </div>
-                  )}
-                  {record.feedback?.suggestion && (
-                    <div className="bg-background/60 rounded-lg p-3 border border-primary/20">
-                      <p className="text-xs font-medium text-primary flex items-center gap-1 mb-1">
-                        <Lightbulb className="w-3 h-3" />
-                        改进建议
-                      </p>
-                      <p className="text-sm text-foreground">{record.feedback.suggestion}</p>
-                    </div>
-                  )}
+            <div key={roundIdx} className="space-y-2">
+              {/* AI Message */}
+              {round.ai && (
+                <div className="border-l-2 border-l-primary/30 pl-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <p className="text-xs font-medium text-primary">AI</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground line-clamp-3">
+                    {round.ai.content}
+                  </p>
                 </div>
               )}
+              
+              {/* User Message with Feedback */}
+              {round.user && (() => {
+                const record = round.user;
+                const style = getFeedbackStyle(record.feedback?.type || null);
+                const isExpanded = expandedIndex === globalIndex + 1;
+                const hasFeedback = record.feedback && record.feedback.type !== 'good' && (record.feedback.issue || record.feedback.suggestion);
+                
+                return (
+                  <div 
+                    className={cn(
+                      "border-l-2 pl-3 transition-all duration-200",
+                      style.border,
+                      record.feedback && style.bg,
+                      hasFeedback && "cursor-pointer hover:bg-accent/50 rounded-r-lg -ml-0.5 pl-3.5"
+                    )}
+                    onClick={() => hasFeedback && toggleExpand(globalIndex + 1)}
+                  >
+                    {/* Message Header */}
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="text-xs font-medium text-primary">我</p>
+                      {record.feedback?.type && (
+                        <span className={cn("text-xs px-1.5 py-0.5 rounded-full flex items-center gap-1", style.badge)}>
+                          {style.icon && <style.icon className="w-3 h-3" />}
+                          <span>{style.label}</span>
+                        </span>
+                      )}
+                      {hasFeedback && (
+                        <span className="ml-auto">
+                          {isExpanded ? (
+                            <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                          )}
+                        </span>
+                      )}
+                    </div>
+                    
+                    {/* Message Content */}
+                    <p className={cn(
+                      "text-sm text-muted-foreground",
+                      !isExpanded && "line-clamp-3"
+                    )}>
+                      {record.content}
+                    </p>
+                    
+                    {/* Expanded Feedback */}
+                    {isExpanded && hasFeedback && (
+                      <div className="mt-3 space-y-2 animate-fade-in">
+                        {record.feedback?.issue && (
+                          <div className="bg-background/60 rounded-lg p-3 border border-border/50">
+                            <p className="text-xs font-medium text-destructive flex items-center gap-1 mb-1">
+                              <AlertCircle className="w-3 h-3" />
+                              问题分析
+                            </p>
+                            <p className="text-sm text-foreground">{record.feedback.issue}</p>
+                          </div>
+                        )}
+                        {record.feedback?.suggestion && (
+                          <div className="bg-background/60 rounded-lg p-3 border border-primary/20">
+                            <p className="text-xs font-medium text-primary flex items-center gap-1 mb-1">
+                              <Lightbulb className="w-3 h-3" />
+                              改进建议
+                            </p>
+                            <p className="text-sm text-foreground">{record.feedback.suggestion}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           );
         })}
