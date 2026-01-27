@@ -59,7 +59,7 @@ const ChatPage = () => {
 
   // Combine initial greeting with AI messages
   const displayMessages = [
-    { role: 'assistant' as const, content: '你好！我是你的AI销售专家助手，拥有20年销售经验。无论是销售技巧、客户沟通还是团队管理，都可以向我咨询！' },
+    { role: 'assistant' as const, content: '你好！我是你的AI零售采销专家助手，拥有20年采销经验。无论是采购技巧、供应商沟通还是库存管理，都可以向我咨询！' },
     ...messages
   ];
 
@@ -70,7 +70,7 @@ const ChatPage = () => {
         <div className="flex items-center justify-center h-14 px-4 max-w-md mx-auto">
           <div className="flex items-center gap-2">
             <img src={avatarAi} alt="AI" className="w-8 h-8 rounded-full" />
-            <h1 className="text-lg font-semibold text-foreground">AI销售专家</h1>
+            <h1 className="text-lg font-semibold text-foreground">AI采销专家</h1>
           </div>
         </div>
       </header>

@@ -70,7 +70,7 @@ const PracticeDetail = () => {
             {/* Title */}
             <div className="flex items-center gap-2 mb-4">
               <Users className="w-5 h-5 text-primary" />
-              <span className="font-semibold text-foreground">销售练习 白酒仓储方向</span>
+              <span className="font-semibold text-foreground">零售采销练习 白酒仓储方向</span>
             </div>
 
             {/* Banner Image */}
