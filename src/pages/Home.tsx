@@ -75,6 +75,7 @@ const Home = () => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [likedItems, setLikedItems] = useState<Set<string>>(new Set());
   const [savedItems, setSavedItems] = useState<Set<string>>(new Set());
+  const [isScrolling, setIsScrolling] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartY = useRef(0);
   const touchEndY = useRef(0);
@@ -88,21 +89,34 @@ const Home = () => {
   };
 
   const handleTouchEnd = () => {
+    if (isScrolling) return;
+    
     const diff = touchStartY.current - touchEndY.current;
     const threshold = 50;
 
     if (diff > threshold && currentIndex < mockFeedData.length - 1) {
+      setIsScrolling(true);
       setCurrentIndex(prev => prev + 1);
+      setTimeout(() => setIsScrolling(false), 400);
     } else if (diff < -threshold && currentIndex > 0) {
+      setIsScrolling(true);
       setCurrentIndex(prev => prev - 1);
+      setTimeout(() => setIsScrolling(false), 400);
     }
   };
 
   const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    if (isScrolling) return;
+    
     if (e.deltaY > 0 && currentIndex < mockFeedData.length - 1) {
+      setIsScrolling(true);
       setCurrentIndex(prev => prev + 1);
+      setTimeout(() => setIsScrolling(false), 400);
     } else if (e.deltaY < 0 && currentIndex > 0) {
+      setIsScrolling(true);
       setCurrentIndex(prev => prev - 1);
+      setTimeout(() => setIsScrolling(false), 400);
     }
   };
 
