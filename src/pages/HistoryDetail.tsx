@@ -20,7 +20,7 @@ const HistoryDetail = () => {
         <div>
           <h2 className="font-semibold text-foreground flex items-center gap-2">
             <FileBarChart className="w-4 h-4 text-primary" />
-            多场景销售话术
+            多场景零售采销话术
           </h2>
           <p className="text-xs text-muted-foreground mt-1">考试 | 时长 7min</p>
         </div>

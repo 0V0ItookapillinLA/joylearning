@@ -18,7 +18,7 @@ interface ConversationMessage {
 const conversationWithFeedback: ConversationMessage[] = [
   { 
     role: 'AI', 
-    content: '您好，我是来自XX公司的销售顾问小王。请问您最近有考虑过升级一下您公司的办公系统吗？' 
+    content: '您好，我是来自XX公司的采销专员小王。请问您最近有考虑过扩大供货渠道吗？' 
   },
   { 
     role: 'user', 

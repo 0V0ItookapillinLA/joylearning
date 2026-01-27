@@ -12,12 +12,12 @@ export const plans: Plan[] = [
   },
   {
     id: '2',
-    title: '全量销售AI陪练',
+    title: '全量零售采销AI陪练',
     description: '这是一段关于新人应知应会计划的长文本...',
     chapters: 10,
     estimatedHours: 3,
     status: 'in_progress',
-    bannerTitle: '全量销售\nAI陪练',
+    bannerTitle: '全量采销\nAI陪练',
   },
 ];
 
@@ -30,23 +30,23 @@ export const chapters: Chapter[] = [
 ];
 
 export const learningItems: LearningItem[] = [
-  { id: '1', title: '新人销售知识培训课', type: 'learning', duration: '36:00min', status: 'not_started' },
-  { id: '2', title: '新人销售知识培训课', type: 'learning', duration: '36:00min', status: 'in_progress' },
-  { id: '3', title: '新人销售知识培训课', type: 'learning', duration: '36:00min', status: 'completed' },
-  { id: '4', title: '多场景销售话术AI陪练', type: 'practice', duration: '36:00min', status: 'not_started' },
-  { id: '5', title: '多场景销售话术AI陪练', type: 'practice', duration: '36:00min', status: 'in_progress' },
-  { id: '6', title: '多场景销售话术AI陪练', type: 'practice', duration: '36:00min', status: 'completed' },
-  { id: '7', title: '场景销售话术AI考试', type: 'exam', duration: '36:00min', status: 'locked' },
-  { id: '8', title: '场景销售话术AI考试', type: 'exam', duration: '36:00min', status: 'in_progress' },
-  { id: '9', title: '场景销售话术AI考试', type: 'exam', duration: '36:00min', status: 'completed' },
+  { id: '1', title: '新人零售采销知识培训课', type: 'learning', duration: '36:00min', status: 'not_started' },
+  { id: '2', title: '新人零售采销知识培训课', type: 'learning', duration: '36:00min', status: 'in_progress' },
+  { id: '3', title: '新人零售采销知识培训课', type: 'learning', duration: '36:00min', status: 'completed' },
+  { id: '4', title: '多场景零售采销话术AI陪练', type: 'practice', duration: '36:00min', status: 'not_started' },
+  { id: '5', title: '多场景零售采销话术AI陪练', type: 'practice', duration: '36:00min', status: 'in_progress' },
+  { id: '6', title: '多场景零售采销话术AI陪练', type: 'practice', duration: '36:00min', status: 'completed' },
+  { id: '7', title: '场景零售采销话术AI考试', type: 'exam', duration: '36:00min', status: 'locked' },
+  { id: '8', title: '场景零售采销话术AI考试', type: 'exam', duration: '36:00min', status: 'in_progress' },
+  { id: '9', title: '场景零售采销话术AI考试', type: 'exam', duration: '36:00min', status: 'completed' },
 ];
 
 export const historyRecords: HistoryRecord[] = [
-  { id: '1', title: '新人销售知识培训课', type: 'exam', duration: '36:00min', date: '2025-09-11 12:00', score: 82.7, planName: '新人应知应会' },
-  { id: '2', title: '新人销售知识培训课', type: 'exam', duration: '36:00min', date: '2025-09-11 12:00', score: 78.5, planName: '新人应知应会' },
-  { id: '3', title: '新人销售知识培训课', type: 'exam', duration: '36:00min', date: '2025-09-11 12:00', score: 91.2, planName: '全量销售AI陪练' },
-  { id: '4', title: '新人销售知识培训课', type: 'practice', duration: '36:00min', date: '2025-09-11 12:00', score: 85.0, planName: '全量销售AI陪练' },
-  { id: '5', title: '新人销售知识培训课', type: 'practice', duration: '36:00min', date: '2025-09-11 12:00', score: 88.3, planName: '新人应知应会' },
+  { id: '1', title: '新人零售采销知识培训课', type: 'exam', duration: '36:00min', date: '2025-09-11 12:00', score: 82.7, planName: '新人应知应会' },
+  { id: '2', title: '新人零售采销知识培训课', type: 'exam', duration: '36:00min', date: '2025-09-11 12:00', score: 78.5, planName: '新人应知应会' },
+  { id: '3', title: '新人零售采销知识培训课', type: 'exam', duration: '36:00min', date: '2025-09-11 12:00', score: 91.2, planName: '全量零售采销AI陪练' },
+  { id: '4', title: '新人零售采销知识培训课', type: 'practice', duration: '36:00min', date: '2025-09-11 12:00', score: 85.0, planName: '全量零售采销AI陪练' },
+  { id: '5', title: '新人零售采销知识培训课', type: 'practice', duration: '36:00min', date: '2025-09-11 12:00', score: 88.3, planName: '新人应知应会' },
 ];
 
 export const abilityScores: AbilityScore[] = [

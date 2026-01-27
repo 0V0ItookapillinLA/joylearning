@@ -14,16 +14,16 @@ interface Course {
 }
 
 const allCourses: Course[] = [
-  { id: '1', title: '新人销售知识培训课', type: 'video', category: '教学', duration: '36:00min', status: 'not_started' },
-  { id: '2', title: '新人销售知识文档', type: 'pdf', category: '教学', duration: '36:00min', status: 'not_started' },
-  { id: '3', title: '客户异议处理技巧', type: 'video', category: '进阶', duration: '28:00min', status: 'not_started' },
+  { id: '1', title: '新人零售采销知识培训课', type: 'video', category: '教学', duration: '36:00min', status: 'not_started' },
+  { id: '2', title: '新人零售采销知识文档', type: 'pdf', category: '教学', duration: '36:00min', status: 'not_started' },
+  { id: '3', title: '供应商异议处理技巧', type: 'video', category: '进阶', duration: '28:00min', status: 'not_started' },
   { id: '4', title: '高效谈判策略指南', type: 'pdf', category: '进阶', duration: '45:00min', status: 'not_started' },
-  { id: '5', title: 'SPIN销售法实战', type: 'video', category: '实战', duration: '52:00min', status: 'not_started' },
-  { id: '6', title: '客户心理分析手册', type: 'pdf', category: '心理学', duration: '30:00min', status: 'not_started' },
-  { id: '7', title: '产品演示技巧课程', type: 'video', category: '技巧', duration: '40:00min', status: 'not_started' },
-  { id: '8', title: '成交话术大全', type: 'pdf', category: '话术', duration: '25:00min', status: 'not_started' },
-  { id: '9', title: '大客户开发策略', type: 'video', category: '高级', duration: '65:00min', status: 'in_progress' },
-  { id: '10', title: '销售团队管理手册', type: 'pdf', category: '管理', duration: '50:00min', status: 'not_started' },
+  { id: '5', title: 'SPIN采销法实战', type: 'video', category: '实战', duration: '52:00min', status: 'not_started' },
+  { id: '6', title: '供应商心理分析手册', type: 'pdf', category: '心理学', duration: '30:00min', status: 'not_started' },
+  { id: '7', title: '产品选品技巧课程', type: 'video', category: '技巧', duration: '40:00min', status: 'not_started' },
+  { id: '8', title: '采购话术大全', type: 'pdf', category: '话术', duration: '25:00min', status: 'not_started' },
+  { id: '9', title: '大供应商开发策略', type: 'video', category: '高级', duration: '65:00min', status: 'in_progress' },
+  { id: '10', title: '采销团队管理手册', type: 'pdf', category: '管理', duration: '50:00min', status: 'not_started' },
 ];
 
 const getRandomCourses = (count: number): Course[] => {

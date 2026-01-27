@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, Play, Pause } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Heart, MessageCircle, Share2, Bookmark, Play } from 'lucide-react';
 import TabBar from '@/components/TabBar';
 
 interface FeedItem {
@@ -10,69 +10,71 @@ interface FeedItem {
   author: string;
   likes: number;
   comments: number;
-  thumbnail?: string;
+  duration?: string;
 }
 
 const mockFeedData: FeedItem[] = [
   {
     id: '1',
-    type: 'text',
-    title: '销售技巧：如何快速建立客户信任',
-    content: '建立客户信任的关键在于：\n\n1️⃣ 真诚倾听客户需求\n2️⃣ 专业地解答疑问\n3️⃣ 提供超出预期的服务\n4️⃣ 保持适度的跟进频率\n\n记住：信任是销售的基础，没有信任就没有成交。',
-    author: '销售导师小王',
-    likes: 1234,
-    comments: 89,
+    type: 'video',
+    title: '【必看】零售采销新人必修课',
+    content: '零售采销的核心在于：选品精准、成本把控、库存管理、供应商谈判。本视频将带你系统了解零售采销的完整流程和关键技巧。',
+    author: '采销导师小王',
+    likes: 2341,
+    comments: 156,
+    duration: '05:32',
   },
   {
     id: '2',
     type: 'text',
-    title: '每日一学：SPIN销售法则',
-    content: 'SPIN销售法则是什么？\n\n🔹 S - Situation（情境问题）\n了解客户的现状\n\n🔹 P - Problem（难点问题）\n发现客户的痛点\n\n🔹 I - Implication（暗示问题）\n扩大问题的影响\n\n🔹 N - Need-payoff（需求问题）\n引导解决方案\n\n掌握这个技巧，成单率提升50%！',
+    title: '采销技巧：如何快速建立供应商信任',
+    content: '建立供应商信任的关键在于：\n\n1️⃣ 付款及时不拖欠\n2️⃣ 订单量保持稳定\n3️⃣ 沟通专业有效率\n4️⃣ 长期合作共赢思维\n\n记住：好的供应商关系是零售采销成功的基础！',
+    author: '采销专家李老师',
+    likes: 1234,
+    comments: 89,
+  },
+  {
+    id: '3',
+    type: 'video',
+    title: '实战演示：供应商谈判技巧',
+    content: '跟着资深采销经理学习如何在保证质量的前提下，争取到最优的采购价格和账期。实战案例分析，干货满满！',
+    author: '谈判大师周老师',
+    likes: 3156,
+    comments: 234,
+    duration: '08:15',
+  },
+  {
+    id: '4',
+    type: 'text',
+    title: '每日一学：SPIN采销法则',
+    content: 'SPIN采销法则是什么？\n\n🔹 S - Situation（情境分析）\n了解供应商的现状\n\n🔹 P - Problem（问题发现）\n发现采购痛点\n\n🔹 I - Implication（影响评估）\n评估问题的影响\n\n🔹 N - Need-payoff（需求满足）\n找到最优解决方案\n\n掌握这个技巧，采购效率提升50%！',
     author: '培训专家李老师',
     likes: 2156,
     comments: 156,
   },
   {
-    id: '3',
+    id: '5',
     type: 'text',
-    title: '话术分享：客户说"太贵了"怎么办？',
-    content: '当客户说"太贵了"时，不要急于降价！\n\n✅ 正确回应：\n"我理解您的顾虑，价格确实是重要的考量因素。不过您看，我们的产品能帮您解决XXX问题，从长远来看，其实是在帮您省钱..."\n\n❌ 错误回应：\n"那我给您打个折吧"\n\n记住：价值先于价格！',
-    author: '金牌销售张总',
+    title: '话术分享：供应商说"没货了"怎么办？',
+    content: '当供应商说"没货了"时，不要轻易放弃！\n\n✅ 正确回应：\n"我理解目前库存紧张，不过我们是长期合作伙伴，能否优先给我们调配一批？我们可以适当提高采购价..."\n\n❌ 错误回应：\n"那算了，我找别家"\n\n记住：关系维护比单次交易更重要！',
+    author: '金牌采销张总',
     likes: 3421,
     comments: 234,
   },
   {
-    id: '4',
-    type: 'text',
-    title: '新人必读：电话销售的黄金30秒',
-    content: '电话销售的前30秒决定成败！\n\n⏱️ 0-10秒：自我介绍\n简洁明了，突出身份\n\n⏱️ 10-20秒：说明目的\n一句话说清打电话原因\n\n⏱️ 20-30秒：抛出价值\n给对方一个继续听的理由\n\n💡 小技巧：\n语速适中、语调自信、保持微笑',
-    author: '电销冠军刘姐',
-    likes: 1876,
-    comments: 98,
-  },
-  {
-    id: '5',
-    type: 'text',
-    title: '客户心理学：读懂购买信号',
-    content: '这些信号说明客户想买了！\n\n🟢 语言信号：\n• "如果我买的话..."\n• "最快什么时候能到？"\n• "有没有其他颜色？"\n\n🟢 行为信号：\n• 反复查看产品细节\n• 询问售后服务\n• 开始讨价还价\n\n看到这些信号，抓紧促单！',
-    author: '心理学博士陈老师',
-    likes: 4532,
-    comments: 312,
-  },
-  {
     id: '6',
-    type: 'text',
-    title: '谈判技巧：如何应对客户的"再考虑"',
-    content: '客户说"我再考虑一下"时：\n\n🎯 第一步：认同情绪\n"理解，这确实需要慎重考虑"\n\n🎯 第二步：挖掘顾虑\n"方便说说您主要考虑哪些方面吗？"\n\n🎯 第三步：针对性解答\n根据客户顾虑提供解决方案\n\n🎯 第四步：创造紧迫感\n"这个优惠活动本周就结束了..."',
-    author: '谈判大师周老师',
-    likes: 2845,
-    comments: 178,
+    type: 'video',
+    title: '库存管理：避免断货与积压',
+    content: '科学的库存管理是零售采销的核心能力。本视频详解安全库存设定、周转率优化、滞销品处理等关键知识点。',
+    author: '库存专家陈老师',
+    likes: 1845,
+    comments: 123,
+    duration: '06:48',
   },
 ];
 
 const Home = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
   const [likedItems, setLikedItems] = useState<Set<string>>(new Set());
   const [savedItems, setSavedItems] = useState<Set<string>>(new Set());
   const [isScrolling, setIsScrolling] = useState(false);
@@ -144,8 +146,6 @@ const Home = () => {
     });
   };
 
-  const currentItem = mockFeedData[currentIndex];
-
   return (
     <div className="min-h-screen bg-background flex justify-center">
       <div className="w-full max-w-md h-screen overflow-hidden relative">
@@ -163,47 +163,76 @@ const Home = () => {
             className="absolute inset-0 flex flex-col transition-transform duration-300"
             style={{ transform: `translateY(-${currentIndex * 100}%)` }}
           >
-            {mockFeedData.map((item, index) => (
+            {mockFeedData.map((item) => (
               <div
                 key={item.id}
                 className="h-screen flex-shrink-0 relative bg-gradient-to-b from-primary/5 via-background to-primary/10"
               >
                 {/* Content Area */}
-                <div className="h-full flex flex-col justify-center px-6 pb-32 pt-16">
-                  {/* Title */}
-                  <h2 className="text-xl font-bold text-foreground mb-6 leading-tight">
-                    {item.title}
-                  </h2>
-                  
-                  {/* Main Content */}
-                  <div className="flex-1 overflow-y-auto">
-                    <p className="text-base text-foreground/90 whitespace-pre-line leading-relaxed">
-                      {item.content}
-                    </p>
-                  </div>
-
-                  {/* Author */}
-                  <div className="mt-6 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                      <span className="text-sm font-medium text-primary">
-                        {item.author.charAt(0)}
+                <div className="h-full flex flex-col justify-center px-4 pb-32 pt-16">
+                  {/* Content Card */}
+                  <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-5 shadow-lg border border-border/50">
+                    {/* Video Thumbnail */}
+                    {item.type === 'video' && (
+                      <div className="relative mb-4 rounded-xl overflow-hidden bg-muted aspect-video flex items-center justify-center">
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5" />
+                        <div className="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center shadow-lg">
+                          <Play className="w-8 h-8 text-primary-foreground ml-1" fill="currentColor" />
+                        </div>
+                        {item.duration && (
+                          <span className="absolute bottom-2 right-2 bg-foreground/80 text-background text-xs px-2 py-1 rounded">
+                            {item.duration}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    
+                    {/* Type Badge */}
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        item.type === 'video' 
+                          ? 'bg-primary/10 text-primary' 
+                          : 'bg-accent text-accent-foreground'
+                      }`}>
+                        {item.type === 'video' ? '📹 视频' : '📝 图文'}
                       </span>
                     </div>
-                    <span className="text-sm text-muted-foreground">@{item.author}</span>
+                    
+                    {/* Title */}
+                    <h2 className="text-lg font-bold text-foreground mb-3 leading-tight">
+                      {item.title}
+                    </h2>
+                    
+                    {/* Main Content */}
+                    <div className="max-h-40 overflow-y-auto">
+                      <p className="text-sm text-foreground/80 whitespace-pre-line leading-relaxed">
+                        {item.content}
+                      </p>
+                    </div>
+
+                    {/* Author */}
+                    <div className="mt-4 pt-4 border-t border-border/50 flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center">
+                        <span className="text-sm font-medium text-primary">
+                          {item.author.charAt(0)}
+                        </span>
+                      </div>
+                      <span className="text-sm text-muted-foreground">@{item.author}</span>
+                    </div>
                   </div>
                 </div>
 
                 {/* Right Side Actions */}
-                <div className="absolute right-4 bottom-40 flex flex-col items-center gap-6">
+                <div className="absolute right-4 bottom-40 flex flex-col items-center gap-5">
                   <button
                     onClick={() => toggleLike(item.id)}
                     className="flex flex-col items-center gap-1"
                   >
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
-                      likedItems.has(item.id) ? 'bg-red-500/20' : 'bg-card/50 backdrop-blur-sm'
+                    <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors ${
+                      likedItems.has(item.id) ? 'bg-red-500/20' : 'bg-card/70 backdrop-blur-sm'
                     }`}>
                       <Heart
-                        className={`w-6 h-6 transition-colors ${
+                        className={`w-5 h-5 transition-colors ${
                           likedItems.has(item.id) ? 'text-red-500 fill-red-500' : 'text-foreground'
                         }`}
                       />
@@ -214,8 +243,8 @@ const Home = () => {
                   </button>
 
                   <button className="flex flex-col items-center gap-1">
-                    <div className="w-12 h-12 rounded-full bg-card/50 backdrop-blur-sm flex items-center justify-center">
-                      <MessageCircle className="w-6 h-6 text-foreground" />
+                    <div className="w-11 h-11 rounded-full bg-card/70 backdrop-blur-sm flex items-center justify-center">
+                      <MessageCircle className="w-5 h-5 text-foreground" />
                     </div>
                     <span className="text-xs text-foreground/80">{item.comments}</span>
                   </button>
@@ -224,11 +253,11 @@ const Home = () => {
                     onClick={() => toggleSave(item.id)}
                     className="flex flex-col items-center gap-1"
                   >
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
-                      savedItems.has(item.id) ? 'bg-yellow-500/20' : 'bg-card/50 backdrop-blur-sm'
+                    <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors ${
+                      savedItems.has(item.id) ? 'bg-yellow-500/20' : 'bg-card/70 backdrop-blur-sm'
                     }`}>
                       <Bookmark
-                        className={`w-6 h-6 transition-colors ${
+                        className={`w-5 h-5 transition-colors ${
                           savedItems.has(item.id) ? 'text-yellow-500 fill-yellow-500' : 'text-foreground'
                         }`}
                       />
@@ -237,8 +266,8 @@ const Home = () => {
                   </button>
 
                   <button className="flex flex-col items-center gap-1">
-                    <div className="w-12 h-12 rounded-full bg-card/50 backdrop-blur-sm flex items-center justify-center">
-                      <Share2 className="w-6 h-6 text-foreground" />
+                    <div className="w-11 h-11 rounded-full bg-card/70 backdrop-blur-sm flex items-center justify-center">
+                      <Share2 className="w-5 h-5 text-foreground" />
                     </div>
                     <span className="text-xs text-foreground/80">分享</span>
                   </button>
