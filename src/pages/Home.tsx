@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, Play } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Bookmark, Play, Music2, Plus } from 'lucide-react';
 import TabBar from '@/components/TabBar';
 
 interface FeedItem {
@@ -11,6 +11,7 @@ interface FeedItem {
   likes: number;
   comments: number;
   duration?: string;
+  tags?: string[];
 }
 
 const mockFeedData: FeedItem[] = [
@@ -23,6 +24,7 @@ const mockFeedData: FeedItem[] = [
     likes: 2341,
     comments: 156,
     duration: '05:32',
+    tags: ['新人必看', '采销基础'],
   },
   {
     id: '2',
@@ -32,6 +34,7 @@ const mockFeedData: FeedItem[] = [
     author: '采销专家李老师',
     likes: 1234,
     comments: 89,
+    tags: ['供应商管理', '信任建立'],
   },
   {
     id: '3',
@@ -42,6 +45,7 @@ const mockFeedData: FeedItem[] = [
     likes: 3156,
     comments: 234,
     duration: '08:15',
+    tags: ['谈判技巧', '实战案例'],
   },
   {
     id: '4',
@@ -51,6 +55,7 @@ const mockFeedData: FeedItem[] = [
     author: '培训专家李老师',
     likes: 2156,
     comments: 156,
+    tags: ['SPIN法则', '方法论'],
   },
   {
     id: '5',
@@ -60,6 +65,7 @@ const mockFeedData: FeedItem[] = [
     author: '金牌采销张总',
     likes: 3421,
     comments: 234,
+    tags: ['话术技巧', '异议处理'],
   },
   {
     id: '6',
@@ -70,6 +76,7 @@ const mockFeedData: FeedItem[] = [
     likes: 1845,
     comments: 123,
     duration: '06:48',
+    tags: ['库存管理', '数据分析'],
   },
 ];
 
@@ -146,6 +153,16 @@ const Home = () => {
     });
   };
 
+  const formatNumber = (num: number) => {
+    if (num >= 10000) {
+      return (num / 10000).toFixed(1) + 'w';
+    }
+    if (num >= 1000) {
+      return (num / 1000).toFixed(1) + 'k';
+    }
+    return num.toString();
+  };
+
   return (
     <div className="min-h-screen bg-background flex justify-center">
       <div className="w-full max-w-md h-screen overflow-hidden relative">
@@ -160,110 +177,217 @@ const Home = () => {
         >
           {/* Current Feed Item */}
           <div
-            className="absolute inset-0 flex flex-col transition-transform duration-300"
+            className="absolute inset-0 flex flex-col transition-transform duration-300 ease-out"
             style={{ transform: `translateY(-${currentIndex * 100}%)` }}
           >
-            {mockFeedData.map((item) => (
+            {mockFeedData.map((item, index) => (
               <div
                 key={item.id}
-                className="h-screen flex-shrink-0 relative bg-gradient-to-b from-foreground/5 via-background to-foreground/10"
+                className="h-screen flex-shrink-0 relative overflow-hidden"
               >
-                {/* Video Content - Full Screen Background */}
+                {/* Background Layer */}
+                <div className="absolute inset-0">
+                  {item.type === 'video' ? (
+                    <>
+                      {/* Video Background with gradient overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-background" />
+                      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/15 via-transparent to-transparent" />
+                    </>
+                  ) : (
+                    <>
+                      {/* Text Content Background */}
+                      <div className="absolute inset-0 bg-gradient-to-b from-primary/8 via-background to-primary/12" />
+                      <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-primary/10 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 h-60 bg-gradient-to-t from-primary/15 to-transparent" />
+                    </>
+                  )}
+                  {/* Decorative elements */}
+                  <div className="absolute top-20 -left-20 w-60 h-60 bg-primary/5 rounded-full blur-3xl" />
+                  <div className="absolute bottom-40 -right-20 w-80 h-80 bg-primary/8 rounded-full blur-3xl" />
+                </div>
+
+                {/* Video Content */}
                 {item.type === 'video' && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-muted">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5" />
-                    <div className="w-20 h-20 rounded-full bg-foreground/20 backdrop-blur-sm flex items-center justify-center">
-                      <Play className="w-10 h-10 text-white ml-1" fill="currentColor" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    {/* Play Button */}
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-primary/30 rounded-full blur-xl scale-150 animate-pulse-soft" />
+                      <div className="relative w-20 h-20 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-2xl">
+                        <Play className="w-8 h-8 text-white ml-1" fill="currentColor" />
+                      </div>
                     </div>
+                    {/* Duration Badge */}
                     {item.duration && (
-                      <span className="absolute top-20 right-4 bg-black/60 text-white text-xs px-2 py-1 rounded">
+                      <span className="absolute top-20 right-4 bg-black/50 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full font-medium">
                         {item.duration}
                       </span>
                     )}
                   </div>
                 )}
 
-                {/* Text Content - Centered */}
+                {/* Text Content - Centered with beautiful styling */}
                 {item.type === 'text' && (
-                  <div className="absolute inset-0 flex items-center justify-center px-8 pb-40 pt-20">
-                    <div className="text-center max-w-sm">
-                      <p className="text-lg text-foreground leading-relaxed whitespace-pre-line">
-                        {item.content}
-                      </p>
+                  <div className="absolute inset-0 flex items-center justify-center px-6 pb-48 pt-24">
+                    <div className="relative">
+                      {/* Glow effect behind text */}
+                      <div className="absolute -inset-4 bg-primary/5 rounded-3xl blur-2xl" />
+                      <div className="relative bg-white/60 dark:bg-card/60 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/50 dark:border-border/50 max-w-sm">
+                        <p className="text-base text-foreground leading-relaxed whitespace-pre-line font-medium">
+                          {item.content}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 )}
 
                 {/* Bottom Info Area */}
-                <div className="absolute bottom-24 left-4 right-16 z-10">
+                <div className="absolute bottom-28 left-4 right-20 z-10">
+                  {/* Tags */}
+                  {item.tags && (
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {item.tags.map((tag, i) => (
+                        <span
+                          key={i}
+                          className="text-xs px-2.5 py-1 rounded-full bg-primary/15 text-primary font-medium backdrop-blur-sm"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  
                   {/* Title */}
-                  <h2 className="text-base font-bold text-foreground mb-3 leading-tight">
+                  <h2 className="text-base font-bold text-foreground mb-4 leading-snug drop-shadow-sm">
                     {item.title}
                   </h2>
                   
                   {/* Author */}
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center border-2 border-primary/50">
-                      <span className="text-sm font-medium text-primary">
-                        {item.author.charAt(0)}
-                      </span>
+                    <div className="relative">
+                      <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg">
+                        <span className="text-sm font-bold text-primary-foreground">
+                          {item.author.charAt(0)}
+                        </span>
+                      </div>
+                      {/* Online indicator */}
+                      <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-status-complete rounded-full border-2 border-background" />
                     </div>
-                    <span className="text-sm text-foreground/80">@{item.author}</span>
-                    <button className="ml-2 px-3 py-1 text-xs bg-primary text-primary-foreground rounded-full">
+                    <div className="flex-1">
+                      <span className="text-sm font-semibold text-foreground">@{item.author}</span>
+                      <p className="text-xs text-muted-foreground mt-0.5">零售采销专家</p>
+                    </div>
+                    <button className="px-4 py-1.5 text-xs font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg shadow-primary/25 transition-all active:scale-95">
+                      <Plus className="w-3 h-3 inline mr-1" />
                       关注
                     </button>
                   </div>
+
+                  {/* Music/Audio info bar - for video only */}
+                  {item.type === 'video' && (
+                    <div className="mt-4 flex items-center gap-2 bg-black/20 backdrop-blur-sm rounded-full px-3 py-2 w-fit">
+                      <Music2 className="w-3.5 h-3.5 text-white animate-pulse-soft" />
+                      <span className="text-xs text-white/90 font-medium truncate max-w-48">
+                        原声 - {item.author}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Right Side Actions */}
-                <div className="absolute right-3 bottom-32 flex flex-col items-center gap-5 z-10">
+                <div className="absolute right-3 bottom-36 flex flex-col items-center gap-5 z-10">
+                  {/* Like Button */}
                   <button
                     onClick={() => toggleLike(item.id)}
-                    className="flex flex-col items-center gap-1"
+                    className="flex flex-col items-center gap-1 group"
                   >
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
-                      likedItems.has(item.id) ? 'bg-red-500/20' : 'bg-foreground/10 backdrop-blur-sm'
+                    <div className={`relative w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
+                      likedItems.has(item.id) 
+                        ? 'bg-red-500/20 scale-110' 
+                        : 'bg-white/10 backdrop-blur-md group-hover:bg-white/20'
                     }`}>
+                      {likedItems.has(item.id) && (
+                        <div className="absolute inset-0 bg-red-500/30 rounded-full blur-md" />
+                      )}
                       <Heart
-                        className={`w-6 h-6 transition-colors ${
-                          likedItems.has(item.id) ? 'text-red-500 fill-red-500' : 'text-foreground'
+                        className={`w-7 h-7 relative transition-all ${
+                          likedItems.has(item.id) 
+                            ? 'text-red-500 fill-red-500 scale-110' 
+                            : 'text-foreground group-hover:scale-110'
                         }`}
                       />
                     </div>
-                    <span className="text-xs text-foreground/80">
-                      {likedItems.has(item.id) ? item.likes + 1 : item.likes}
+                    <span className="text-xs font-semibold text-foreground/90">
+                      {formatNumber(likedItems.has(item.id) ? item.likes + 1 : item.likes)}
                     </span>
                   </button>
 
-                  <button className="flex flex-col items-center gap-1">
-                    <div className="w-12 h-12 rounded-full bg-foreground/10 backdrop-blur-sm flex items-center justify-center">
-                      <MessageCircle className="w-6 h-6 text-foreground" />
+                  {/* Comment Button */}
+                  <button className="flex flex-col items-center gap-1 group">
+                    <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center group-hover:bg-white/20 transition-all">
+                      <MessageCircle className="w-7 h-7 text-foreground group-hover:scale-110 transition-transform" />
                     </div>
-                    <span className="text-xs text-foreground/80">{item.comments}</span>
+                    <span className="text-xs font-semibold text-foreground/90">{formatNumber(item.comments)}</span>
                   </button>
 
+                  {/* Save Button */}
                   <button
                     onClick={() => toggleSave(item.id)}
-                    className="flex flex-col items-center gap-1"
+                    className="flex flex-col items-center gap-1 group"
                   >
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
-                      savedItems.has(item.id) ? 'bg-yellow-500/20' : 'bg-foreground/10 backdrop-blur-sm'
+                    <div className={`relative w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
+                      savedItems.has(item.id) 
+                        ? 'bg-yellow-500/20 scale-110' 
+                        : 'bg-white/10 backdrop-blur-md group-hover:bg-white/20'
                     }`}>
+                      {savedItems.has(item.id) && (
+                        <div className="absolute inset-0 bg-yellow-500/30 rounded-full blur-md" />
+                      )}
                       <Bookmark
-                        className={`w-6 h-6 transition-colors ${
-                          savedItems.has(item.id) ? 'text-yellow-500 fill-yellow-500' : 'text-foreground'
+                        className={`w-7 h-7 relative transition-all ${
+                          savedItems.has(item.id) 
+                            ? 'text-yellow-500 fill-yellow-500 scale-110' 
+                            : 'text-foreground group-hover:scale-110'
                         }`}
                       />
                     </div>
-                    <span className="text-xs text-foreground/80">收藏</span>
+                    <span className="text-xs font-semibold text-foreground/90">收藏</span>
                   </button>
 
-                  <button className="flex flex-col items-center gap-1">
-                    <div className="w-12 h-12 rounded-full bg-foreground/10 backdrop-blur-sm flex items-center justify-center">
-                      <Share2 className="w-6 h-6 text-foreground" />
+                  {/* Share Button */}
+                  <button className="flex flex-col items-center gap-1 group">
+                    <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center group-hover:bg-white/20 transition-all">
+                      <Share2 className="w-7 h-7 text-foreground group-hover:scale-110 transition-transform" />
                     </div>
-                    <span className="text-xs text-foreground/80">分享</span>
+                    <span className="text-xs font-semibold text-foreground/90">分享</span>
                   </button>
+
+                  {/* Author Avatar - Rotating */}
+                  <div className="mt-2 relative">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary/60 p-0.5 animate-spin" style={{ animationDuration: '3s' }}>
+                      <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
+                        <span className="text-xs font-bold text-primary">{item.author.charAt(0)}</span>
+                      </div>
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+                      <Plus className="w-3 h-3 text-primary-foreground" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Progress Indicator */}
+                <div className="absolute left-2 top-1/2 -translate-y-1/2 flex flex-col gap-1.5 z-10">
+                  {mockFeedData.map((_, i) => (
+                    <div
+                      key={i}
+                      className={`rounded-full transition-all duration-300 ${
+                        i === currentIndex
+                          ? 'w-1.5 h-6 bg-primary shadow-lg shadow-primary/50'
+                          : i < currentIndex
+                            ? 'w-1 h-2 bg-primary/40'
+                            : 'w-1 h-2 bg-muted-foreground/20'
+                      }`}
+                    />
+                  ))}
                 </div>
               </div>
             ))}
@@ -271,8 +395,10 @@ const Home = () => {
 
           {/* Top Header */}
           <div className="absolute top-0 left-0 right-0 z-10 pt-safe">
-            <div className="flex items-center justify-center py-4">
-              <h1 className="text-lg font-semibold text-foreground">JoyLearning</h1>
+            <div className="flex items-center justify-center py-4 bg-gradient-to-b from-background/80 to-transparent backdrop-blur-sm">
+              <h1 className="text-lg font-bold text-foreground tracking-wide">
+                <span className="text-primary">Joy</span>Learning
+              </h1>
             </div>
           </div>
         </div>
