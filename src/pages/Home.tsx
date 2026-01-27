@@ -166,73 +166,66 @@ const Home = () => {
             {mockFeedData.map((item) => (
               <div
                 key={item.id}
-                className="h-screen flex-shrink-0 relative bg-gradient-to-b from-primary/5 via-background to-primary/10"
+                className="h-screen flex-shrink-0 relative bg-gradient-to-b from-foreground/5 via-background to-foreground/10"
               >
-                {/* Content Area */}
-                <div className="h-full flex flex-col justify-center px-4 pb-32 pt-16">
-                  {/* Content Card */}
-                  <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-5 shadow-lg border border-border/50">
-                    {/* Video Thumbnail */}
-                    {item.type === 'video' && (
-                      <div className="relative mb-4 rounded-xl overflow-hidden bg-muted aspect-video flex items-center justify-center">
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5" />
-                        <div className="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center shadow-lg">
-                          <Play className="w-8 h-8 text-primary-foreground ml-1" fill="currentColor" />
-                        </div>
-                        {item.duration && (
-                          <span className="absolute bottom-2 right-2 bg-foreground/80 text-background text-xs px-2 py-1 rounded">
-                            {item.duration}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                    
-                    {/* Type Badge */}
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        item.type === 'video' 
-                          ? 'bg-primary/10 text-primary' 
-                          : 'bg-accent text-accent-foreground'
-                      }`}>
-                        {item.type === 'video' ? '📹 视频' : '📝 图文'}
-                      </span>
+                {/* Video Content - Full Screen Background */}
+                {item.type === 'video' && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-muted">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5" />
+                    <div className="w-20 h-20 rounded-full bg-foreground/20 backdrop-blur-sm flex items-center justify-center">
+                      <Play className="w-10 h-10 text-white ml-1" fill="currentColor" />
                     </div>
-                    
-                    {/* Title */}
-                    <h2 className="text-lg font-bold text-foreground mb-3 leading-tight">
-                      {item.title}
-                    </h2>
-                    
-                    {/* Main Content */}
-                    <div className="max-h-40 overflow-y-auto">
-                      <p className="text-sm text-foreground/80 whitespace-pre-line leading-relaxed">
+                    {item.duration && (
+                      <span className="absolute top-20 right-4 bg-black/60 text-white text-xs px-2 py-1 rounded">
+                        {item.duration}
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* Text Content - Centered */}
+                {item.type === 'text' && (
+                  <div className="absolute inset-0 flex items-center justify-center px-8 pb-40 pt-20">
+                    <div className="text-center max-w-sm">
+                      <p className="text-lg text-foreground leading-relaxed whitespace-pre-line">
                         {item.content}
                       </p>
                     </div>
+                  </div>
+                )}
 
-                    {/* Author */}
-                    <div className="mt-4 pt-4 border-t border-border/50 flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center">
-                        <span className="text-sm font-medium text-primary">
-                          {item.author.charAt(0)}
-                        </span>
-                      </div>
-                      <span className="text-sm text-muted-foreground">@{item.author}</span>
+                {/* Bottom Info Area */}
+                <div className="absolute bottom-24 left-4 right-16 z-10">
+                  {/* Title */}
+                  <h2 className="text-base font-bold text-foreground mb-3 leading-tight">
+                    {item.title}
+                  </h2>
+                  
+                  {/* Author */}
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center border-2 border-primary/50">
+                      <span className="text-sm font-medium text-primary">
+                        {item.author.charAt(0)}
+                      </span>
                     </div>
+                    <span className="text-sm text-foreground/80">@{item.author}</span>
+                    <button className="ml-2 px-3 py-1 text-xs bg-primary text-primary-foreground rounded-full">
+                      关注
+                    </button>
                   </div>
                 </div>
 
                 {/* Right Side Actions */}
-                <div className="absolute right-4 bottom-40 flex flex-col items-center gap-5">
+                <div className="absolute right-3 bottom-32 flex flex-col items-center gap-5 z-10">
                   <button
                     onClick={() => toggleLike(item.id)}
                     className="flex flex-col items-center gap-1"
                   >
-                    <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors ${
-                      likedItems.has(item.id) ? 'bg-red-500/20' : 'bg-card/70 backdrop-blur-sm'
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+                      likedItems.has(item.id) ? 'bg-red-500/20' : 'bg-foreground/10 backdrop-blur-sm'
                     }`}>
                       <Heart
-                        className={`w-5 h-5 transition-colors ${
+                        className={`w-6 h-6 transition-colors ${
                           likedItems.has(item.id) ? 'text-red-500 fill-red-500' : 'text-foreground'
                         }`}
                       />
@@ -243,8 +236,8 @@ const Home = () => {
                   </button>
 
                   <button className="flex flex-col items-center gap-1">
-                    <div className="w-11 h-11 rounded-full bg-card/70 backdrop-blur-sm flex items-center justify-center">
-                      <MessageCircle className="w-5 h-5 text-foreground" />
+                    <div className="w-12 h-12 rounded-full bg-foreground/10 backdrop-blur-sm flex items-center justify-center">
+                      <MessageCircle className="w-6 h-6 text-foreground" />
                     </div>
                     <span className="text-xs text-foreground/80">{item.comments}</span>
                   </button>
@@ -253,11 +246,11 @@ const Home = () => {
                     onClick={() => toggleSave(item.id)}
                     className="flex flex-col items-center gap-1"
                   >
-                    <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors ${
-                      savedItems.has(item.id) ? 'bg-yellow-500/20' : 'bg-card/70 backdrop-blur-sm'
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+                      savedItems.has(item.id) ? 'bg-yellow-500/20' : 'bg-foreground/10 backdrop-blur-sm'
                     }`}>
                       <Bookmark
-                        className={`w-5 h-5 transition-colors ${
+                        className={`w-6 h-6 transition-colors ${
                           savedItems.has(item.id) ? 'text-yellow-500 fill-yellow-500' : 'text-foreground'
                         }`}
                       />
@@ -266,25 +259,11 @@ const Home = () => {
                   </button>
 
                   <button className="flex flex-col items-center gap-1">
-                    <div className="w-11 h-11 rounded-full bg-card/70 backdrop-blur-sm flex items-center justify-center">
-                      <Share2 className="w-5 h-5 text-foreground" />
+                    <div className="w-12 h-12 rounded-full bg-foreground/10 backdrop-blur-sm flex items-center justify-center">
+                      <Share2 className="w-6 h-6 text-foreground" />
                     </div>
                     <span className="text-xs text-foreground/80">分享</span>
                   </button>
-                </div>
-
-                {/* Progress Indicator */}
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col gap-1">
-                  {mockFeedData.map((_, i) => (
-                    <div
-                      key={i}
-                      className={`w-1 rounded-full transition-all duration-300 ${
-                        i === currentIndex
-                          ? 'h-6 bg-primary'
-                          : 'h-2 bg-muted-foreground/30'
-                      }`}
-                    />
-                  ))}
                 </div>
               </div>
             ))}
