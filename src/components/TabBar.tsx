@@ -1,12 +1,13 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { PlaySquare, User } from 'lucide-react';
+import { Home, PlaySquare, User } from 'lucide-react';
 import avatarAi from '@/assets/avatar-ai.png';
 
 const TabBar = () => {
   const location = useLocation();
   
   const tabs = [
-    { path: '/', icon: PlaySquare, label: '课程中心' },
+    { path: '/', icon: Home, label: '首页' },
+    { path: '/courses', icon: PlaySquare, label: '课程中心' },
     { path: '/profile', icon: User, label: '我的' },
     { path: '/chat', icon: null, label: 'AI助手', isAvatar: true },
   ];
@@ -16,7 +17,7 @@ const TabBar = () => {
       <div className="bg-card/70 backdrop-blur-xl border border-border/50 rounded-2xl shadow-lg flex items-center justify-around py-2 px-2">
         {tabs.map((tab) => {
           const isActive = location.pathname === tab.path || 
-            (tab.path === '/' && location.pathname.startsWith('/plan')) ||
+            (tab.path === '/courses' && location.pathname.startsWith('/plan')) ||
             (tab.path === '/profile' && (location.pathname.startsWith('/profile') || location.pathname.startsWith('/history')));
           
           return (
