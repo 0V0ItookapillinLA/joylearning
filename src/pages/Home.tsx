@@ -124,145 +124,147 @@ const Home = () => {
   const currentItem = mockFeedData[currentIndex];
 
   return (
-    <div className="h-screen bg-background overflow-hidden">
-      {/* Feed Container */}
-      <div
-        ref={containerRef}
-        className="h-full relative"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onWheel={handleWheel}
-      >
-        {/* Current Feed Item */}
+    <div className="min-h-screen bg-background flex justify-center">
+      <div className="w-full max-w-md h-screen overflow-hidden relative">
+        {/* Feed Container */}
         <div
-          className="absolute inset-0 flex flex-col transition-transform duration-300"
-          style={{ transform: `translateY(-${currentIndex * 100}%)` }}
+          ref={containerRef}
+          className="h-full relative"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onWheel={handleWheel}
         >
-          {mockFeedData.map((item, index) => (
-            <div
-              key={item.id}
-              className="h-screen flex-shrink-0 relative bg-gradient-to-b from-primary/5 via-background to-primary/10"
-            >
-              {/* Content Area */}
-              <div className="h-full flex flex-col justify-center px-6 pb-32 pt-16">
-                {/* Title */}
-                <h2 className="text-xl font-bold text-foreground mb-6 leading-tight">
-                  {item.title}
-                </h2>
-                
-                {/* Main Content */}
-                <div className="flex-1 overflow-y-auto">
-                  <p className="text-base text-foreground/90 whitespace-pre-line leading-relaxed">
-                    {item.content}
-                  </p>
+          {/* Current Feed Item */}
+          <div
+            className="absolute inset-0 flex flex-col transition-transform duration-300"
+            style={{ transform: `translateY(-${currentIndex * 100}%)` }}
+          >
+            {mockFeedData.map((item, index) => (
+              <div
+                key={item.id}
+                className="h-screen flex-shrink-0 relative bg-gradient-to-b from-primary/5 via-background to-primary/10"
+              >
+                {/* Content Area */}
+                <div className="h-full flex flex-col justify-center px-6 pb-32 pt-16">
+                  {/* Title */}
+                  <h2 className="text-xl font-bold text-foreground mb-6 leading-tight">
+                    {item.title}
+                  </h2>
+                  
+                  {/* Main Content */}
+                  <div className="flex-1 overflow-y-auto">
+                    <p className="text-base text-foreground/90 whitespace-pre-line leading-relaxed">
+                      {item.content}
+                    </p>
+                  </div>
+
+                  {/* Author */}
+                  <div className="mt-6 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                      <span className="text-sm font-medium text-primary">
+                        {item.author.charAt(0)}
+                      </span>
+                    </div>
+                    <span className="text-sm text-muted-foreground">@{item.author}</span>
+                  </div>
                 </div>
 
-                {/* Author */}
-                <div className="mt-6 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                    <span className="text-sm font-medium text-primary">
-                      {item.author.charAt(0)}
+                {/* Right Side Actions */}
+                <div className="absolute right-4 bottom-40 flex flex-col items-center gap-6">
+                  <button
+                    onClick={() => toggleLike(item.id)}
+                    className="flex flex-col items-center gap-1"
+                  >
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+                      likedItems.has(item.id) ? 'bg-red-500/20' : 'bg-card/50 backdrop-blur-sm'
+                    }`}>
+                      <Heart
+                        className={`w-6 h-6 transition-colors ${
+                          likedItems.has(item.id) ? 'text-red-500 fill-red-500' : 'text-foreground'
+                        }`}
+                      />
+                    </div>
+                    <span className="text-xs text-foreground/80">
+                      {likedItems.has(item.id) ? item.likes + 1 : item.likes}
                     </span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">@{item.author}</span>
+                  </button>
+
+                  <button className="flex flex-col items-center gap-1">
+                    <div className="w-12 h-12 rounded-full bg-card/50 backdrop-blur-sm flex items-center justify-center">
+                      <MessageCircle className="w-6 h-6 text-foreground" />
+                    </div>
+                    <span className="text-xs text-foreground/80">{item.comments}</span>
+                  </button>
+
+                  <button
+                    onClick={() => toggleSave(item.id)}
+                    className="flex flex-col items-center gap-1"
+                  >
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+                      savedItems.has(item.id) ? 'bg-yellow-500/20' : 'bg-card/50 backdrop-blur-sm'
+                    }`}>
+                      <Bookmark
+                        className={`w-6 h-6 transition-colors ${
+                          savedItems.has(item.id) ? 'text-yellow-500 fill-yellow-500' : 'text-foreground'
+                        }`}
+                      />
+                    </div>
+                    <span className="text-xs text-foreground/80">收藏</span>
+                  </button>
+
+                  <button className="flex flex-col items-center gap-1">
+                    <div className="w-12 h-12 rounded-full bg-card/50 backdrop-blur-sm flex items-center justify-center">
+                      <Share2 className="w-6 h-6 text-foreground" />
+                    </div>
+                    <span className="text-xs text-foreground/80">分享</span>
+                  </button>
+                </div>
+
+                {/* Progress Indicator */}
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col gap-1">
+                  {mockFeedData.map((_, i) => (
+                    <div
+                      key={i}
+                      className={`w-1 rounded-full transition-all duration-300 ${
+                        i === currentIndex
+                          ? 'h-6 bg-primary'
+                          : 'h-2 bg-muted-foreground/30'
+                      }`}
+                    />
+                  ))}
                 </div>
               </div>
+            ))}
+          </div>
 
-              {/* Right Side Actions */}
-              <div className="absolute right-4 bottom-40 flex flex-col items-center gap-6">
-                <button
-                  onClick={() => toggleLike(item.id)}
-                  className="flex flex-col items-center gap-1"
-                >
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
-                    likedItems.has(item.id) ? 'bg-red-500/20' : 'bg-card/50 backdrop-blur-sm'
-                  }`}>
-                    <Heart
-                      className={`w-6 h-6 transition-colors ${
-                        likedItems.has(item.id) ? 'text-red-500 fill-red-500' : 'text-foreground'
-                      }`}
-                    />
-                  </div>
-                  <span className="text-xs text-foreground/80">
-                    {likedItems.has(item.id) ? item.likes + 1 : item.likes}
-                  </span>
-                </button>
-
-                <button className="flex flex-col items-center gap-1">
-                  <div className="w-12 h-12 rounded-full bg-card/50 backdrop-blur-sm flex items-center justify-center">
-                    <MessageCircle className="w-6 h-6 text-foreground" />
-                  </div>
-                  <span className="text-xs text-foreground/80">{item.comments}</span>
-                </button>
-
-                <button
-                  onClick={() => toggleSave(item.id)}
-                  className="flex flex-col items-center gap-1"
-                >
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
-                    savedItems.has(item.id) ? 'bg-yellow-500/20' : 'bg-card/50 backdrop-blur-sm'
-                  }`}>
-                    <Bookmark
-                      className={`w-6 h-6 transition-colors ${
-                        savedItems.has(item.id) ? 'text-yellow-500 fill-yellow-500' : 'text-foreground'
-                      }`}
-                    />
-                  </div>
-                  <span className="text-xs text-foreground/80">收藏</span>
-                </button>
-
-                <button className="flex flex-col items-center gap-1">
-                  <div className="w-12 h-12 rounded-full bg-card/50 backdrop-blur-sm flex items-center justify-center">
-                    <Share2 className="w-6 h-6 text-foreground" />
-                  </div>
-                  <span className="text-xs text-foreground/80">分享</span>
+          {/* Top Header */}
+          <div className="absolute top-0 left-0 right-0 z-10 pt-safe">
+            <div className="flex items-center justify-center py-4">
+              <div className="flex items-center gap-6">
+                <button className="text-muted-foreground text-sm">关注</button>
+                <button className="text-foreground text-sm font-semibold border-b-2 border-primary pb-1">
+                  推荐
                 </button>
               </div>
-
-              {/* Progress Indicator */}
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col gap-1">
-                {mockFeedData.map((_, i) => (
-                  <div
-                    key={i}
-                    className={`w-1 rounded-full transition-all duration-300 ${
-                      i === currentIndex
-                        ? 'h-6 bg-primary'
-                        : 'h-2 bg-muted-foreground/30'
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Top Header */}
-        <div className="absolute top-0 left-0 right-0 z-10 pt-safe">
-          <div className="flex items-center justify-center py-4">
-            <div className="flex items-center gap-6">
-              <button className="text-muted-foreground text-sm">关注</button>
-              <button className="text-foreground text-sm font-semibold border-b-2 border-primary pb-1">
-                推荐
-              </button>
             </div>
           </div>
+
+          {/* Swipe Hint */}
+          {currentIndex === 0 && (
+            <div className="absolute bottom-36 left-1/2 -translate-x-1/2 animate-bounce">
+              <div className="flex flex-col items-center gap-1 text-muted-foreground">
+                <div className="w-6 h-10 rounded-full border-2 border-muted-foreground/50 flex items-start justify-center pt-2">
+                  <div className="w-1.5 h-2.5 bg-muted-foreground/50 rounded-full animate-pulse" />
+                </div>
+                <span className="text-xs">上滑查看更多</span>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Swipe Hint */}
-        {currentIndex === 0 && (
-          <div className="absolute bottom-36 left-1/2 -translate-x-1/2 animate-bounce">
-            <div className="flex flex-col items-center gap-1 text-muted-foreground">
-              <div className="w-6 h-10 rounded-full border-2 border-muted-foreground/50 flex items-start justify-center pt-2">
-                <div className="w-1.5 h-2.5 bg-muted-foreground/50 rounded-full animate-pulse" />
-              </div>
-              <span className="text-xs">上滑查看更多</span>
-            </div>
-          </div>
-        )}
+        <TabBar />
       </div>
-
-      <TabBar />
     </div>
   );
 };
