@@ -59,6 +59,15 @@ const mockFeedData: FeedItem[] = [
     likes: 4532,
     comments: 312,
   },
+  {
+    id: '6',
+    type: 'text',
+    title: '谈判技巧：如何应对客户的"再考虑"',
+    content: '客户说"我再考虑一下"时：\n\n🎯 第一步：认同情绪\n"理解，这确实需要慎重考虑"\n\n🎯 第二步：挖掘顾虑\n"方便说说您主要考虑哪些方面吗？"\n\n🎯 第三步：针对性解答\n根据客户顾虑提供解决方案\n\n🎯 第四步：创造紧迫感\n"这个优惠活动本周就结束了..."',
+    author: '谈判大师周老师',
+    likes: 2845,
+    comments: 178,
+  },
 ];
 
 const Home = () => {
@@ -241,26 +250,9 @@ const Home = () => {
           {/* Top Header */}
           <div className="absolute top-0 left-0 right-0 z-10 pt-safe">
             <div className="flex items-center justify-center py-4">
-              <div className="flex items-center gap-6">
-                <button className="text-muted-foreground text-sm">关注</button>
-                <button className="text-foreground text-sm font-semibold border-b-2 border-primary pb-1">
-                  推荐
-                </button>
-              </div>
+              <h1 className="text-lg font-semibold text-foreground">JoyLearning</h1>
             </div>
           </div>
-
-          {/* Swipe Hint */}
-          {currentIndex === 0 && (
-            <div className="absolute bottom-36 left-1/2 -translate-x-1/2 animate-bounce">
-              <div className="flex flex-col items-center gap-1 text-muted-foreground">
-                <div className="w-6 h-10 rounded-full border-2 border-muted-foreground/50 flex items-start justify-center pt-2">
-                  <div className="w-1.5 h-2.5 bg-muted-foreground/50 rounded-full animate-pulse" />
-                </div>
-                <span className="text-xs">上滑查看更多</span>
-              </div>
-            </div>
-          )}
         </div>
 
         <TabBar />
