@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, Play, Music2, Plus } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Bookmark, Music2, Plus } from 'lucide-react';
 import TabBar from '@/components/TabBar';
+import FeedVideo from '@/components/home/FeedVideo';
 
 interface FeedItem {
   id: string;
@@ -274,71 +275,21 @@ const Home = () => {
                 </div>
 
                 {/* Video Content */}
-                {item.type === 'video' && (
-                  <div
-                    className="absolute inset-0 flex items-center justify-center cursor-pointer z-20"
-                    // 移动端/内置 WebView 下，touchend + preventDefault 可能导致 play() 不被视为“用户手势”
-                    // 这里改用 pointer 事件，且不调用 preventDefault，提高可播放率
-                    onPointerUp={(e) => {
-                      if (!touchMoved.current) toggleVideoPlay(index, e);
+                {item.type === 'video' && item.videoUrl && (
+                  <FeedVideo
+                    index={index}
+                    src={item.videoUrl}
+                    duration={item.duration}
+                    isPlaying={playingVideos.has(index)}
+                    forceNativeControls={forceNativeControls.has(index)}
+                    setForceNativeControls={setForceNativeControls}
+                    setPlayingVideos={setPlayingVideos}
+                    setVideoRef={(el) => {
+                      videoRefs.current[index] = el;
                     }}
-                    // 兜底：部分环境 pointer 事件不稳定，补回 touchend，但不调用 preventDefault
-                    onTouchEnd={(e) => {
-                      if (!touchMoved.current) toggleVideoPlay(index, e);
-                    }}
-                    onClick={(e) => toggleVideoPlay(index, e)}
-                  >
-                    {item.videoUrl ? (
-                      <>
-                        <video
-                          ref={(el) => { videoRefs.current[index] = el; }}
-                          className="absolute inset-0 w-full h-full object-cover"
-                          src={item.videoUrl}
-                          loop
-                          muted
-                          playsInline
-                          controls={forceNativeControls.has(index)}
-                            // 兜底：有些 WebView 会更依赖这些属性组合
-                            preload="metadata"
-                            onPlay={() => {
-                              setPlayingVideos(prev => new Set(prev).add(index));
-                            }}
-                            onPause={() => {
-                              setPlayingVideos(prev => {
-                                const next = new Set(prev);
-                                next.delete(index);
-                                return next;
-                              });
-                            }}
-                        />
-                        {/* 播放/暂停按钮 */}
-                        {!playingVideos.has(index) && (
-                          <div className="relative z-10">
-                            <div className="absolute inset-0 bg-primary/30 rounded-full blur-xl scale-150 animate-pulse-soft" />
-                            <div className="relative w-20 h-20 rounded-full bg-background/30 backdrop-blur-md flex items-center justify-center border border-border/30 shadow-2xl">
-                              <Play className="w-8 h-8 text-foreground ml-1" fill="currentColor" />
-                            </div>
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <>
-                        {/* Play Button Placeholder */}
-                        <div className="relative">
-                          <div className="absolute inset-0 bg-primary/30 rounded-full blur-xl scale-150 animate-pulse-soft" />
-                          <div className="relative w-20 h-20 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-border/30 shadow-2xl">
-                            <Play className="w-8 h-8 text-foreground ml-1" fill="currentColor" />
-                          </div>
-                        </div>
-                      </>
-                    )}
-                    {/* Duration Badge */}
-                    {item.duration && (
-                      <span className="absolute top-20 right-4 bg-foreground/50 backdrop-blur-sm text-background text-xs px-2.5 py-1 rounded-full font-medium z-10">
-                        {item.duration}
-                      </span>
-                    )}
-                  </div>
+                    onTogglePlay={(e) => toggleVideoPlay(index, e)}
+                    touchMovedRef={touchMoved}
+                  />
                 )}
                 {/* Text Content - Centered with beautiful styling */}
                 {item.type === 'text' && (
