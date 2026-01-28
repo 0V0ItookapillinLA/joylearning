@@ -105,21 +105,6 @@ export default function FeedVideo({
         </div>
       )}
 
-      {/* 不支持/加载失败提示：不再黑屏 */}
-      {hasFatalError && (
-        <div className="relative z-10 max-w-[18rem] px-4 py-3 rounded-2xl bg-card/70 backdrop-blur border border-border shadow-xl">
-          <p className="text-sm text-foreground leading-relaxed">{hint}</p>
-          <a
-            className="mt-3 inline-flex items-center justify-center w-full h-11 rounded-xl bg-primary text-primary-foreground text-sm font-semibold"
-            href={normalizedSrc}
-            target="_blank"
-            rel="noreferrer"
-            onClick={(e) => e.stopPropagation()}
-          >
-            在新窗口打开视频
-          </a>
-        </div>
-      )}
 
       {/* Duration Badge */}
       {duration && (
