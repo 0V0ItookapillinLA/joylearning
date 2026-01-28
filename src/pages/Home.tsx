@@ -12,19 +12,21 @@ interface FeedItem {
   comments: number;
   duration?: string;
   tags?: string[];
+  videoUrl?: string;
 }
 
 const mockFeedData: FeedItem[] = [
   {
     id: '1',
     type: 'video',
-    title: '【必看】零售采销新人必修课',
+    title: '【必看】采销核心工作解析',
     content: '零售采销的核心在于：选品精准、成本把控、库存管理、供应商谈判。本视频将带你系统了解零售采销的完整流程和关键技巧。',
     author: '采销导师小王',
     likes: 2341,
     comments: 156,
-    duration: '05:32',
+    duration: '02:45',
     tags: ['新人必看', '采销基础'],
+    videoUrl: '/videos/采销核心工作.mp4',
   },
   {
     id: '2',
@@ -39,13 +41,14 @@ const mockFeedData: FeedItem[] = [
   {
     id: '3',
     type: 'video',
-    title: '实战演示：供应商谈判技巧',
-    content: '跟着资深采销经理学习如何在保证质量的前提下，争取到最优的采购价格和账期。实战案例分析，干货满满！',
+    title: '【实战】BOM成本分析详解',
+    content: '跟着资深采销经理学习如何进行BOM成本分析，了解成本构成和优化策略。实战案例分析，干货满满！',
     author: '谈判大师周老师',
     likes: 3156,
     comments: 234,
-    duration: '08:15',
-    tags: ['谈判技巧', '实战案例'],
+    duration: '03:20',
+    tags: ['成本分析', 'BOM'],
+    videoUrl: '/videos/BOM成本.mp4',
   },
   {
     id: '4',
@@ -66,17 +69,6 @@ const mockFeedData: FeedItem[] = [
     likes: 3421,
     comments: 234,
     tags: ['话术技巧', '异议处理'],
-  },
-  {
-    id: '6',
-    type: 'video',
-    title: '库存管理：避免断货与积压',
-    content: '科学的库存管理是零售采销的核心能力。本视频详解安全库存设定、周转率优化、滞销品处理等关键知识点。',
-    author: '库存专家陈老师',
-    likes: 1845,
-    comments: 123,
-    duration: '06:48',
-    tags: ['库存管理', '数据分析'],
   },
 ];
 
@@ -209,16 +201,29 @@ const Home = () => {
                 {/* Video Content */}
                 {item.type === 'video' && (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    {/* Play Button */}
-                    <div className="relative">
-                      <div className="absolute inset-0 bg-primary/30 rounded-full blur-xl scale-150 animate-pulse-soft" />
-                      <div className="relative w-20 h-20 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-2xl">
-                        <Play className="w-8 h-8 text-white ml-1" fill="currentColor" />
-                      </div>
-                    </div>
+                    {item.videoUrl ? (
+                      <video
+                        className="absolute inset-0 w-full h-full object-cover"
+                        src={item.videoUrl}
+                        autoPlay={index === currentIndex}
+                        loop
+                        muted
+                        playsInline
+                      />
+                    ) : (
+                      <>
+                        {/* Play Button Placeholder */}
+                        <div className="relative">
+                          <div className="absolute inset-0 bg-primary/30 rounded-full blur-xl scale-150 animate-pulse-soft" />
+                          <div className="relative w-20 h-20 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-2xl">
+                            <Play className="w-8 h-8 text-white ml-1" fill="currentColor" />
+                          </div>
+                        </div>
+                      </>
+                    )}
                     {/* Duration Badge */}
                     {item.duration && (
-                      <span className="absolute top-20 right-4 bg-black/50 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full font-medium">
+                      <span className="absolute top-20 right-4 bg-black/50 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full font-medium z-10">
                         {item.duration}
                       </span>
                     )}
