@@ -267,15 +267,14 @@ const Home = () => {
 
                 {/* Video Content */}
                 {item.type === 'video' && (
-                  <div 
+                  <div
                     className="absolute inset-0 flex items-center justify-center cursor-pointer z-20"
-                    onClick={(e) => toggleVideoPlay(index, e)}
-                    onTouchEnd={(e) => {
-                      if (!touchMoved.current) {
-                        e.preventDefault();
-                        toggleVideoPlay(index, e);
-                      }
+                    // 移动端/内置 WebView 下，touchend + preventDefault 可能导致 play() 不被视为“用户手势”
+                    // 这里改用 pointer 事件，且不调用 preventDefault，提高可播放率
+                    onPointerUp={(e) => {
+                      if (!touchMoved.current) toggleVideoPlay(index, e);
                     }}
+                    onClick={(e) => toggleVideoPlay(index, e)}
                   >
                     {item.videoUrl ? (
                       <>
@@ -286,6 +285,18 @@ const Home = () => {
                           loop
                           muted
                           playsInline
+                            // 兜底：有些 WebView 会更依赖这些属性组合
+                            preload="metadata"
+                            onPlay={() => {
+                              setPlayingVideos(prev => new Set(prev).add(index));
+                            }}
+                            onPause={() => {
+                              setPlayingVideos(prev => {
+                                const next = new Set(prev);
+                                next.delete(index);
+                                return next;
+                              });
+                            }}
                         />
                         {/* 播放/暂停按钮 */}
                         {!playingVideos.has(index) && (
