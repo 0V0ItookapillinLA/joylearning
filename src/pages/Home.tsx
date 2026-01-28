@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Heart, MessageCircle, Share2, Bookmark, Play, Music2, Plus } from 'lucide-react';
 import TabBar from '@/components/TabBar';
 
@@ -78,8 +78,25 @@ const Home = () => {
   const [savedItems, setSavedItems] = useState<Set<string>>(new Set());
   const [isScrolling, setIsScrolling] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const touchStartY = useRef(0);
   const touchEndY = useRef(0);
+
+  // 控制视频播放
+  useEffect(() => {
+    videoRefs.current.forEach((video, index) => {
+      if (video) {
+        if (index === currentIndex) {
+          video.play().catch(() => {
+            // 自动播放被阻止时静默处理
+          });
+        } else {
+          video.pause();
+          video.currentTime = 0;
+        }
+      }
+    });
+  }, [currentIndex]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartY.current = e.touches[0].clientY;
@@ -203,9 +220,9 @@ const Home = () => {
                   <div className="absolute inset-0 flex items-center justify-center">
                     {item.videoUrl ? (
                       <video
+                        ref={(el) => { videoRefs.current[index] = el; }}
                         className="absolute inset-0 w-full h-full object-cover"
                         src={item.videoUrl}
-                        autoPlay={index === currentIndex}
                         loop
                         muted
                         playsInline
