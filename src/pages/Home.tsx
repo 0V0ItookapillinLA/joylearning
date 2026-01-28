@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, Music2, Plus } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Bookmark, Play, Music2, Plus } from 'lucide-react';
 import TabBar from '@/components/TabBar';
-import FeedVideo from '@/components/home/FeedVideo';
 
 interface FeedItem {
   id: string;
@@ -78,75 +77,22 @@ const Home = () => {
   const [likedItems, setLikedItems] = useState<Set<string>>(new Set());
   const [savedItems, setSavedItems] = useState<Set<string>>(new Set());
   const [isScrolling, setIsScrolling] = useState(false);
-  const [playingVideos, setPlayingVideos] = useState<Set<number>>(new Set());
-  // 当 play() 在某些手机/内置浏览器中被拒绝时，强制展示原生 controls 让用户用系统播放器控件启动播放
-  const [forceNativeControls, setForceNativeControls] = useState<Set<number>>(new Set());
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const touchStartY = useRef(0);
   const touchEndY = useRef(0);
-  const touchMoved = useRef(false);
-
-  // 切换视频播放/暂停
-  const toggleVideoPlay = (index: number, e?: React.MouseEvent | React.TouchEvent) => {
-    // 如果是滑动操作，不处理点击
-    if (touchMoved.current) {
-      return;
-    }
-    
-    // 阻止事件冒泡
-    if (e) {
-      e.stopPropagation();
-    }
-    
-    const video = videoRefs.current[index];
-    if (video) {
-      if (video.paused) {
-        video.play().then(() => {
-          setPlayingVideos(prev => new Set(prev).add(index));
-        }).catch((err) => {
-          // 某些移动端/内置 WebView 会拒绝非原生控件触发的播放，这里兜底切到 controls
-          console.warn('[Home] video.play() failed, falling back to native controls', err);
-          setForceNativeControls(prev => {
-            const next = new Set(prev);
-            next.add(index);
-            return next;
-          });
-        });
-      } else {
-        video.pause();
-        setPlayingVideos(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(index);
-          return newSet;
-        });
-      }
-    }
-  };
 
   // 控制视频播放
   useEffect(() => {
     videoRefs.current.forEach((video, index) => {
       if (video) {
         if (index === currentIndex) {
-          video.play().then(() => {
-            setPlayingVideos(prev => new Set(prev).add(index));
-          }).catch(() => {
-            // 自动播放被阻止时静默处理，用户可点击播放
-            setPlayingVideos(prev => {
-              const newSet = new Set(prev);
-              newSet.delete(index);
-              return newSet;
-            });
+          video.play().catch(() => {
+            // 自动播放被阻止时静默处理
           });
         } else {
           video.pause();
           video.currentTime = 0;
-          setPlayingVideos(prev => {
-            const newSet = new Set(prev);
-            newSet.delete(index);
-            return newSet;
-          });
         }
       }
     });
@@ -154,15 +100,10 @@ const Home = () => {
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartY.current = e.touches[0].clientY;
-    touchMoved.current = false;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     touchEndY.current = e.touches[0].clientY;
-    const diff = Math.abs(touchStartY.current - touchEndY.current);
-    if (diff > 10) {
-      touchMoved.current = true;
-    }
   };
 
   const handleTouchEnd = () => {
@@ -275,22 +216,37 @@ const Home = () => {
                 </div>
 
                 {/* Video Content */}
-                {item.type === 'video' && item.videoUrl && (
-                  <FeedVideo
-                    index={index}
-                    src={item.videoUrl}
-                    duration={item.duration}
-                    isPlaying={playingVideos.has(index)}
-                    forceNativeControls={forceNativeControls.has(index)}
-                    setForceNativeControls={setForceNativeControls}
-                    setPlayingVideos={setPlayingVideos}
-                    setVideoRef={(el) => {
-                      videoRefs.current[index] = el;
-                    }}
-                    onTogglePlay={(e) => toggleVideoPlay(index, e)}
-                    touchMovedRef={touchMoved}
-                  />
+                {item.type === 'video' && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    {item.videoUrl ? (
+                      <video
+                        ref={(el) => { videoRefs.current[index] = el; }}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        src={item.videoUrl}
+                        loop
+                        muted
+                        playsInline
+                      />
+                    ) : (
+                      <>
+                        {/* Play Button Placeholder */}
+                        <div className="relative">
+                          <div className="absolute inset-0 bg-primary/30 rounded-full blur-xl scale-150 animate-pulse-soft" />
+                          <div className="relative w-20 h-20 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-2xl">
+                            <Play className="w-8 h-8 text-white ml-1" fill="currentColor" />
+                          </div>
+                        </div>
+                      </>
+                    )}
+                    {/* Duration Badge */}
+                    {item.duration && (
+                      <span className="absolute top-20 right-4 bg-black/50 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full font-medium z-10">
+                        {item.duration}
+                      </span>
+                    )}
+                  </div>
                 )}
+
                 {/* Text Content - Centered with beautiful styling */}
                 {item.type === 'text' && (
                   <div className="absolute inset-0 flex items-center justify-center px-6 pb-48 pt-24">
@@ -360,7 +316,7 @@ const Home = () => {
                 </div>
 
                 {/* Right Side Actions */}
-                <div className="absolute right-3 bottom-36 flex flex-col items-center gap-5 z-30">
+                <div className="absolute right-3 bottom-36 flex flex-col items-center gap-5 z-10">
                   {/* Like Button */}
                   <button
                     onClick={() => toggleLike(item.id)}
