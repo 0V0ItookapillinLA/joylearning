@@ -82,9 +82,20 @@ const Home = () => {
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const touchStartY = useRef(0);
   const touchEndY = useRef(0);
+  const touchMoved = useRef(false);
 
   // 切换视频播放/暂停
-  const toggleVideoPlay = (index: number) => {
+  const toggleVideoPlay = (index: number, e?: React.MouseEvent | React.TouchEvent) => {
+    // 如果是滑动操作，不处理点击
+    if (touchMoved.current) {
+      return;
+    }
+    
+    // 阻止事件冒泡
+    if (e) {
+      e.stopPropagation();
+    }
+    
     const video = videoRefs.current[index];
     if (video) {
       if (video.paused) {
@@ -134,10 +145,15 @@ const Home = () => {
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartY.current = e.touches[0].clientY;
+    touchMoved.current = false;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     touchEndY.current = e.touches[0].clientY;
+    const diff = Math.abs(touchStartY.current - touchEndY.current);
+    if (diff > 10) {
+      touchMoved.current = true;
+    }
   };
 
   const handleTouchEnd = () => {
@@ -252,8 +268,14 @@ const Home = () => {
                 {/* Video Content */}
                 {item.type === 'video' && (
                   <div 
-                    className="absolute inset-0 flex items-center justify-center cursor-pointer"
-                    onClick={() => toggleVideoPlay(index)}
+                    className="absolute inset-0 flex items-center justify-center cursor-pointer z-20"
+                    onClick={(e) => toggleVideoPlay(index, e)}
+                    onTouchEnd={(e) => {
+                      if (!touchMoved.current) {
+                        e.preventDefault();
+                        toggleVideoPlay(index, e);
+                      }
+                    }}
                   >
                     {item.videoUrl ? (
                       <>
