@@ -385,7 +385,7 @@ const Home = () => {
                 </div>
 
                 {/* Right Side Actions */}
-                <div className="absolute right-3 bottom-36 flex flex-col items-center gap-5 z-10">
+                <div className="absolute right-3 bottom-36 flex flex-col items-center gap-5 z-30">
                   {/* Like Button */}
                   <button
                     onClick={() => toggleLike(item.id)}
