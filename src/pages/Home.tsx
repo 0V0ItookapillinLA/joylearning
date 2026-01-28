@@ -78,6 +78,8 @@ const Home = () => {
   const [savedItems, setSavedItems] = useState<Set<string>>(new Set());
   const [isScrolling, setIsScrolling] = useState(false);
   const [playingVideos, setPlayingVideos] = useState<Set<number>>(new Set());
+  // 当 play() 在某些手机/内置浏览器中被拒绝时，强制展示原生 controls 让用户用系统播放器控件启动播放
+  const [forceNativeControls, setForceNativeControls] = useState<Set<number>>(new Set());
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const touchStartY = useRef(0);
@@ -101,8 +103,14 @@ const Home = () => {
       if (video.paused) {
         video.play().then(() => {
           setPlayingVideos(prev => new Set(prev).add(index));
-        }).catch(() => {
-          // 播放失败时静默处理
+        }).catch((err) => {
+          // 某些移动端/内置 WebView 会拒绝非原生控件触发的播放，这里兜底切到 controls
+          console.warn('[Home] video.play() failed, falling back to native controls', err);
+          setForceNativeControls(prev => {
+            const next = new Set(prev);
+            next.add(index);
+            return next;
+          });
         });
       } else {
         video.pause();
@@ -274,6 +282,10 @@ const Home = () => {
                     onPointerUp={(e) => {
                       if (!touchMoved.current) toggleVideoPlay(index, e);
                     }}
+                    // 兜底：部分环境 pointer 事件不稳定，补回 touchend，但不调用 preventDefault
+                    onTouchEnd={(e) => {
+                      if (!touchMoved.current) toggleVideoPlay(index, e);
+                    }}
                     onClick={(e) => toggleVideoPlay(index, e)}
                   >
                     {item.videoUrl ? (
@@ -285,6 +297,7 @@ const Home = () => {
                           loop
                           muted
                           playsInline
+                          controls={forceNativeControls.has(index)}
                             // 兜底：有些 WebView 会更依赖这些属性组合
                             preload="metadata"
                             onPlay={() => {
