@@ -77,6 +77,7 @@ const Home = () => {
   const [likedItems, setLikedItems] = useState<Set<string>>(new Set());
   const [savedItems, setSavedItems] = useState<Set<string>>(new Set());
   const [isScrolling, setIsScrolling] = useState(false);
+  const [pausedVideos, setPausedVideos] = useState<Set<number>>(new Set());
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const touchStartY = useRef(0);
@@ -87,9 +88,19 @@ const Home = () => {
     videoRefs.current.forEach((video, index) => {
       if (video) {
         if (index === currentIndex) {
-          video.play().catch(() => {
-            // 自动播放被阻止时静默处理
-          });
+          // iOS/部分 WebView 对自动播放更严格：确保 muted 后再尝试 play
+          video.muted = true;
+          const playPromise = video.play();
+          if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.catch(() => {
+              // 自动播放被阻止：显示点击播放覆盖层
+              setPausedVideos((prev) => {
+                const next = new Set(prev);
+                next.add(index);
+                return next;
+              });
+            });
+          }
         } else {
           video.pause();
           video.currentTime = 0;
@@ -97,6 +108,36 @@ const Home = () => {
       }
     });
   }, [currentIndex]);
+
+  const toggleVideoPlayback = async (index: number) => {
+    const video = videoRefs.current[index];
+    if (!video) return;
+
+    try {
+      if (video.paused) {
+        video.muted = true;
+        await video.play();
+        setPausedVideos((prev) => {
+          const next = new Set(prev);
+          next.delete(index);
+          return next;
+        });
+      } else {
+        video.pause();
+        setPausedVideos((prev) => {
+          const next = new Set(prev);
+          next.add(index);
+          return next;
+        });
+      }
+    } catch {
+      setPausedVideos((prev) => {
+        const next = new Set(prev);
+        next.add(index);
+        return next;
+      });
+    }
+  };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartY.current = e.touches[0].clientY;
@@ -219,14 +260,48 @@ const Home = () => {
                 {item.type === 'video' && (
                   <div className="absolute inset-0 flex items-center justify-center">
                     {item.videoUrl ? (
-                      <video
-                        ref={(el) => { videoRefs.current[index] = el; }}
-                        className="absolute inset-0 w-full h-full object-cover"
-                        src={item.videoUrl}
-                        loop
-                        muted
-                        playsInline
-                      />
+                      <>
+                        <video
+                          ref={(el) => { videoRefs.current[index] = el; }}
+                          className="absolute inset-0 w-full h-full object-cover"
+                          src={item.videoUrl}
+                          loop
+                          muted
+                          playsInline
+                          preload="metadata"
+                          onPlay={() => {
+                            setPausedVideos((prev) => {
+                              const next = new Set(prev);
+                              next.delete(index);
+                              return next;
+                            });
+                          }}
+                          onPause={() => {
+                            setPausedVideos((prev) => {
+                              const next = new Set(prev);
+                              next.add(index);
+                              return next;
+                            });
+                          }}
+                        />
+
+                        {/* Click-to-play overlay (solves autoplay restrictions on some mobile/webviews) */}
+                        <button
+                          type="button"
+                          onClick={() => toggleVideoPlayback(index)}
+                          className="absolute inset-0 z-10 flex items-center justify-center"
+                          aria-label={pausedVideos.has(index) ? '点击播放视频' : '点击暂停视频'}
+                        >
+                          {pausedVideos.has(index) && (
+                            <div className="relative">
+                              <div className="absolute inset-0 bg-primary/30 rounded-full blur-xl scale-150 animate-pulse-soft" />
+                              <div className="relative w-20 h-20 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-2xl">
+                                <Play className="w-8 h-8 text-white ml-1" fill="currentColor" />
+                              </div>
+                            </div>
+                          )}
+                        </button>
+                      </>
                     ) : (
                       <>
                         {/* Play Button Placeholder */}
