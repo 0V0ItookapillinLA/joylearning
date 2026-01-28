@@ -77,22 +77,56 @@ const Home = () => {
   const [likedItems, setLikedItems] = useState<Set<string>>(new Set());
   const [savedItems, setSavedItems] = useState<Set<string>>(new Set());
   const [isScrolling, setIsScrolling] = useState(false);
+  const [playingVideos, setPlayingVideos] = useState<Set<number>>(new Set());
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const touchStartY = useRef(0);
   const touchEndY = useRef(0);
+
+  // 切换视频播放/暂停
+  const toggleVideoPlay = (index: number) => {
+    const video = videoRefs.current[index];
+    if (video) {
+      if (video.paused) {
+        video.play().then(() => {
+          setPlayingVideos(prev => new Set(prev).add(index));
+        }).catch(() => {
+          // 播放失败时静默处理
+        });
+      } else {
+        video.pause();
+        setPlayingVideos(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(index);
+          return newSet;
+        });
+      }
+    }
+  };
 
   // 控制视频播放
   useEffect(() => {
     videoRefs.current.forEach((video, index) => {
       if (video) {
         if (index === currentIndex) {
-          video.play().catch(() => {
-            // 自动播放被阻止时静默处理
+          video.play().then(() => {
+            setPlayingVideos(prev => new Set(prev).add(index));
+          }).catch(() => {
+            // 自动播放被阻止时静默处理，用户可点击播放
+            setPlayingVideos(prev => {
+              const newSet = new Set(prev);
+              newSet.delete(index);
+              return newSet;
+            });
           });
         } else {
           video.pause();
           video.currentTime = 0;
+          setPlayingVideos(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(index);
+            return newSet;
+          });
         }
       }
     });
@@ -217,36 +251,49 @@ const Home = () => {
 
                 {/* Video Content */}
                 {item.type === 'video' && (
-                  <div className="absolute inset-0 flex items-center justify-center">
+                  <div 
+                    className="absolute inset-0 flex items-center justify-center cursor-pointer"
+                    onClick={() => toggleVideoPlay(index)}
+                  >
                     {item.videoUrl ? (
-                      <video
-                        ref={(el) => { videoRefs.current[index] = el; }}
-                        className="absolute inset-0 w-full h-full object-cover"
-                        src={item.videoUrl}
-                        loop
-                        muted
-                        playsInline
-                      />
+                      <>
+                        <video
+                          ref={(el) => { videoRefs.current[index] = el; }}
+                          className="absolute inset-0 w-full h-full object-cover"
+                          src={item.videoUrl}
+                          loop
+                          muted
+                          playsInline
+                        />
+                        {/* 播放/暂停按钮 */}
+                        {!playingVideos.has(index) && (
+                          <div className="relative z-10">
+                            <div className="absolute inset-0 bg-primary/30 rounded-full blur-xl scale-150 animate-pulse-soft" />
+                            <div className="relative w-20 h-20 rounded-full bg-background/30 backdrop-blur-md flex items-center justify-center border border-border/30 shadow-2xl">
+                              <Play className="w-8 h-8 text-foreground ml-1" fill="currentColor" />
+                            </div>
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <>
                         {/* Play Button Placeholder */}
                         <div className="relative">
                           <div className="absolute inset-0 bg-primary/30 rounded-full blur-xl scale-150 animate-pulse-soft" />
-                          <div className="relative w-20 h-20 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-2xl">
-                            <Play className="w-8 h-8 text-white ml-1" fill="currentColor" />
+                          <div className="relative w-20 h-20 rounded-full bg-background/20 backdrop-blur-md flex items-center justify-center border border-border/30 shadow-2xl">
+                            <Play className="w-8 h-8 text-foreground ml-1" fill="currentColor" />
                           </div>
                         </div>
                       </>
                     )}
                     {/* Duration Badge */}
                     {item.duration && (
-                      <span className="absolute top-20 right-4 bg-black/50 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full font-medium z-10">
+                      <span className="absolute top-20 right-4 bg-foreground/50 backdrop-blur-sm text-background text-xs px-2.5 py-1 rounded-full font-medium z-10">
                         {item.duration}
                       </span>
                     )}
                   </div>
                 )}
-
                 {/* Text Content - Centered with beautiful styling */}
                 {item.type === 'text' && (
                   <div className="absolute inset-0 flex items-center justify-center px-6 pb-48 pt-24">
