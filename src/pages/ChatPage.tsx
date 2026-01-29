@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
+import { Button, Input, Avatar, Spin } from 'antd';
+import { SendOutlined, AudioOutlined, AudioMutedOutlined, LoadingOutlined } from '@ant-design/icons';
 import TabBar from '@/components/TabBar';
-import { Send, Mic, MicOff, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
 import { useAIChat } from '@/hooks/useAIChat';
 import avatarAi from '@/assets/avatar-ai.png';
@@ -69,7 +69,7 @@ const ChatPage = () => {
       <header className="sticky top-0 bg-card/80 backdrop-blur-lg z-40 border-b border-border">
         <div className="flex items-center justify-center h-14 px-4 max-w-md mx-auto">
           <div className="flex items-center gap-2">
-            <img src={avatarAi} alt="AI" className="w-8 h-8 rounded-full" />
+            <Avatar src={avatarAi} size={32} />
             <h1 className="text-lg font-semibold text-foreground">AI采销专家</h1>
           </div>
         </div>
@@ -85,10 +85,10 @@ const ChatPage = () => {
                 message.role === 'user' ? 'flex-row-reverse' : ''
               }`}
             >
-              <img
+              <Avatar
                 src={message.role === 'assistant' ? avatarAi : avatarUser}
-                alt={message.role}
-                className="w-9 h-9 rounded-full flex-shrink-0"
+                size={36}
+                className="flex-shrink-0"
               />
               <div
                 className={`max-w-[75%] rounded-2xl px-4 py-3 ${
@@ -132,43 +132,35 @@ const ChatPage = () => {
           
           <div className="flex items-center gap-3">
             <div className="flex-1 relative">
-              <input
-                type="text"
+              <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                onPressEnter={handleSend}
                 placeholder={isListening ? "正在听..." : "输入消息..."}
                 disabled={isLoading}
-                className="w-full bg-muted rounded-full px-4 py-2.5 pr-11 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
+                className="!rounded-full !pr-11"
+                suffix={
+                  <Button
+                    type={isListening ? "primary" : "text"}
+                    danger={isListening}
+                    shape="circle"
+                    size="small"
+                    onClick={toggleListening}
+                    disabled={!isSupported || isLoading}
+                    icon={isListening ? <AudioMutedOutlined /> : <AudioOutlined />}
+                    className={isListening ? 'animate-pulse' : ''}
+                  />
+                }
               />
-              <Button
-                size="icon"
-                variant={isListening ? "destructive" : "ghost"}
-                onClick={toggleListening}
-                disabled={!isSupported || isLoading}
-                className={`absolute right-1 top-1/2 -translate-y-1/2 rounded-full w-8 h-8 transition-all ${
-                  isListening ? 'animate-pulse' : ''
-                }`}
-              >
-                {isListening ? (
-                  <MicOff className="w-4 h-4" />
-                ) : (
-                  <Mic className="w-4 h-4 text-muted-foreground" />
-                )}
-              </Button>
             </div>
             <Button
-              size="icon"
+              type="primary"
+              shape="circle"
+              size="large"
               onClick={handleSend}
               disabled={!input.trim() || isLoading}
-              className="rounded-full w-10 h-10 bg-primary hover:bg-primary/90"
-            >
-              {isLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Send className="w-4 h-4" />
-              )}
-            </Button>
+              icon={isLoading ? <LoadingOutlined spin /> : <SendOutlined />}
+            />
           </div>
         </div>
       </div>

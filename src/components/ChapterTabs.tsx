@@ -1,3 +1,4 @@
+import { Tabs, Tag } from 'antd';
 import { Chapter } from '@/types';
 
 interface ChapterTabsProps {
@@ -7,41 +8,44 @@ interface ChapterTabsProps {
 }
 
 const ChapterTabs = ({ chapters, activeChapter, onSelect }: ChapterTabsProps) => {
-  const statusConfig = {
-    completed: { label: '已完成', color: 'text-status-complete' },
-    in_progress: { label: '进行中', color: 'text-primary' },
-    locked: { label: '待开启', color: 'text-muted-foreground' },
-    not_started: { label: '待开启', color: 'text-muted-foreground' },
+  const getStatusConfig = (status: Chapter['status']) => {
+    switch (status) {
+      case 'completed':
+        return { label: '已完成', color: 'success' as const };
+      case 'in_progress':
+        return { label: '进行中', color: 'processing' as const };
+      default:
+        return { label: '待开启', color: 'default' as const };
+    }
   };
 
+  const items = chapters.map((chapter, index) => {
+    const statusConfig = getStatusConfig(chapter.status);
+    const isLocked = chapter.status === 'locked';
+    
+    return {
+      key: String(index),
+      label: (
+        <div className={`flex flex-col items-center ${isLocked ? 'opacity-50' : ''}`}>
+          <span>章节{chapter.number}</span>
+          <Tag color={statusConfig.color} className="!m-0 !mt-1 !text-xs !px-1.5 !py-0">
+            {statusConfig.label}
+          </Tag>
+        </div>
+      ),
+      disabled: isLocked,
+    };
+  });
+
   return (
-    <div className="overflow-x-auto hide-scrollbar">
-      <div className="flex gap-1 px-4 py-3 min-w-max">
-        {chapters.map((chapter, index) => {
-          const isActive = index === activeChapter;
-          const status = statusConfig[chapter.status];
-          
-          return (
-            <button
-              key={chapter.id}
-              onClick={() => chapter.status !== 'locked' && onSelect(index)}
-              className={`flex flex-col items-center px-4 py-2 rounded-lg transition-all ${
-                isActive 
-                  ? 'bg-transparent' 
-                  : 'hover:bg-accent'
-              } ${chapter.status === 'locked' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-            >
-              <span className={`text-sm font-medium ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
-                章节{chapter.number}
-              </span>
-              <span className={`text-xs ${status.color}`}>{status.label}</span>
-              {isActive && (
-                <div className="w-8 h-0.5 bg-primary rounded-full mt-2" />
-              )}
-            </button>
-          );
-        })}
-      </div>
+    <div className="chapter-tabs px-4">
+      <Tabs
+        activeKey={String(activeChapter)}
+        onChange={(key) => onSelect(Number(key))}
+        items={items}
+        className="chapter-tab-nav"
+        tabBarStyle={{ marginBottom: 0 }}
+      />
     </div>
   );
 };

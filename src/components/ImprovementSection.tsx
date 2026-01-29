@@ -1,8 +1,9 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PlayCircle, FileText, RefreshCw, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Card, Button, Tag, Typography } from 'antd';
+import { PlayCircleOutlined, FileTextOutlined, ReloadOutlined, BulbOutlined } from '@ant-design/icons';
+
+const { Text } = Typography;
 
 interface RelatedCourse {
   id: string;
@@ -62,31 +63,30 @@ const ImprovementSection = () => {
   return (
     <>
       {/* Improvement Suggestions */}
-      <div className="bg-card rounded-xl p-4 shadow-card">
+      <Card className="!rounded-xl shadow-card" styles={{ body: { padding: 16 } }}>
         <div className="flex items-center gap-2 mb-3">
-          <Sparkles className="w-4 h-4 text-primary" />
-          <h3 className="font-medium text-foreground">改进建议</h3>
+          <BulbOutlined className="text-primary" />
+          <Text strong>改进建议</Text>
         </div>
-        <p className="text-sm text-muted-foreground leading-relaxed">
+        <Text type="secondary" className="text-sm leading-relaxed block">
           {suggestion}
-        </p>
-      </div>
+        </Text>
+      </Card>
 
       {/* Related Knowledge */}
-      <div className="bg-card rounded-xl p-4 shadow-card">
+      <Card className="!rounded-xl shadow-card" styles={{ body: { padding: 16 } }}>
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <PlayCircle className="w-5 h-5 text-primary" />
-            <h3 className="font-medium text-foreground">关联知识</h3>
+            <PlayCircleOutlined className="text-primary text-lg" />
+            <Text strong>关联知识</Text>
           </div>
-          <button
+          <Button
+            type="text"
+            icon={<ReloadOutlined spin={isRefreshing} />}
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="p-2 hover:bg-muted rounded-full transition-colors disabled:opacity-50"
-          >
-            <RefreshCw className={`w-4 h-4 text-muted-foreground ${isRefreshing ? 'animate-spin' : ''}`} />
-          </button>
+          />
         </div>
 
         {/* Course List */}
@@ -101,27 +101,26 @@ const ImprovementSection = () => {
                 <div className="flex-shrink-0 mt-0.5">
                   {course.type === 'video' ? (
                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                      <PlayCircle className="w-5 h-5 text-primary" />
+                      <PlayCircleOutlined className="text-primary" />
                     </div>
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center">
-                      <FileText className="w-5 h-5 text-accent-foreground" />
+                      <FileTextOutlined className="text-accent-foreground" />
                     </div>
                   )}
                 </div>
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-foreground text-sm truncate">{course.title}</h4>
+                  <Text strong className="text-sm truncate block">{course.title}</Text>
                   <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
                     {course.tags.map((tag, index) => (
-                      <Badge
+                      <Tag
                         key={index}
-                        variant="outline"
-                        className="text-xs px-2 py-0 h-5 bg-muted/50 text-muted-foreground border-border/50"
+                        className="!m-0 !text-xs !px-2 !py-0"
                       >
                         {tag}
-                      </Badge>
+                      </Tag>
                     ))}
                   </div>
                 </div>
@@ -129,17 +128,16 @@ const ImprovementSection = () => {
 
               {/* Action Button */}
               <Button
-                variant="outline"
-                size="sm"
+                size="small"
                 onClick={() => handleStartLearning(course)}
-                className="flex-shrink-0 ml-3 rounded-lg"
+                className="flex-shrink-0 ml-3 !rounded-lg"
               >
                 开始学习
               </Button>
             </div>
           ))}
         </div>
-      </div>
+      </Card>
     </>
   );
 };

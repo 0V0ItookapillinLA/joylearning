@@ -1,6 +1,9 @@
 import { useState } from 'react';
-import { MessageSquare, ChevronRight, AlertCircle, Lightbulb, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { Card, Tag, Typography } from 'antd';
+import { MessageOutlined, ExclamationCircleOutlined, BulbOutlined, StarOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
 import { cn } from '@/lib/utils';
+
+const { Text } = Typography;
 
 type FeedbackType = 'error' | 'improvement' | 'good' | null;
 
@@ -87,31 +90,31 @@ const ConversationWithFeedback = () => {
         return {
           border: 'border-l-destructive',
           bg: 'bg-destructive/5',
-          badge: 'bg-destructive/10 text-destructive',
-          icon: AlertCircle,
+          tagColor: 'error' as const,
+          icon: <ExclamationCircleOutlined />,
           label: '需要改进'
         };
       case 'improvement':
         return {
-          border: 'border-l-status-pending',
-          bg: 'bg-status-pending/5',
-          badge: 'bg-status-pending/10 text-status-pending',
-          icon: Lightbulb,
+          border: 'border-l-[hsl(var(--status-pending))]',
+          bg: 'bg-[hsl(var(--status-pending))]/5',
+          tagColor: 'warning' as const,
+          icon: <BulbOutlined />,
           label: '可以优化'
         };
       case 'good':
         return {
-          border: 'border-l-status-complete',
-          bg: 'bg-status-complete/5',
-          badge: 'bg-status-complete/10 text-status-complete',
-          icon: Sparkles,
+          border: 'border-l-[hsl(var(--status-complete))]',
+          bg: 'bg-[hsl(var(--status-complete))]/5',
+          tagColor: 'success' as const,
+          icon: <StarOutlined />,
           label: '表现良好'
         };
       default:
         return {
           border: 'border-l-primary/30',
           bg: '',
-          badge: '',
+          tagColor: 'default' as const,
           icon: null,
           label: ''
         };
@@ -137,47 +140,35 @@ const ConversationWithFeedback = () => {
     : conversationRounds;
 
   return (
-    <div className="bg-card rounded-xl p-4 shadow-card">
+    <Card className="!rounded-xl shadow-card" styles={{ body: { padding: 16 } }}>
       <div className="flex items-center gap-2 mb-3">
-        <MessageSquare className="w-4 h-4 text-primary" />
-        <h3 className="font-medium text-foreground">会话记录分析</h3>
+        <MessageOutlined className="text-primary" />
+        <Text strong>会话记录分析</Text>
       </div>
       
       {/* Summary Stats - Clickable Filters */}
       <div className="flex gap-2 mb-4 flex-wrap">
-        <button
+        <Tag
+          color={filterType === 'error' ? 'error' : undefined}
           onClick={() => toggleFilter('error')}
-          className={cn(
-            "text-xs px-2 py-1 rounded-full transition-all",
-            filterType === 'error'
-              ? "bg-destructive text-destructive-foreground ring-2 ring-destructive/30"
-              : "bg-destructive/10 text-destructive hover:bg-destructive/20"
-          )}
+          className="cursor-pointer"
         >
           {errorCount} 处错误
-        </button>
-        <button
+        </Tag>
+        <Tag
+          color={filterType === 'improvement' ? 'warning' : undefined}
           onClick={() => toggleFilter('improvement')}
-          className={cn(
-            "text-xs px-2 py-1 rounded-full transition-all",
-            filterType === 'improvement'
-              ? "bg-status-pending text-white ring-2 ring-status-pending/30"
-              : "bg-status-pending/10 text-status-pending hover:bg-status-pending/20"
-          )}
+          className="cursor-pointer"
         >
           {improvementCount} 处可优化
-        </button>
-        <button
+        </Tag>
+        <Tag
+          color={filterType === 'good' ? 'success' : undefined}
           onClick={() => toggleFilter('good')}
-          className={cn(
-            "text-xs px-2 py-1 rounded-full transition-all",
-            filterType === 'good'
-              ? "bg-status-complete text-white ring-2 ring-status-complete/30"
-              : "bg-status-complete/10 text-status-complete hover:bg-status-complete/20"
-          )}
+          className="cursor-pointer"
         >
           {goodCount} 处表现良好
-        </button>
+        </Tag>
       </div>
 
       {/* Conversation List - By Rounds */}
@@ -191,11 +182,11 @@ const ConversationWithFeedback = () => {
               {round.ai && (
                 <div className="border-l-2 border-l-primary/30 pl-3">
                   <div className="flex items-center gap-2 mb-1">
-                    <p className="text-xs font-medium text-primary">AI</p>
+                    <Text type="secondary" className="text-xs font-medium">AI</Text>
                   </div>
-                  <p className="text-sm text-muted-foreground line-clamp-3">
+                  <Text type="secondary" className="text-sm line-clamp-3">
                     {round.ai.content}
-                  </p>
+                  </Text>
                 </div>
               )}
               
@@ -218,31 +209,30 @@ const ConversationWithFeedback = () => {
                   >
                     {/* Message Header */}
                     <div className="flex items-center gap-2 mb-1">
-                      <p className="text-xs font-medium text-primary">我</p>
+                      <Text className="text-xs font-medium text-primary">我</Text>
                       {record.feedback?.type && (
-                        <span className={cn("text-xs px-1.5 py-0.5 rounded-full flex items-center gap-1", style.badge)}>
-                          {style.icon && <style.icon className="w-3 h-3" />}
-                          <span>{style.label}</span>
-                        </span>
+                        <Tag color={style.tagColor} icon={style.icon} className="!m-0 !text-xs">
+                          {style.label}
+                        </Tag>
                       )}
                       {hasFeedback && (
                         <span className="ml-auto">
                           {isExpanded ? (
-                            <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                            <UpOutlined className="text-muted-foreground text-xs" />
                           ) : (
-                            <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                            <DownOutlined className="text-muted-foreground text-xs" />
                           )}
                         </span>
                       )}
                     </div>
                     
                     {/* Message Content */}
-                    <p className={cn(
-                      "text-sm text-muted-foreground",
+                    <Text type="secondary" className={cn(
+                      "text-sm",
                       !isExpanded && "line-clamp-3"
                     )}>
                       {record.content}
-                    </p>
+                    </Text>
                     
                     {/* Expanded Feedback */}
                     {isExpanded && hasFeedback && (
@@ -250,19 +240,19 @@ const ConversationWithFeedback = () => {
                         {record.feedback?.issue && (
                           <div className="bg-background/60 rounded-lg p-3 border border-border/50">
                             <p className="text-xs font-medium text-destructive flex items-center gap-1 mb-1">
-                              <AlertCircle className="w-3 h-3" />
+                              <ExclamationCircleOutlined />
                               问题分析
                             </p>
-                            <p className="text-sm text-foreground">{record.feedback.issue}</p>
+                            <Text className="text-sm">{record.feedback.issue}</Text>
                           </div>
                         )}
                         {record.feedback?.suggestion && (
                           <div className="bg-background/60 rounded-lg p-3 border border-primary/20">
                             <p className="text-xs font-medium text-primary flex items-center gap-1 mb-1">
-                              <Lightbulb className="w-3 h-3" />
+                              <BulbOutlined />
                               改进建议
                             </p>
-                            <p className="text-sm text-foreground">{record.feedback.suggestion}</p>
+                            <Text className="text-sm">{record.feedback.suggestion}</Text>
                           </div>
                         )}
                       </div>
@@ -275,7 +265,7 @@ const ConversationWithFeedback = () => {
         })}
       </div>
       
-    </div>
+    </Card>
   );
 };
 

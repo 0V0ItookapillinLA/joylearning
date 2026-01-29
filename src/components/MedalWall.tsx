@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import MedalDetailDialog from './MedalDetailDialog';
+import { Card, Tag, Typography, Modal } from 'antd';
+
+const { Text } = Typography;
 
 export interface Medal {
   id: string;
@@ -85,8 +87,8 @@ const MedalWall = () => {
   return (
     <div className="space-y-6">
       {medalCategories.map((category) => (
-        <div key={category.name} className="bg-card rounded-xl p-4 shadow-card">
-          <h3 className="font-medium text-foreground mb-4">{category.name}</h3>
+        <Card key={category.name} className="!rounded-xl shadow-card" styles={{ body: { padding: 16 } }}>
+          <Text strong className="block mb-4">{category.name}</Text>
           
           <div className="grid grid-cols-3 gap-4">
             {category.medals.map((medal) => (
@@ -105,27 +107,49 @@ const MedalWall = () => {
                     </div>
                   </div>
                 </div>
-                <span className={`text-xs text-center ${medal.isUnlocked ? 'text-primary' : 'text-muted-foreground'}`}>
+                <Text className={`text-xs text-center ${medal.isUnlocked ? 'text-primary' : 'text-muted-foreground'}`}>
                   {medal.name}
-                </span>
-                <p className="text-[10px] text-muted-foreground text-center mt-1 line-clamp-2 px-1">
+                </Text>
+                <Text type="secondary" className="text-[10px] text-center mt-1 line-clamp-2 px-1">
                   {medal.description.split('\n')[0]}
-                </p>
+                </Text>
                 {!medal.isUnlocked && (
-                  <span className="text-[10px] text-primary bg-primary/10 px-2 py-0.5 rounded-full mt-1">
+                  <Tag color="blue" className="!mt-1 !text-[10px] !px-2 !py-0">
                     {medal.unlockCondition}
-                  </span>
+                  </Tag>
                 )}
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       ))}
 
-      <MedalDetailDialog 
-        medal={selectedMedal} 
-        onClose={() => setSelectedMedal(null)} 
-      />
+      <Modal
+        open={!!selectedMedal}
+        onCancel={() => setSelectedMedal(null)}
+        footer={null}
+        centered
+        title={selectedMedal?.name}
+      >
+        {selectedMedal && (
+          <div className="text-center py-4">
+            <div 
+              className={`w-24 h-24 ${getMedalColor(selectedMedal.category, selectedMedal.isUnlocked)} ${getMedalShape(selectedMedal.category)} flex items-center justify-center mx-auto mb-4 shadow-lg`}
+            >
+              <div className="text-center">
+                <div className="text-white text-2xl font-bold">{selectedMedal.level}</div>
+                <div className="text-white text-xs uppercase tracking-wider">
+                  {selectedMedal.category === '练习狂魔' ? 'CPRS' : 'DAYS'}
+                </div>
+              </div>
+            </div>
+            <Text className="block whitespace-pre-line mb-4">{selectedMedal.description}</Text>
+            {selectedMedal.earnedDate && (
+              <Tag color="success">获得时间：{selectedMedal.earnedDate}</Tag>
+            )}
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

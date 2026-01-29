@@ -1,11 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Lightbulb, ChevronLeft, ChevronUp, ChevronDown, X, Video, Mic, MicOff } from 'lucide-react';
+import { Button, Card, message } from 'antd';
+import { BulbOutlined, LeftOutlined, UpOutlined, DownOutlined, CloseOutlined, VideoCameraOutlined, AudioOutlined, AudioMutedOutlined } from '@ant-design/icons';
 import avatarInterviewer from '@/assets/avatar-interviewer.png';
 import { useAIPractice } from '@/hooks/useAIPractice';
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
-import { toast } from '@/hooks/use-toast';
 
 interface Scene {
   id: number;
@@ -94,21 +93,13 @@ const PracticePage = () => {
   // Show speech error
   useEffect(() => {
     if (speechError) {
-      toast({
-        title: '语音识别错误',
-        description: speechError,
-        variant: 'destructive',
-      });
+      message.error(speechError);
     }
   }, [speechError]);
 
   const handleTalkPress = () => {
     if (!isSpeechSupported) {
-      toast({
-        title: '不支持语音识别',
-        description: '请使用Chrome或Edge浏览器',
-        variant: 'destructive',
-      });
+      message.error('请使用Chrome或Edge浏览器');
       return;
     }
     setFinalTranscript('');
@@ -174,17 +165,18 @@ const PracticePage = () => {
         />
         
         {/* Back Button */}
-        <button 
+        <Button 
+          type="text"
+          shape="circle"
+          icon={<LeftOutlined />}
           onClick={handleBack}
-          className="absolute top-4 left-4 w-10 h-10 rounded-full bg-card/80 backdrop-blur flex items-center justify-center shadow-lg z-20"
-        >
-          <ChevronLeft className="w-5 h-5 text-foreground" />
-        </button>
+          className="absolute top-4 left-4 !w-10 !h-10 !bg-card/80 backdrop-blur shadow-lg z-20"
+        />
 
         {/* User Video Preview - Top Right */}
         <div className="absolute top-4 right-4 w-20 h-28 rounded-xl overflow-hidden shadow-lg z-20 bg-muted border-2 border-card">
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted-foreground/20">
-            <Video className="w-6 h-6 text-muted-foreground/50" />
+            <VideoCameraOutlined className="text-muted-foreground/50 text-xl" />
           </div>
           <span className="absolute bottom-1 left-1 right-1 text-[10px] text-center text-card bg-foreground/60 rounded px-1">
             百川
@@ -193,28 +185,25 @@ const PracticePage = () => {
 
         {/* Scene Announcement - Top */}
         <div className="absolute top-16 left-4 right-4 z-20">
-          <div 
-            className={`bg-card/95 backdrop-blur rounded-xl shadow-xl overflow-hidden transition-all duration-300 border ${
-              isSceneExpanded ? 'max-h-80' : 'max-h-12'
+          <Card
+            className={`!rounded-xl shadow-xl overflow-hidden transition-all duration-300 ${
+              isSceneExpanded ? '' : '!p-0'
             }`}
+            styles={{ body: { padding: isSceneExpanded ? 16 : 0 } }}
           >
-            <button 
+            <div 
               onClick={() => setIsSceneExpanded(!isSceneExpanded)}
-              className="w-full flex items-center justify-between px-4 py-3 text-foreground"
+              className="flex items-center justify-between cursor-pointer"
             >
               <div className="flex items-center gap-2">
                 <span className="font-semibold text-sm">{currentScene.title}</span>
                 <span className="text-xs text-muted-foreground">({currentSceneIndex + 1}/{scenes.length})</span>
               </div>
-              {isSceneExpanded ? (
-                <ChevronUp className="w-4 h-4" />
-              ) : (
-                <ChevronDown className="w-4 h-4" />
-              )}
-            </button>
+              {isSceneExpanded ? <UpOutlined className="text-xs" /> : <DownOutlined className="text-xs" />}
+            </div>
             
             {isSceneExpanded && (
-              <div className="px-4 pb-4 text-foreground/90">
+              <div className="mt-3 text-foreground/90">
                 <p className="text-xs leading-relaxed mb-2">
                   {currentScene.description}
                 </p>
@@ -224,29 +213,29 @@ const PracticePage = () => {
                 </p>
               </div>
             )}
-          </div>
+          </Card>
         </div>
 
         {/* Hint Overlay - Middle */}
         {showHint && (
           <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 z-30">
-            <div className="bg-card/95 backdrop-blur rounded-xl shadow-xl p-4 border">
+            <Card className="!rounded-xl shadow-xl" styles={{ body: { padding: 16 } }}>
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div className="flex items-center gap-2">
-                  <Lightbulb className="w-5 h-5 text-primary" />
+                  <BulbOutlined className="text-primary" />
                   <span className="font-semibold text-foreground">提示</span>
                 </div>
-                <button 
+                <Button 
+                  type="text"
+                  size="small"
+                  icon={<CloseOutlined />}
                   onClick={closeHint}
-                  className="p-1 hover:bg-muted rounded-full"
-                >
-                  <X className="w-4 h-4 text-muted-foreground" />
-                </button>
+                />
               </div>
               <p className="text-sm text-foreground leading-relaxed">
                 {currentHint}
               </p>
-            </div>
+            </Card>
           </div>
         )}
 
@@ -265,16 +254,16 @@ const PracticePage = () => {
         {/* Recording Indicator */}
         {isRecording && (
           <div className="absolute bottom-32 left-4 right-4 z-20">
-            <div className="bg-card/95 backdrop-blur rounded-lg px-4 py-3 shadow-lg">
+            <Card className="!rounded-lg shadow-lg" styles={{ body: { padding: 12 } }}>
               <div className="flex items-center gap-2 mb-1">
-                <Mic className="w-4 h-4 text-primary animate-pulse" />
+                <AudioOutlined className="text-primary animate-pulse" />
                 <p className="text-xs text-muted-foreground">正在聆听...</p>
               </div>
               <p className="text-sm text-foreground">
                 {transcript || '请开始说话...'}
                 <span className="inline-block w-0.5 h-4 ml-1 bg-primary animate-pulse" />
               </p>
-            </div>
+            </Card>
           </div>
         )}
       </div>
@@ -285,7 +274,7 @@ const PracticePage = () => {
         {!isSpeechSupported && (
           <div className="mb-3 px-2 py-2 bg-destructive/10 rounded-lg">
             <p className="text-xs text-destructive text-center flex items-center justify-center gap-1">
-              <MicOff className="w-3 h-3" />
+              <AudioMutedOutlined />
               您的浏览器不支持语音识别，请使用Chrome或Edge
             </p>
           </div>
@@ -293,18 +282,21 @@ const PracticePage = () => {
 
         <div className="flex items-center justify-between gap-2">
           {/* Hint Button */}
-          <button 
+          <Button 
+            type="text"
+            shape="circle"
+            size="large"
+            icon={<BulbOutlined />}
             onClick={handleHint}
-            className="w-12 h-12 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors flex-shrink-0"
-          >
-            <Lightbulb className="w-5 h-5 text-muted-foreground" />
-          </button>
+            className="!w-12 !h-12 !bg-muted"
+          />
           
           {/* End Button */}
           <Button
-            variant="outline"
+            danger
+            ghost
             onClick={handleEnd}
-            className="h-10 px-4 rounded-full border-destructive text-destructive hover:bg-destructive/5 text-sm"
+            className="!h-10 !px-4 !rounded-full"
           >
             结束
           </Button>

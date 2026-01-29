@@ -1,14 +1,14 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, PlaySquare, User } from 'lucide-react';
+import { HomeOutlined, PlaySquareOutlined, UserOutlined } from '@ant-design/icons';
 import avatarAi from '@/assets/avatar-ai.png';
 
 const TabBar = () => {
   const location = useLocation();
   
   const tabs = [
-    { path: '/', icon: Home, label: '首页' },
-    { path: '/courses', icon: PlaySquare, label: '课程中心' },
-    { path: '/profile', icon: User, label: '我的' },
+    { path: '/', icon: HomeOutlined, label: '首页' },
+    { path: '/courses', icon: PlaySquareOutlined, label: '课程中心' },
+    { path: '/profile', icon: UserOutlined, label: '我的' },
     { path: '/chat', icon: null, label: 'AI助手', isAvatar: true },
   ];
 
@@ -19,6 +19,8 @@ const TabBar = () => {
           const isActive = location.pathname === tab.path || 
             (tab.path === '/courses' && location.pathname.startsWith('/plan')) ||
             (tab.path === '/profile' && (location.pathname.startsWith('/profile') || location.pathname.startsWith('/history')));
+          
+          const Icon = tab.icon;
           
           return (
             <NavLink
@@ -34,8 +36,8 @@ const TabBar = () => {
                 <div className="w-5 h-5 rounded-full overflow-hidden">
                   <img src={avatarAi} alt="AI" className="w-full h-full object-cover" />
                 </div>
-              ) : tab.icon ? (
-                <tab.icon className="w-5 h-5" strokeWidth={1.5} />
+              ) : Icon ? (
+                <Icon style={{ fontSize: 20 }} />
               ) : null}
               <span className="text-xs font-medium">{tab.label}</span>
             </NavLink>

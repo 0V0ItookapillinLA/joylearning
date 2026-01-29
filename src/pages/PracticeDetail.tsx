@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { ChevronLeft, MoreHorizontal, Users } from 'lucide-react';
+import { Button, Card, Typography } from 'antd';
+import { LeftOutlined, MoreOutlined, TeamOutlined } from '@ant-design/icons';
 import avatarInterviewer from '@/assets/avatar-interviewer.png';
+
+const { Text } = Typography;
 
 const PracticeDetail = () => {
   const navigate = useNavigate();
@@ -54,23 +56,19 @@ const PracticeDetail = () => {
       <div className="w-full max-w-md flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 bg-background/80 backdrop-blur sticky top-0 z-10">
-          <button onClick={handleBack} className="p-2 -ml-2">
-            <ChevronLeft className="w-5 h-5 text-foreground" />
-          </button>
+          <Button type="text" icon={<LeftOutlined />} onClick={handleBack} />
           <h1 className="text-base font-semibold text-foreground">陪练详情</h1>
-          <button className="p-2 -mr-2">
-            <MoreHorizontal className="w-5 h-5 text-foreground" />
-          </button>
+          <Button type="text" icon={<MoreOutlined />} />
         </div>
 
         {/* Content */}
         <div className="flex-1 px-4 pb-24 overflow-auto">
           {/* Practice Card */}
-          <div className="bg-card rounded-xl p-4 shadow-sm border mt-2">
+          <Card className="!rounded-xl shadow-sm !mt-2" styles={{ body: { padding: 16 } }}>
             {/* Title */}
             <div className="flex items-center gap-2 mb-4">
-              <Users className="w-5 h-5 text-primary" />
-              <span className="font-semibold text-foreground">零售采销练习 白酒仓储方向</span>
+              <TeamOutlined className="text-primary text-lg" />
+              <Text strong>零售采销练习 白酒仓储方向</Text>
             </div>
 
             {/* Banner Image */}
@@ -84,26 +82,26 @@ const PracticeDetail = () => {
 
             {/* Customer Role */}
             <div className="mb-4">
-              <h3 className="font-semibold text-foreground mb-2">客户角色</h3>
-              <p className="text-sm text-muted-foreground">白酒品牌方/经销商负责人</p>
+              <Text strong className="block mb-2">客户角色</Text>
+              <Text type="secondary">白酒品牌方/经销商负责人</Text>
             </div>
 
             {/* Goal */}
             <div className="mb-4">
-              <h3 className="font-semibold text-foreground mb-2">本次目标</h3>
-              <p className="text-sm text-muted-foreground">
+              <Text strong className="block mb-2">本次目标</Text>
+              <Text type="secondary">
                 推动客户同意进入下一步（例如：预约方案评估/确认需求清单/约见）
-              </p>
+              </Text>
             </div>
 
             {/* Script Goals */}
             <div className="mb-4">
-              <h3 className="font-semibold text-foreground mb-2">剧本目标</h3>
+              <Text strong className="block mb-2">剧本目标</Text>
               <div className="space-y-3">
                 {scenes.map((scene, index) => (
                   <div key={index} className="text-sm">
-                    <p className="text-primary font-medium">{scene.title}</p>
-                    <p className="text-muted-foreground">目标：{scene.goal}</p>
+                    <Text className="text-primary font-medium">{scene.title}</Text>
+                    <Text type="secondary" className="block">目标：{scene.goal}</Text>
                   </div>
                 ))}
               </div>
@@ -111,12 +109,12 @@ const PracticeDetail = () => {
 
             {/* Pain Points */}
             <div className="mb-4">
-              <h3 className="font-semibold text-foreground mb-2">客户当前痛点</h3>
+              <Text strong className="block mb-2">客户当前痛点</Text>
               <ul className="space-y-2">
                 {painPoints.map((point, index) => (
-                  <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <li key={index} className="flex items-start gap-2 text-sm">
                     <span className="text-primary mt-1">•</span>
-                    <span>{point}</span>
+                    <Text type="secondary">{point}</Text>
                   </li>
                 ))}
               </ul>
@@ -124,35 +122,37 @@ const PracticeDetail = () => {
 
             {/* Scoring Criteria */}
             <div>
-              <h3 className="font-semibold text-foreground mb-2">评分标准</h3>
+              <Text strong className="block mb-2">评分标准</Text>
               <div className="space-y-3">
                 {scoringCriteria.map((criteria, index) => (
                   <div key={index} className="text-sm">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="font-medium text-foreground">{criteria.name}</span>
-                      <span className="text-xs text-primary">({criteria.percentage}%)</span>
+                      <Text strong>{criteria.name}</Text>
+                      <Text type="secondary" className="text-xs">({criteria.percentage}%)</Text>
                     </div>
-                    <p className="text-muted-foreground">{criteria.description}</p>
+                    <Text type="secondary">{criteria.description}</Text>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
+          </Card>
         </div>
 
         {/* Bottom Buttons */}
         <div className="fixed bottom-0 left-0 right-0 bg-background border-t p-4 safe-bottom flex justify-center">
           <div className="w-full max-w-md flex gap-3">
             <Button
-              variant="outline"
+              size="large"
               onClick={handleCancel}
-              className="flex-1 h-12 rounded-full text-base"
+              className="flex-1 !h-12 !rounded-full"
             >
               取消
             </Button>
             <Button
+              type="primary"
+              size="large"
               onClick={handleStart}
-              className="flex-1 h-12 rounded-full bg-primary hover:bg-primary/90 text-base"
+              className="flex-1 !h-12 !rounded-full"
             >
               开始练习
             </Button>
