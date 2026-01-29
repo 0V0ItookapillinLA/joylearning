@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Card, Tag, Typography } from 'antd';
 import { MessageOutlined, ExclamationCircleOutlined, BulbOutlined, StarOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
-import { cn } from '@/lib/utils';
 
 const { Text } = Typography;
 
@@ -199,12 +198,7 @@ const ConversationWithFeedback = () => {
                 
                 return (
                   <div 
-                    className={cn(
-                      "border-l-2 pl-3 transition-all duration-200",
-                      style.border,
-                      record.feedback && style.bg,
-                      hasFeedback && "cursor-pointer hover:bg-accent/50 rounded-r-lg -ml-0.5 pl-3.5"
-                    )}
+                    className={`border-l-2 pl-3 transition-all duration-200 ${style.border} ${record.feedback ? style.bg : ''} ${hasFeedback ? 'cursor-pointer hover:bg-accent/50 rounded-r-lg -ml-0.5 pl-3.5' : ''}`}
                     onClick={() => hasFeedback && toggleExpand(globalIndex + 1)}
                   >
                     {/* Message Header */}
@@ -227,10 +221,7 @@ const ConversationWithFeedback = () => {
                     </div>
                     
                     {/* Message Content */}
-                    <Text type="secondary" className={cn(
-                      "text-sm",
-                      !isExpanded && "line-clamp-3"
-                    )}>
+                    <Text type="secondary" className={`text-sm ${!isExpanded ? 'line-clamp-3' : ''}`}>
                       {record.content}
                     </Text>
                     
