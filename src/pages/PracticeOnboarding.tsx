@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, Lightbulb, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Button, Card, Checkbox } from 'antd';
+import { CloseOutlined, BulbOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import avatarInterviewer from '@/assets/avatar-interviewer.png';
 
 const ONBOARDING_DISABLED_KEY = 'practice_onboarding_disabled';
@@ -110,17 +109,19 @@ const PracticeOnboarding = () => {
         
         {/* Back Button */}
         <div className={`absolute top-4 left-4 z-20 ${step.highlight === 'back' ? '' : 'opacity-30'}`}>
-          <button className={`w-10 h-10 rounded-full bg-card backdrop-blur flex items-center justify-center shadow-lg ${getHighlightStyles('back')}`}>
-            <ChevronLeft className="w-5 h-5 text-foreground" />
-          </button>
+          <Button 
+            type="text"
+            shape="circle"
+            icon={<LeftOutlined />}
+            className={`!w-10 !h-10 !bg-card ${getHighlightStyles('back')}`}
+          />
         </div>
 
         <div className="absolute top-4 right-4 z-30">
           <Button
-            variant="ghost"
-            size="sm"
+            type="text"
             onClick={handleSkip}
-            className="text-foreground bg-card/80 backdrop-blur hover:bg-card/90 px-4"
+            className="!bg-card/80 backdrop-blur"
           >
             跳过
           </Button>
@@ -129,17 +130,18 @@ const PracticeOnboarding = () => {
         {/* Tooltip for 'back' step - positioned below back button */}
         {step.highlight === 'back' && (
           <div className="absolute top-16 left-4 z-30 w-[calc(100%-2rem)] max-w-[280px]">
-            <div className="bg-card rounded-xl shadow-xl p-4 border relative">
+            <Card className="!rounded-xl shadow-xl" styles={{ body: { padding: 16 } }}>
               {/* Arrow pointing up */}
               <div className="absolute -top-2 left-6 w-3 h-3 bg-card rotate-45 border-t border-l" />
               
               {/* Close button */}
-              <button 
+              <Button 
+                type="text"
+                size="small"
+                icon={<CloseOutlined />}
                 onClick={handleCloseStep}
-                className="absolute top-3 right-3 p-1 hover:bg-muted rounded-full"
-              >
-                <X className="w-4 h-4 text-muted-foreground" />
-              </button>
+                className="absolute top-2 right-2"
+              />
 
               {/* Content */}
               <div className="pr-6 mb-3">
@@ -163,24 +165,22 @@ const PracticeOnboarding = () => {
               <div className="flex items-center gap-2">
                 {!isFirstStep && (
                   <Button
-                    variant="outline"
-                    size="sm"
                     onClick={handlePrev}
-                    className="flex-1 h-9"
+                    className="flex-1"
+                    icon={<LeftOutlined />}
                   >
-                    <ChevronLeft className="w-4 h-4 mr-1" />
                     上一步
                   </Button>
                 )}
                 <Button
-                  size="sm"
+                  type="primary"
                   onClick={handleComplete}
-                  className="flex-1 h-9"
+                  className="flex-1"
                 >
                   完成
                 </Button>
               </div>
-            </div>
+            </Card>
           </div>
         )}
       </div>
@@ -190,7 +190,7 @@ const PracticeOnboarding = () => {
         {/* Tooltip for bottom controls - positioned above buttons */}
         {step.highlight !== 'back' && (
           <div className="absolute bottom-full left-4 right-4 mb-3 z-30 flex justify-center">
-            <div className="bg-card rounded-xl shadow-xl p-4 border relative w-full max-w-[300px]">
+            <Card className="!rounded-xl shadow-xl w-full max-w-[300px]" styles={{ body: { padding: 16 } }}>
               {/* Arrow pointing down */}
               <div 
                 className={`absolute -bottom-2 w-3 h-3 bg-card rotate-45 border-b border-r ${
@@ -201,12 +201,13 @@ const PracticeOnboarding = () => {
               />
               
               {/* Close button */}
-              <button 
+              <Button 
+                type="text"
+                size="small"
+                icon={<CloseOutlined />}
                 onClick={handleCloseStep}
-                className="absolute top-3 right-3 p-1 hover:bg-muted rounded-full"
-              >
-                <X className="w-4 h-4 text-muted-foreground" />
-              </button>
+                className="absolute top-2 right-2"
+              />
 
               {/* Content */}
               <div className="pr-6 mb-3">
@@ -230,52 +231,55 @@ const PracticeOnboarding = () => {
               <div className="flex items-center gap-2">
                 {!isFirstStep && (
                   <Button
-                    variant="outline"
-                    size="sm"
                     onClick={handlePrev}
-                    className="flex-1 h-9"
+                    className="flex-1"
+                    icon={<LeftOutlined />}
                   >
-                    <ChevronLeft className="w-4 h-4 mr-1" />
                     上一步
                   </Button>
                 )}
                 
                 {isLastStep ? (
                   <Button
-                    size="sm"
+                    type="primary"
                     onClick={handleComplete}
-                    className="flex-1 h-9"
+                    className="flex-1"
                   >
                     完成
                   </Button>
                 ) : (
                   <Button
-                    size="sm"
+                    type="primary"
                     onClick={handleNext}
-                    className="flex-1 h-9"
+                    className="flex-1"
                   >
                     下一步
-                    <ChevronRight className="w-4 h-4 ml-1" />
+                    <RightOutlined />
                   </Button>
                 )}
               </div>
-            </div>
+            </Card>
           </div>
         )}
 
         <div className="flex items-center justify-center gap-3">
           {/* Hint Button */}
           <div className={step.highlight === 'hint' ? '' : 'opacity-30'}>
-            <button className={`w-12 h-12 rounded-full bg-muted flex items-center justify-center ${getHighlightStyles('hint')}`}>
-              <Lightbulb className="w-5 h-5 text-muted-foreground" />
-            </button>
+            <Button 
+              type="text"
+              shape="circle"
+              size="large"
+              icon={<BulbOutlined />}
+              className={`!w-12 !h-12 !bg-muted ${getHighlightStyles('hint')}`}
+            />
           </div>
           
           {/* End Button */}
           <div className={step.highlight === 'end' ? '' : 'opacity-30'}>
             <Button
-              variant="outline"
-              className={`h-12 px-6 rounded-full border-destructive text-destructive hover:bg-destructive/5 ${getHighlightStyles('end')}`}
+              danger
+              ghost
+              className={`!h-12 !px-6 !rounded-full ${getHighlightStyles('end')}`}
             >
               结束
             </Button>
@@ -284,7 +288,8 @@ const PracticeOnboarding = () => {
           {/* Talk Button */}
           <div className={step.highlight === 'talk' ? '' : 'opacity-30'}>
             <Button
-              className={`h-12 px-8 rounded-full bg-primary hover:bg-primary/90 ${getHighlightStyles('talk')}`}
+              type="primary"
+              className={`!h-12 !px-8 !rounded-full ${getHighlightStyles('talk')}`}
             >
               点击说话
             </Button>
@@ -293,14 +298,12 @@ const PracticeOnboarding = () => {
 
         {/* Don't show again checkbox */}
         <div className="flex justify-center mt-4">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <Checkbox 
-              checked={dontShowAgain} 
-              onCheckedChange={(checked) => setDontShowAgain(checked === true)}
-              className="border-muted-foreground data-[state=checked]:bg-primary"
-            />
+          <Checkbox 
+            checked={dontShowAgain} 
+            onChange={(e) => setDontShowAgain(e.target.checked)}
+          >
             <span className="text-sm text-muted-foreground">不再显示新手引导</span>
-          </label>
+          </Checkbox>
         </div>
       </div>
       </div>

@@ -1,8 +1,9 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PlayCircle, FileText, Clock, RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Card, Button, Tag, Typography } from 'antd';
+import { PlayCircleOutlined, FileTextOutlined, ClockCircleOutlined, ReloadOutlined } from '@ant-design/icons';
+
+const { Text } = Typography;
 
 interface Course {
   id: string;
@@ -58,20 +59,19 @@ const RecommendedCourses = () => {
   };
 
   return (
-    <div className="bg-card rounded-xl p-4 shadow-card">
+    <Card className="!rounded-xl shadow-card" styles={{ body: { padding: 16 } }}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <PlayCircle className="w-5 h-5 text-destructive" />
-          <h3 className="font-medium text-foreground">推荐课程</h3>
+          <PlayCircleOutlined className="text-destructive text-lg" />
+          <Text strong>推荐课程</Text>
         </div>
-        <button
+        <Button
+          type="text"
+          icon={<ReloadOutlined spin={isRefreshing} />}
           onClick={handleRefresh}
           disabled={isRefreshing}
-          className="p-2 hover:bg-muted rounded-full transition-colors disabled:opacity-50"
-        >
-          <RefreshCw className={`w-4 h-4 text-muted-foreground ${isRefreshing ? 'animate-spin' : ''}`} />
-        </button>
+        />
       </div>
 
       {/* Course List */}
@@ -86,44 +86,43 @@ const RecommendedCourses = () => {
               <div className="flex-shrink-0 mt-0.5">
                 {course.type === 'video' ? (
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                    <PlayCircle className="w-5 h-5 text-primary" />
+                    <PlayCircleOutlined className="text-primary" />
                   </div>
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center">
-                    <FileText className="w-5 h-5 text-accent-foreground" />
+                    <FileTextOutlined className="text-accent-foreground" />
                   </div>
                 )}
               </div>
 
               {/* Content */}
               <div className="flex-1 min-w-0">
-                <h4 className="font-medium text-foreground text-sm truncate">{course.title}</h4>
-                <div className="flex items-center gap-2 mt-1.5">
-                  <Badge variant="secondary" className="text-xs px-2 py-0 h-5 bg-accent text-accent-foreground hover:bg-accent">
+                <Text strong className="text-sm truncate block">{course.title}</Text>
+                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                  <Tag color="default" className="!m-0 !text-xs">
                     {course.category}
-                  </Badge>
-                  <span className="text-xs text-muted-foreground">{course.duration}</span>
-                  <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
+                  </Tag>
+                  <Text type="secondary" className="text-xs">{course.duration}</Text>
+                  <Text type="secondary" className="text-xs flex items-center gap-1">
+                    <ClockCircleOutlined className="text-xs" />
                     {getStatusText(course.status)}
-                  </span>
+                  </Text>
                 </div>
               </div>
             </div>
 
             {/* Action Button */}
             <Button
-              variant="outline"
-              size="sm"
+              size="small"
               onClick={() => handleStartLearning(course)}
-              className="flex-shrink-0 ml-3 rounded-lg"
+              className="flex-shrink-0 ml-3 !rounded-lg"
             >
               开始学习
             </Button>
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 };
 

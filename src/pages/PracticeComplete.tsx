@@ -1,24 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle2, Star, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '@/components/ui/drawer';
+import { Button, Modal, Rate, Input } from 'antd';
+import { CheckCircleOutlined, CloseOutlined } from '@ant-design/icons';
+
+const { TextArea } = Input;
 
 const PracticeComplete = () => {
   const navigate = useNavigate();
   const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
   const [feedback, setFeedback] = useState('');
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const getRatingText = (score: number) => {
     if (score === 0) return '';
@@ -32,7 +23,7 @@ const PracticeComplete = () => {
   const handleSubmitFeedback = () => {
     // TODO: Submit feedback to backend
     console.log('Submitted:', { rating, feedback });
-    setDrawerOpen(false);
+    setModalOpen(false);
   };
 
   const handleViewReport = () => {
@@ -44,11 +35,13 @@ const PracticeComplete = () => {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b max-w-md mx-auto w-full">
-        <button onClick={() => navigate('/profile')} className="p-1">
-          <X className="w-5 h-5" />
-        </button>
+        <Button 
+          type="text" 
+          icon={<CloseOutlined />} 
+          onClick={() => navigate('/profile')}
+        />
         <h1 className="text-base font-medium">京东物流AI陪练</h1>
-        <div className="w-6" />
+        <div className="w-8" />
       </header>
 
       {/* Content */}
@@ -56,7 +49,7 @@ const PracticeComplete = () => {
         <div className="flex flex-col items-center text-center space-y-4">
           {/* Success Icon */}
           <div className="w-20 h-20 rounded-full bg-[hsl(var(--status-complete))] flex items-center justify-center">
-            <CheckCircle2 className="w-12 h-12 text-primary-foreground" strokeWidth={2.5} />
+            <CheckCircleOutlined className="text-4xl text-primary-foreground" />
           </div>
 
           {/* Title */}
@@ -74,91 +67,80 @@ const PracticeComplete = () => {
 
         {/* Buttons */}
         <div className="flex gap-4 mt-12 w-full">
-          <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-            <DrawerTrigger asChild>
-              <Button
-                variant="outline"
-                className="flex-1 h-11 border-primary text-primary hover:bg-primary/5"
-              >
-                评价反馈
-              </Button>
-            </DrawerTrigger>
-            <DrawerContent className="max-w-md mx-auto">
-              <DrawerHeader className="text-center pb-2">
-                <DrawerTitle className="text-lg">打分评价</DrawerTitle>
-              </DrawerHeader>
-
-              <div className="px-6 pb-4">
-                {/* Greeting */}
-                <div className="mb-6">
-                  <h3 className="text-2xl font-bold mb-1">Hello</h3>
-                  <p className="text-sm text-muted-foreground">
-                    请为本次面试体验打分吧~
-                  </p>
-                </div>
-
-                {/* Star Rating */}
-                <div className="flex flex-col items-center mb-6">
-                  <div className="flex gap-2 mb-2">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        onClick={() => setRating(star)}
-                        onMouseEnter={() => setHoverRating(star)}
-                        onMouseLeave={() => setHoverRating(0)}
-                        className="p-1 transition-transform hover:scale-110"
-                      >
-                        <Star
-                          className={`w-8 h-8 ${
-                            star <= (hoverRating || rating)
-                              ? 'fill-yellow-400 text-yellow-400'
-                              : 'text-gray-300'
-                          }`}
-                        />
-                      </button>
-                    ))}
-                  </div>
-                  <span className="text-sm text-muted-foreground">
-                    {getRatingText(hoverRating || rating)}
-                  </span>
-                </div>
-
-                {/* Feedback Input */}
-                <div className="space-y-2">
-                  <h4 className="text-sm font-medium">我要反馈</h4>
-                  <div className="relative">
-                    <Textarea
-                      placeholder="告诉我们您的其他想法？（选填）"
-                      value={feedback}
-                      onChange={(e) => setFeedback(e.target.value.slice(0, 200))}
-                      className="min-h-[100px] resize-none"
-                    />
-                    <span className="absolute bottom-2 right-3 text-xs text-muted-foreground">
-                      {feedback.length}/200
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <DrawerFooter className="pt-2">
-                <Button
-                  onClick={handleSubmitFeedback}
-                  className="w-full h-12 bg-[#E53935] hover:bg-[#D32F2F] text-white"
-                >
-                  提交
-                </Button>
-              </DrawerFooter>
-            </DrawerContent>
-          </Drawer>
+          <Button
+            size="large"
+            onClick={() => setModalOpen(true)}
+            className="flex-1 !h-11 !border-primary !text-primary"
+          >
+            评价反馈
+          </Button>
 
           <Button
+            type="primary"
+            size="large"
             onClick={handleViewReport}
-            className="flex-1 h-11 bg-primary hover:bg-primary/90"
+            className="flex-1 !h-11"
           >
             查看报告
           </Button>
         </div>
       </main>
+
+      {/* Feedback Modal */}
+      <Modal
+        open={modalOpen}
+        onCancel={() => setModalOpen(false)}
+        footer={null}
+        title="打分评价"
+        centered
+      >
+        <div className="py-4">
+          {/* Greeting */}
+          <div className="mb-6">
+            <h3 className="text-2xl font-bold mb-1">Hello</h3>
+            <p className="text-sm text-muted-foreground">
+              请为本次面试体验打分吧~
+            </p>
+          </div>
+
+          {/* Star Rating */}
+          <div className="flex flex-col items-center mb-6">
+            <Rate 
+              value={rating} 
+              onChange={setRating}
+              className="text-3xl"
+            />
+            <span className="text-sm text-muted-foreground mt-2">
+              {getRatingText(rating)}
+            </span>
+          </div>
+
+          {/* Feedback Input */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-medium">我要反馈</h4>
+            <div className="relative">
+              <TextArea
+                placeholder="告诉我们您的其他想法？（选填）"
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value.slice(0, 200))}
+                rows={4}
+                showCount
+                maxLength={200}
+              />
+            </div>
+          </div>
+
+          <Button
+            type="primary"
+            danger
+            size="large"
+            onClick={handleSubmitFeedback}
+            className="w-full !h-12 mt-6"
+          >
+            提交
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 };
