@@ -268,7 +268,16 @@ const Home = () => {
                           loop
                           muted
                           playsInline
-                          preload="metadata"
+                          preload="auto"
+                          onCanPlay={() => {
+                            // 视频可播放时，如果是当前页面则尝试播放
+                            const video = videoRefs.current[index];
+                            if (video && index === currentIndex && video.paused) {
+                              video.play().catch(() => {
+                                setPausedVideos((prev) => new Set(prev).add(index));
+                              });
+                            }
+                          }}
                           onPlay={() => {
                             setPausedVideos((prev) => {
                               const next = new Set(prev);
