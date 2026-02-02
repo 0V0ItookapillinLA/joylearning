@@ -83,23 +83,43 @@ const Home = () => {
   const touchStartY = useRef(0);
   const touchEndY = useRef(0);
 
-  // 控制视频播放
+  // 控制视频播放 - 增强版自动播放逻辑
   useEffect(() => {
+    const attemptPlay = async (video: HTMLVideoElement, index: number) => {
+      try {
+        // 确保视频静音（浏览器自动播放策略要求）
+        video.muted = true;
+        await video.play();
+        // 播放成功，移除暂停状态
+        setPausedVideos((prev) => {
+          const next = new Set(prev);
+          next.delete(index);
+          return next;
+        });
+      } catch {
+        // 自动播放被阻止：显示点击播放覆盖层
+        setPausedVideos((prev) => {
+          const next = new Set(prev);
+          next.add(index);
+          return next;
+        });
+      }
+    };
+
     videoRefs.current.forEach((video, index) => {
       if (video) {
         if (index === currentIndex) {
-          // iOS/部分 WebView 对自动播放更严格：确保 muted 后再尝试 play
-          video.muted = true;
-          const playPromise = video.play();
-          if (playPromise && typeof playPromise.catch === 'function') {
-            playPromise.catch(() => {
-              // 自动播放被阻止：显示点击播放覆盖层
-              setPausedVideos((prev) => {
-                const next = new Set(prev);
-                next.add(index);
-                return next;
-              });
-            });
+          // 如果视频已经有足够数据，直接尝试播放
+          if (video.readyState >= 3) {
+            attemptPlay(video, index);
+          } else {
+            // 等待视频加载后再播放
+            video.muted = true;
+            const handleCanPlay = () => {
+              attemptPlay(video, index);
+              video.removeEventListener('canplay', handleCanPlay);
+            };
+            video.addEventListener('canplay', handleCanPlay);
           }
         } else {
           video.pause();
