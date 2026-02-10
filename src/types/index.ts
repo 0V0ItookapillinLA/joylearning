@@ -27,6 +27,17 @@ export interface LearningItem {
   status: ItemStatus;
 }
 
+export type PracticeMode = 'free' | 'scripted';
+
+export interface ActResult {
+  actNumber: number;
+  title: string;
+  scene: string;
+  score: number;
+  evaluation: string;
+  suggestion: string;
+}
+
 export interface HistoryRecord {
   id: string;
   title: string;
@@ -35,6 +46,8 @@ export interface HistoryRecord {
   date: string;
   score?: number;
   planName?: string;
+  mode: PracticeMode;
+  acts?: ActResult[];
 }
 
 export interface AbilityScore {

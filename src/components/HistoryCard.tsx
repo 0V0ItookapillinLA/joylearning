@@ -42,6 +42,9 @@ const HistoryCard = ({ record }: HistoryCardProps) => {
               <Tag color={config.color} className="!m-0 !text-xs">
                 {config.label}
               </Tag>
+              <Tag color={record.mode === 'scripted' ? 'orange' : 'cyan'} className="!m-0 !text-xs">
+                {record.mode === 'scripted' ? '固定剧本' : '自由对话'}
+              </Tag>
               <span>{record.duration}</span>
               <span>|</span>
               <span>{record.date}</span>
