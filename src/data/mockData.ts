@@ -42,11 +42,18 @@ export const learningItems: LearningItem[] = [
 ];
 
 export const historyRecords: HistoryRecord[] = [
-  { id: '1', title: '新人零售采销知识培训课', type: 'exam', duration: '36:00min', date: '2025-09-11 12:00', score: 82.7, planName: '新人应知应会' },
-  { id: '2', title: '新人零售采销知识培训课', type: 'exam', duration: '36:00min', date: '2025-09-11 12:00', score: 78.5, planName: '新人应知应会' },
-  { id: '3', title: '新人零售采销知识培训课', type: 'exam', duration: '36:00min', date: '2025-09-11 12:00', score: 91.2, planName: '全量零售采销AI陪练' },
-  { id: '4', title: '新人零售采销知识培训课', type: 'practice', duration: '36:00min', date: '2025-09-11 12:00', score: 85.0, planName: '全量零售采销AI陪练' },
-  { id: '5', title: '新人零售采销知识培训课', type: 'practice', duration: '36:00min', date: '2025-09-11 12:00', score: 88.3, planName: '新人应知应会' },
+  { id: '1', title: '新人零售采销知识培训课', type: 'exam', duration: '36:00min', date: '2025-09-11 12:00', score: 82.7, planName: '新人应知应会', mode: 'free' },
+  { id: '2', title: '多场景零售采销话术AI陪练', type: 'exam', duration: '36:00min', date: '2025-09-11 12:00', score: 78.5, planName: '新人应知应会', mode: 'scripted', acts: [
+    { actNumber: 1, title: '初次接触与需求挖掘', scene: '你是一名采销专员，客户张经理是某连锁超市的采购负责人，首次拜访需要了解其核心需求。', score: 85.2, evaluation: '在需求挖掘阶段表现较好，能够通过开放性问题引导客户表达需求，但在追问细节时不够深入。', suggestion: '建议使用SPIN提问法，先了解客户现状，再挖掘痛点，最后引导需求。' },
+    { actNumber: 2, title: '方案呈现与异议处理', scene: '基于第一幕了解的需求，向张经理呈现解决方案，并处理其对价格和服务的疑虑。', score: 72.8, evaluation: '方案呈现逻辑清晰，但在面对价格异议时应对不够灵活，过早进入价格谈判环节。', suggestion: '面对价格异议时，应先强调价值差异化，用数据和案例证明ROI，避免直接降价。' },
+    { actNumber: 3, title: '促成成交与关系维护', scene: '张经理对方案基本认可，需要推动签约并建立长期合作关系。', score: 77.5, evaluation: '成交推动节奏较好，但在关系维护方面缺少具体的后续跟进计划。', suggestion: '签约后应主动提出30天回访计划和季度复盘机制，增强客户信任感。' },
+  ]},
+  { id: '3', title: '新人零售采销知识培训课', type: 'exam', duration: '36:00min', date: '2025-09-11 12:00', score: 91.2, planName: '全量零售采销AI陪练', mode: 'free' },
+  { id: '4', title: '客户谈判实战演练', type: 'practice', duration: '36:00min', date: '2025-09-11 12:00', score: 85.0, planName: '全量零售采销AI陪练', mode: 'scripted', acts: [
+    { actNumber: 1, title: '破冰与信息收集', scene: '首次电话联系潜在客户李总，了解其公司的采购流程和当前供应商情况。', score: 88.0, evaluation: '破冰环节表现自然，能够快速建立信任感，信息收集全面。', suggestion: '可以在收集信息时适当做笔记确认，让客户感受到被重视。' },
+    { actNumber: 2, title: '竞品分析与差异化', scene: '客户提到目前已有合作供应商，需要展示我方产品的差异化优势。', score: 82.0, evaluation: '竞品分析到位，但差异化表达不够有冲击力，数据支撑不足。', suggestion: '准备3个以上的成功案例和具体数据，用对比表格直观展示差异。' },
+  ]},
+  { id: '5', title: '新人零售采销知识培训课', type: 'practice', duration: '36:00min', date: '2025-09-11 12:00', score: 88.3, planName: '新人应知应会', mode: 'free' },
 ];
 
 export const abilityScores: AbilityScore[] = [
