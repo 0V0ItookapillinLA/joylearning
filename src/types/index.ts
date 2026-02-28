@@ -56,6 +56,26 @@ export interface AbilityScore {
   maxScore: number;
 }
 
+export type FeedbackType = 'error' | 'improvement' | 'good' | null;
+
+export interface ConversationFeedback {
+  type: FeedbackType;
+  issue?: string;
+  suggestion?: string;
+}
+
+export interface ConversationMessage {
+  role: 'AI' | 'user';
+  content: string;
+  feedback?: ConversationFeedback;
+}
+
+export interface ActConversation {
+  actNumber: number;
+  title: string;
+  messages: ConversationMessage[];
+}
+
 export interface Message {
   id: string;
   role: 'user' | 'assistant';

@@ -1,142 +1,142 @@
 import { useState } from 'react';
 import { Card, Tag, Typography } from 'antd';
-import { MessageOutlined, ExclamationCircleOutlined, BulbOutlined, StarOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
+import { MessageOutlined, ExclamationCircleOutlined, BulbOutlined, StarOutlined, UpOutlined, DownOutlined, NumberOutlined } from '@ant-design/icons';
+import { ConversationMessage, ActConversation, FeedbackType } from '@/types';
+import { freeConversation, scriptedConversation } from '@/data/mockData';
 
 const { Text } = Typography;
 
-type FeedbackType = 'error' | 'improvement' | 'good' | null;
+const getFeedbackStyle = (type: FeedbackType) => {
+  switch (type) {
+    case 'error':
+      return { border: 'border-l-destructive', bg: 'bg-destructive/5', tagColor: 'error' as const, icon: <ExclamationCircleOutlined />, label: '需要改进' };
+    case 'improvement':
+      return { border: 'border-l-[hsl(var(--status-pending))]', bg: 'bg-[hsl(var(--status-pending))]/5', tagColor: 'warning' as const, icon: <BulbOutlined />, label: '可以优化' };
+    case 'good':
+      return { border: 'border-l-[hsl(var(--status-complete))]', bg: 'bg-[hsl(var(--status-complete))]/5', tagColor: 'success' as const, icon: <StarOutlined />, label: '表现良好' };
+    default:
+      return { border: 'border-l-primary/30', bg: '', tagColor: 'default' as const, icon: null, label: '' };
+  }
+};
 
-interface ConversationMessage {
-  role: 'AI' | 'user';
-  content: string;
-  feedback?: {
-    type: FeedbackType;
-    issue?: string;
-    suggestion?: string;
+/** Single round: AI message + user response with expandable feedback */
+const ConversationRound = ({
+  ai,
+  user,
+  globalKey,
+  expandedKey,
+  onToggle,
+}: {
+  ai: ConversationMessage | null;
+  user: ConversationMessage | null;
+  globalKey: string;
+  expandedKey: string | null;
+  onToggle: (key: string) => void;
+}) => {
+  if (!user) return null;
+  const style = getFeedbackStyle(user.feedback?.type || null);
+  const isExpanded = expandedKey === globalKey;
+  const hasFeedback = user.feedback && user.feedback.type !== 'good' && (user.feedback.issue || user.feedback.suggestion);
+
+  return (
+    <div className="space-y-2">
+      {ai && (
+        <div className="border-l-2 border-l-primary/30 pl-3">
+          <div className="flex items-center gap-2 mb-1">
+            <Text type="secondary" className="text-xs font-medium">AI</Text>
+          </div>
+          <Text type="secondary" className="text-sm line-clamp-3">{ai.content}</Text>
+        </div>
+      )}
+      <div
+        className={`border-l-2 pl-3 transition-all duration-200 ${style.border} ${user.feedback ? style.bg : ''} ${hasFeedback ? 'cursor-pointer hover:bg-accent/50 rounded-r-lg -ml-0.5 pl-3.5' : ''}`}
+        onClick={() => hasFeedback && onToggle(globalKey)}
+      >
+        <div className="flex items-center gap-2 mb-1">
+          <Text className="text-xs font-medium text-primary">我</Text>
+          {user.feedback?.type && (
+            <Tag color={style.tagColor} icon={style.icon} className="!m-0 !text-xs">{style.label}</Tag>
+          )}
+          {hasFeedback && (
+            <span className="ml-auto">
+              {isExpanded ? <UpOutlined className="text-muted-foreground text-xs" /> : <DownOutlined className="text-muted-foreground text-xs" />}
+            </span>
+          )}
+        </div>
+        <Text type="secondary" className={`text-sm ${!isExpanded ? 'line-clamp-3' : ''}`}>{user.content}</Text>
+        {isExpanded && hasFeedback && (
+          <div className="mt-3 space-y-2 animate-fade-in">
+            {user.feedback?.issue && (
+              <div className="bg-background/60 rounded-lg p-3 border border-border/50">
+                <p className="text-xs font-medium text-destructive flex items-center gap-1 mb-1"><ExclamationCircleOutlined />问题分析</p>
+                <Text className="text-sm">{user.feedback.issue}</Text>
+              </div>
+            )}
+            {user.feedback?.suggestion && (
+              <div className="bg-background/60 rounded-lg p-3 border border-primary/20">
+                <p className="text-xs font-medium text-primary flex items-center gap-1 mb-1"><BulbOutlined />改进建议</p>
+                <Text className="text-sm">{user.feedback.suggestion}</Text>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+/** Build rounds from flat message array */
+const buildRounds = (messages: ConversationMessage[]) => {
+  const rounds: { ai: ConversationMessage | null; user: ConversationMessage | null }[] = [];
+  for (let i = 0; i < messages.length; i += 2) {
+    const ai = messages[i]?.role === 'AI' ? messages[i] : null;
+    const user = messages[i + 1]?.role === 'user' ? messages[i + 1] : null;
+    rounds.push({ ai, user });
+  }
+  return rounds;
+};
+
+/** Count feedback types across messages */
+const countFeedback = (messages: ConversationMessage[]) => {
+  const userMsgs = messages.filter(m => m.role === 'user');
+  return {
+    error: userMsgs.filter(m => m.feedback?.type === 'error').length,
+    improvement: userMsgs.filter(m => m.feedback?.type === 'improvement').length,
+    good: userMsgs.filter(m => m.feedback?.type === 'good').length,
   };
+};
+
+interface Props {
+  mode?: 'free' | 'scripted';
 }
 
-// Enhanced mock data with feedback
-const conversationWithFeedback: ConversationMessage[] = [
-  { 
-    role: 'AI', 
-    content: '您好，我是来自XX公司的采销专员小王。请问您最近有考虑过扩大供货渠道吗？' 
-  },
-  { 
-    role: 'user', 
-    content: '我们公司目前用的系统还行吧，暂时没有换的打算。',
-    feedback: {
-      type: 'improvement',
-      issue: '回应过于消极，缺乏探索性问题',
-      suggestion: '建议反问："您说的还行是指哪些方面呢？如果在效率或成本方面有提升空间，您会感兴趣了解吗？"'
-    }
-  },
-  { 
-    role: 'AI', 
-    content: '理解您的想法。不过我想了解一下，您目前的系统在处理大批量数据时，响应速度怎么样？' 
-  },
-  { 
-    role: 'user', 
-    content: '这个我不太清楚，反正我们用着没什么问题。',
-    feedback: {
-      type: 'error',
-      issue: '回避问题，没有提供有价值的信息交换',
-      suggestion: '即使不了解技术细节，也应该表现出专业态度："这个我需要确认一下，不过我可以安排技术同事详细测试并提供报告给您。"'
-    }
-  },
-  { 
-    role: 'AI', 
-    content: '好的，那您方便告诉我，贵公司目前团队规模大概有多少人在使用这个系统呢？' 
-  },
-  { 
-    role: 'user', 
-    content: '大概有50多人吧，但这个跟你们的产品有什么关系呢？',
-    feedback: {
-      type: 'good',
-    }
-  },
-  { 
-    role: 'AI', 
-    content: '非常感谢您的信息。50人规模的团队，如果能提升10%的工作效率，一年能节省不少成本呢。' 
-  },
-  { 
-    role: 'user', 
-    content: '你们的产品价格是多少？我先看看再说。',
-    feedback: {
-      type: 'improvement',
-      issue: '直接询问价格显得过于急躁',
-      suggestion: '建议先了解更多价值信息："在讨论价格之前，我想先了解一下贵公司具体的需求点，这样才能给您推荐最合适的方案。"'
-    }
-  },
-];
-
-const ConversationWithFeedback = () => {
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+const ConversationWithFeedback = ({ mode = 'free' }: Props) => {
+  const [expandedKey, setExpandedKey] = useState<string | null>(null);
   const [filterType, setFilterType] = useState<FeedbackType>(null);
 
-  const toggleExpand = (index: number) => {
-    setExpandedIndex(expandedIndex === index ? null : index);
-  };
+  const toggleExpand = (key: string) => setExpandedKey(expandedKey === key ? null : key);
+  const toggleFilter = (type: FeedbackType) => { setFilterType(filterType === type ? null : type); setExpandedKey(null); };
 
-  const toggleFilter = (type: FeedbackType) => {
-    setFilterType(filterType === type ? null : type);
-    setExpandedIndex(null); // Reset expanded state when filter changes
-  };
+  // Gather all messages for counting
+  const allMessages = mode === 'scripted'
+    ? scriptedConversation.flatMap(a => a.messages)
+    : freeConversation;
+  const counts = countFeedback(allMessages);
 
-  const getFeedbackStyle = (type: FeedbackType) => {
-    switch (type) {
-      case 'error':
-        return {
-          border: 'border-l-destructive',
-          bg: 'bg-destructive/5',
-          tagColor: 'error' as const,
-          icon: <ExclamationCircleOutlined />,
-          label: '需要改进'
-        };
-      case 'improvement':
-        return {
-          border: 'border-l-[hsl(var(--status-pending))]',
-          bg: 'bg-[hsl(var(--status-pending))]/5',
-          tagColor: 'warning' as const,
-          icon: <BulbOutlined />,
-          label: '可以优化'
-        };
-      case 'good':
-        return {
-          border: 'border-l-[hsl(var(--status-complete))]',
-          bg: 'bg-[hsl(var(--status-complete))]/5',
-          tagColor: 'success' as const,
-          icon: <StarOutlined />,
-          label: '表现良好'
-        };
-      default:
-        return {
-          border: 'border-l-primary/30',
-          bg: '',
-          tagColor: 'default' as const,
-          icon: null,
-          label: ''
-        };
-    }
-  };
+  // Free mode: flat rounds
+  const freeRounds = mode === 'free' ? buildRounds(freeConversation) : [];
+  const filteredFreeRounds = filterType
+    ? freeRounds.filter(r => r.user?.feedback?.type === filterType)
+    : freeRounds;
 
-  const userMessages = conversationWithFeedback.filter(m => m.role === 'user');
-  const errorCount = userMessages.filter(m => m.feedback?.type === 'error').length;
-  const improvementCount = userMessages.filter(m => m.feedback?.type === 'improvement').length;
-  const goodCount = userMessages.filter(m => m.feedback?.type === 'good').length;
-
-  // Group conversations into rounds (AI message + user response)
-  const conversationRounds: { ai: ConversationMessage | null; user: ConversationMessage | null; roundIndex: number }[] = [];
-  for (let i = 0; i < conversationWithFeedback.length; i += 2) {
-    const ai = conversationWithFeedback[i]?.role === 'AI' ? conversationWithFeedback[i] : null;
-    const user = conversationWithFeedback[i + 1]?.role === 'user' ? conversationWithFeedback[i + 1] : null;
-    conversationRounds.push({ ai, user, roundIndex: Math.floor(i / 2) });
-  }
-
-  // Filter rounds based on selected filter type
-  const filteredRounds = filterType
-    ? conversationRounds.filter(round => round.user?.feedback?.type === filterType)
-    : conversationRounds;
+  // Scripted mode: rounds per act, with filter
+  const filteredActs = mode === 'scripted'
+    ? scriptedConversation.map(act => {
+        const rounds = buildRounds(act.messages);
+        const filtered = filterType ? rounds.filter(r => r.user?.feedback?.type === filterType) : rounds;
+        return { ...act, rounds: filtered };
+      }).filter(act => act.rounds.length > 0)
+    : [];
 
   return (
     <Card className="!rounded-xl shadow-card" styles={{ body: { padding: 16 } }}>
@@ -144,118 +144,63 @@ const ConversationWithFeedback = () => {
         <MessageOutlined className="text-primary" />
         <Text strong>会话记录分析</Text>
       </div>
-      
+
       {/* Summary Stats - Clickable Filters */}
       <div className="flex gap-2 mb-4 flex-wrap">
-        <Tag
-          color={filterType === 'error' ? 'error' : undefined}
-          onClick={() => toggleFilter('error')}
-          className="cursor-pointer"
-        >
-          {errorCount} 处错误
+        <Tag color={filterType === 'error' ? 'error' : undefined} onClick={() => toggleFilter('error')} className="cursor-pointer">
+          {counts.error} 处错误
         </Tag>
-        <Tag
-          color={filterType === 'improvement' ? 'warning' : undefined}
-          onClick={() => toggleFilter('improvement')}
-          className="cursor-pointer"
-        >
-          {improvementCount} 处可优化
+        <Tag color={filterType === 'improvement' ? 'warning' : undefined} onClick={() => toggleFilter('improvement')} className="cursor-pointer">
+          {counts.improvement} 处可优化
         </Tag>
-        <Tag
-          color={filterType === 'good' ? 'success' : undefined}
-          onClick={() => toggleFilter('good')}
-          className="cursor-pointer"
-        >
-          {goodCount} 处表现良好
+        <Tag color={filterType === 'good' ? 'success' : undefined} onClick={() => toggleFilter('good')} className="cursor-pointer">
+          {counts.good} 处表现良好
         </Tag>
       </div>
 
-      {/* Conversation List - By Rounds */}
-      <div className="space-y-4">
-        {filteredRounds.map((round, roundIdx) => {
-          const globalIndex = round.roundIndex * 2;
-          
-          return (
-            <div key={roundIdx} className="space-y-2">
-              {/* AI Message */}
-              {round.ai && (
-                <div className="border-l-2 border-l-primary/30 pl-3">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Text type="secondary" className="text-xs font-medium">AI</Text>
-                  </div>
-                  <Text type="secondary" className="text-sm line-clamp-3">
-                    {round.ai.content}
-                  </Text>
+      {mode === 'free' ? (
+        /* Free mode: flat list */
+        <div className="space-y-4">
+          {filteredFreeRounds.map((round, idx) => (
+            <ConversationRound
+              key={idx}
+              ai={round.ai}
+              user={round.user}
+              globalKey={`free-${idx}`}
+              expandedKey={expandedKey}
+              onToggle={toggleExpand}
+            />
+          ))}
+        </div>
+      ) : (
+        /* Scripted mode: grouped by act */
+        <div className="space-y-5">
+          {filteredActs.map(act => (
+            <div key={act.actNumber} className="relative">
+              {/* Act header */}
+              <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center justify-center w-6 h-6 rounded-md bg-primary/10">
+                  <NumberOutlined className="text-primary text-xs" />
                 </div>
-              )}
-              
-              {/* User Message with Feedback */}
-              {round.user && (() => {
-                const record = round.user;
-                const style = getFeedbackStyle(record.feedback?.type || null);
-                const isExpanded = expandedIndex === globalIndex + 1;
-                const hasFeedback = record.feedback && record.feedback.type !== 'good' && (record.feedback.issue || record.feedback.suggestion);
-                
-                return (
-                  <div 
-                    className={`border-l-2 pl-3 transition-all duration-200 ${style.border} ${record.feedback ? style.bg : ''} ${hasFeedback ? 'cursor-pointer hover:bg-accent/50 rounded-r-lg -ml-0.5 pl-3.5' : ''}`}
-                    onClick={() => hasFeedback && toggleExpand(globalIndex + 1)}
-                  >
-                    {/* Message Header */}
-                    <div className="flex items-center gap-2 mb-1">
-                      <Text className="text-xs font-medium text-primary">我</Text>
-                      {record.feedback?.type && (
-                        <Tag color={style.tagColor} icon={style.icon} className="!m-0 !text-xs">
-                          {style.label}
-                        </Tag>
-                      )}
-                      {hasFeedback && (
-                        <span className="ml-auto">
-                          {isExpanded ? (
-                            <UpOutlined className="text-muted-foreground text-xs" />
-                          ) : (
-                            <DownOutlined className="text-muted-foreground text-xs" />
-                          )}
-                        </span>
-                      )}
-                    </div>
-                    
-                    {/* Message Content */}
-                    <Text type="secondary" className={`text-sm ${!isExpanded ? 'line-clamp-3' : ''}`}>
-                      {record.content}
-                    </Text>
-                    
-                    {/* Expanded Feedback */}
-                    {isExpanded && hasFeedback && (
-                      <div className="mt-3 space-y-2 animate-fade-in">
-                        {record.feedback?.issue && (
-                          <div className="bg-background/60 rounded-lg p-3 border border-border/50">
-                            <p className="text-xs font-medium text-destructive flex items-center gap-1 mb-1">
-                              <ExclamationCircleOutlined />
-                              问题分析
-                            </p>
-                            <Text className="text-sm">{record.feedback.issue}</Text>
-                          </div>
-                        )}
-                        {record.feedback?.suggestion && (
-                          <div className="bg-background/60 rounded-lg p-3 border border-primary/20">
-                            <p className="text-xs font-medium text-primary flex items-center gap-1 mb-1">
-                              <BulbOutlined />
-                              改进建议
-                            </p>
-                            <Text className="text-sm">{record.feedback.suggestion}</Text>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                );
-              })()}
+                <Text strong className="text-sm">第{act.actNumber}幕 · {act.title}</Text>
+              </div>
+              {/* Act wrapper */}
+              <div className="border border-border/60 rounded-xl bg-accent/20 p-3 space-y-4">
+                {act.rounds.map((round, idx) => (
+                  <ConversationRound
+                    key={idx}
+                    ai={round.ai}
+                    user={round.user}
+                    globalKey={`act${act.actNumber}-${idx}`}
+                    expandedKey={expandedKey}
+                    onToggle={toggleExpand}
+                  />
+                ))}
+              </div>
             </div>
-          );
-        })}
-      </div>
-      
+          ))}
+        </div>
+      )}
     </Card>
   );
 };
