@@ -52,7 +52,7 @@ const ActAnalysis = ({ act }: { act: ActResult }) => (
     </Card>
 
     {/* 本幕对话记录 */}
-    <ConversationWithFeedback />
+    <ConversationWithFeedback mode="scripted" />
   </div>
 );
 
@@ -172,7 +172,7 @@ const HistoryDetail = () => {
         </Card>
         
         {/* 自由对话模式才显示整体对话记录 */}
-        {!isScripted && <ConversationWithFeedback />}
+        {!isScripted && <ConversationWithFeedback mode="free" />}
       </main>
       
       <TabBar />
