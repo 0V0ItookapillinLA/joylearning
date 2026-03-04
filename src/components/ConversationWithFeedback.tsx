@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Card, Tag, Typography } from 'antd';
 import { MessageOutlined, ExclamationCircleOutlined, BulbOutlined, StarOutlined, UpOutlined, DownOutlined, NumberOutlined } from '@ant-design/icons';
-import { ConversationMessage, ActConversation, FeedbackType } from '@/types';
-import { freeConversation, scriptedConversation } from '@/data/mockData';
+import { ConversationSegment, ActConversation, FeedbackType } from '@/types';
+import { freeConversationSegments, scriptedConversationSegments } from '@/data/mockData';
 
 const { Text } = Typography;
 
@@ -19,92 +19,85 @@ const getFeedbackStyle = (type: FeedbackType) => {
   }
 };
 
-/** Single round: AI message + user response with expandable feedback */
-const ConversationRound = ({
-  ai,
-  user,
+/** A single segment: multiple rounds of dialogue + one overall feedback */
+const SegmentBlock = ({
+  segment,
+  segmentIndex,
   globalKey,
   expandedKey,
   onToggle,
 }: {
-  ai: ConversationMessage | null;
-  user: ConversationMessage | null;
+  segment: ConversationSegment;
+  segmentIndex: number;
   globalKey: string;
   expandedKey: string | null;
   onToggle: (key: string) => void;
 }) => {
-  if (!user) return null;
-  const style = getFeedbackStyle(user.feedback?.type || null);
+  const style = getFeedbackStyle(segment.feedback?.type || null);
   const isExpanded = expandedKey === globalKey;
-  const hasFeedback = user.feedback && user.feedback.type !== 'good' && (user.feedback.issue || user.feedback.suggestion);
+  const hasFeedback = segment.feedback && segment.feedback.type !== 'good' && (segment.feedback.issue || segment.feedback.suggestion);
 
   return (
-    <div className="space-y-2">
-      {ai && (
-        <div className="border-l-2 border-l-primary/30 pl-3">
-          <div className="flex items-center gap-2 mb-1">
-            <Text type="secondary" className="text-xs font-medium">AI</Text>
-          </div>
-          <Text type="secondary" className="text-sm line-clamp-3">{ai.content}</Text>
-        </div>
-      )}
+    <div
+      className={`border-l-2 rounded-r-lg transition-all duration-200 ${style.border} ${segment.feedback ? style.bg : ''}`}
+    >
+      {/* Segment header */}
       <div
-        className={`border-l-2 pl-3 transition-all duration-200 ${style.border} ${user.feedback ? style.bg : ''} ${hasFeedback ? 'cursor-pointer hover:bg-accent/50 rounded-r-lg -ml-0.5 pl-3.5' : ''}`}
+        className={`flex items-center justify-between px-3 pt-2.5 pb-1 ${hasFeedback ? 'cursor-pointer' : ''}`}
         onClick={() => hasFeedback && onToggle(globalKey)}
       >
-        <div className="flex items-center gap-2 mb-1">
-          <Text className="text-xs font-medium text-primary">我</Text>
-          {user.feedback?.type && (
+        <div className="flex items-center gap-2">
+          <Text type="secondary" className="text-xs font-medium">片段 {segmentIndex + 1}</Text>
+          {segment.feedback?.type && (
             <Tag color={style.tagColor} icon={style.icon} className="!m-0 !text-xs">{style.label}</Tag>
           )}
-          {hasFeedback && (
-            <span className="ml-auto">
-              {isExpanded ? <UpOutlined className="text-muted-foreground text-xs" /> : <DownOutlined className="text-muted-foreground text-xs" />}
-            </span>
-          )}
         </div>
-        <Text type="secondary" className={`text-sm ${!isExpanded ? 'line-clamp-3' : ''}`}>{user.content}</Text>
-        {isExpanded && hasFeedback && (
-          <div className="mt-3 space-y-2 animate-fade-in">
-            {user.feedback?.issue && (
-              <div className="bg-background/60 rounded-lg p-3 border border-border/50">
-                <p className="text-xs font-medium text-destructive flex items-center gap-1 mb-1"><ExclamationCircleOutlined />问题分析</p>
-                <Text className="text-sm">{user.feedback.issue}</Text>
-              </div>
-            )}
-            {user.feedback?.suggestion && (
-              <div className="bg-background/60 rounded-lg p-3 border border-primary/20">
-                <p className="text-xs font-medium text-primary flex items-center gap-1 mb-1"><BulbOutlined />改进建议</p>
-                <Text className="text-sm">{user.feedback.suggestion}</Text>
-              </div>
-            )}
-          </div>
+        {hasFeedback && (
+          <span>
+            {isExpanded ? <UpOutlined className="text-muted-foreground text-xs" /> : <DownOutlined className="text-muted-foreground text-xs" />}
+          </span>
         )}
       </div>
+
+      {/* Messages within the segment */}
+      <div className="px-3 pb-2.5 space-y-1.5">
+        {segment.messages.map((msg, idx) => (
+          <div key={idx} className="flex gap-2">
+            <Text className={`text-xs font-medium shrink-0 mt-0.5 ${msg.role === 'AI' ? 'text-muted-foreground' : 'text-primary'}`}>
+              {msg.role === 'AI' ? 'AI' : '我'}
+            </Text>
+            <Text type="secondary" className="text-sm leading-relaxed">{msg.content}</Text>
+          </div>
+        ))}
+      </div>
+
+      {/* Expandable feedback area */}
+      {isExpanded && hasFeedback && (
+        <div className="px-3 pb-3 space-y-2 animate-fade-in">
+          {segment.feedback?.issue && (
+            <div className="bg-background/60 rounded-lg p-3 border border-border/50">
+              <p className="text-xs font-medium text-destructive flex items-center gap-1 mb-1"><ExclamationCircleOutlined />问题分析</p>
+              <Text className="text-sm">{segment.feedback.issue}</Text>
+            </div>
+          )}
+          {segment.feedback?.suggestion && (
+            <div className="bg-background/60 rounded-lg p-3 border border-primary/20">
+              <p className="text-xs font-medium text-primary flex items-center gap-1 mb-1"><BulbOutlined />改进建议</p>
+              <Text className="text-sm">{segment.feedback.suggestion}</Text>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
 
-/** Build rounds from flat message array */
-const buildRounds = (messages: ConversationMessage[]) => {
-  const rounds: { ai: ConversationMessage | null; user: ConversationMessage | null }[] = [];
-  for (let i = 0; i < messages.length; i += 2) {
-    const ai = messages[i]?.role === 'AI' ? messages[i] : null;
-    const user = messages[i + 1]?.role === 'user' ? messages[i + 1] : null;
-    rounds.push({ ai, user });
-  }
-  return rounds;
-};
-
-/** Count feedback types across messages */
-const countFeedback = (messages: ConversationMessage[]) => {
-  const userMsgs = messages.filter(m => m.role === 'user');
-  return {
-    error: userMsgs.filter(m => m.feedback?.type === 'error').length,
-    improvement: userMsgs.filter(m => m.feedback?.type === 'improvement').length,
-    good: userMsgs.filter(m => m.feedback?.type === 'good').length,
-  };
-};
+/** Count feedback types across segments */
+const countSegmentFeedback = (segments: ConversationSegment[]) => ({
+  error: segments.filter(s => s.feedback?.type === 'error').length,
+  improvement: segments.filter(s => s.feedback?.type === 'improvement').length,
+  good: segments.filter(s => s.feedback?.type === 'good').length,
+});
 
 interface Props {
   mode?: 'free' | 'scripted';
@@ -117,25 +110,23 @@ const ConversationWithFeedback = ({ mode = 'free' }: Props) => {
   const toggleExpand = (key: string) => setExpandedKey(expandedKey === key ? null : key);
   const toggleFilter = (type: FeedbackType) => { setFilterType(filterType === type ? null : type); setExpandedKey(null); };
 
-  // Gather all messages for counting
-  const allMessages = mode === 'scripted'
-    ? scriptedConversation.flatMap(a => a.messages)
-    : freeConversation;
-  const counts = countFeedback(allMessages);
+  // Gather all segments for counting
+  const allSegments: ConversationSegment[] = mode === 'scripted'
+    ? scriptedConversationSegments.flatMap(a => a.segments)
+    : freeConversationSegments;
+  const counts = countSegmentFeedback(allSegments);
 
-  // Free mode: flat rounds
-  const freeRounds = mode === 'free' ? buildRounds(freeConversation) : [];
-  const filteredFreeRounds = filterType
-    ? freeRounds.filter(r => r.user?.feedback?.type === filterType)
-    : freeRounds;
+  // Free mode: flat segment list with filter
+  const filteredFreeSegments = filterType
+    ? freeConversationSegments.filter(s => s.feedback?.type === filterType)
+    : freeConversationSegments;
 
-  // Scripted mode: rounds per act, with filter
+  // Scripted mode: segments per act, with filter
   const filteredActs = mode === 'scripted'
-    ? scriptedConversation.map(act => {
-        const rounds = buildRounds(act.messages);
-        const filtered = filterType ? rounds.filter(r => r.user?.feedback?.type === filterType) : rounds;
-        return { ...act, rounds: filtered };
-      }).filter(act => act.rounds.length > 0)
+    ? scriptedConversationSegments.map(act => {
+        const filtered = filterType ? act.segments.filter(s => s.feedback?.type === filterType) : act.segments;
+        return { ...act, segments: filtered };
+      }).filter(act => act.segments.length > 0)
     : [];
 
   return (
@@ -159,13 +150,12 @@ const ConversationWithFeedback = ({ mode = 'free' }: Props) => {
       </div>
 
       {mode === 'free' ? (
-        /* Free mode: flat list */
-        <div className="space-y-4">
-          {filteredFreeRounds.map((round, idx) => (
-            <ConversationRound
+        <div className="space-y-3">
+          {filteredFreeSegments.map((segment, idx) => (
+            <SegmentBlock
               key={idx}
-              ai={round.ai}
-              user={round.user}
+              segment={segment}
+              segmentIndex={idx}
               globalKey={`free-${idx}`}
               expandedKey={expandedKey}
               onToggle={toggleExpand}
@@ -173,24 +163,23 @@ const ConversationWithFeedback = ({ mode = 'free' }: Props) => {
           ))}
         </div>
       ) : (
-        /* Scripted mode: grouped by act */
         <div className="space-y-5">
           {filteredActs.map(act => (
-            <div key={act.actNumber} className="relative">
+            <div key={act.actNumber}>
               {/* Act header */}
-              <div className="flex items-center gap-2 mb-3">
-                <div className="flex items-center justify-center w-6 h-6 rounded-md bg-primary/10">
-                  <NumberOutlined className="text-primary text-xs" />
+              <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center justify-center w-5 h-5 rounded bg-primary/10">
+                  <NumberOutlined className="text-primary text-[10px]" />
                 </div>
                 <Text strong className="text-sm">第{act.actNumber}幕 · {act.title}</Text>
               </div>
-              {/* Act wrapper */}
-              <div className="border border-border/60 rounded-xl bg-accent/20 p-3 space-y-4">
-                {act.rounds.map((round, idx) => (
-                  <ConversationRound
+              {/* Segments within this act */}
+              <div className="space-y-3 ml-1">
+                {act.segments.map((segment, idx) => (
+                  <SegmentBlock
                     key={idx}
-                    ai={round.ai}
-                    user={round.user}
+                    segment={segment}
+                    segmentIndex={idx}
                     globalKey={`act${act.actNumber}-${idx}`}
                     expandedKey={expandedKey}
                     onToggle={toggleExpand}
