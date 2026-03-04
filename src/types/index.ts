@@ -58,7 +58,7 @@ export interface AbilityScore {
 
 export type FeedbackType = 'error' | 'improvement' | 'good' | null;
 
-export interface ConversationFeedback {
+export interface SegmentFeedback {
   type: FeedbackType;
   issue?: string;
   suggestion?: string;
@@ -67,14 +67,22 @@ export interface ConversationFeedback {
 export interface ConversationMessage {
   role: 'AI' | 'user';
   content: string;
-  feedback?: ConversationFeedback;
+}
+
+/** A segment groups 2-3 rounds of dialogue as one evaluation unit */
+export interface ConversationSegment {
+  messages: ConversationMessage[];
+  feedback?: SegmentFeedback;
 }
 
 export interface ActConversation {
   actNumber: number;
   title: string;
-  messages: ConversationMessage[];
+  segments: ConversationSegment[];
 }
+
+// Keep legacy aliases for backward compat
+export type ConversationFeedback = SegmentFeedback;
 
 export interface Message {
   id: string;

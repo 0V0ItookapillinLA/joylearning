@@ -111,48 +111,80 @@ export const weaknessesData = [
   },
 ];
 
-import { ConversationMessage, ActConversation } from '@/types';
+import { ConversationSegment, ActConversation } from '@/types';
 
-export const freeConversation: ConversationMessage[] = [
-  { role: 'AI', content: '您好，我是来自XX公司的采销专员小王。请问您最近有考虑过扩大供货渠道吗？' },
-  { role: 'user', content: '我们公司目前用的系统还行吧，暂时没有换的打算。', feedback: { type: 'improvement', issue: '回应过于消极，缺乏探索性问题', suggestion: '建议反问："您说的还行是指哪些方面呢？如果在效率或成本方面有提升空间，您会感兴趣了解吗？"' } },
-  { role: 'AI', content: '理解您的想法。不过我想了解一下，您目前的系统在处理大批量数据时，响应速度怎么样？' },
-  { role: 'user', content: '这个我不太清楚，反正我们用着没什么问题。', feedback: { type: 'error', issue: '回避问题，没有提供有价值的信息交换', suggestion: '即使不了解技术细节，也应该表现出专业态度："这个我需要确认一下，不过我可以安排技术同事详细测试并提供报告给您。"' } },
-  { role: 'AI', content: '好的，那您方便告诉我，贵公司目前团队规模大概有多少人在使用这个系统呢？' },
-  { role: 'user', content: '大概有50多人吧，但这个跟你们的产品有什么关系呢？', feedback: { type: 'good' } },
-  { role: 'AI', content: '非常感谢您的信息。50人规模的团队，如果能提升10%的工作效率，一年能节省不少成本呢。' },
-  { role: 'user', content: '你们的产品价格是多少？我先看看再说。', feedback: { type: 'improvement', issue: '直接询问价格显得过于急躁', suggestion: '建议先了解更多价值信息："在讨论价格之前，我想先了解一下贵公司具体的需求点，这样才能给您推荐最合适的方案。"' } },
+/** Free conversation: segmented into evaluation units of 2-3 rounds */
+export const freeConversationSegments: ConversationSegment[] = [
+  {
+    messages: [
+      { role: 'AI', content: '您好，我是来自XX公司的采销专员小王。请问您最近有考虑过扩大供货渠道吗？' },
+      { role: 'user', content: '我们公司目前用的系统还行吧，暂时没有换的打算。' },
+      { role: 'AI', content: '理解您的想法。不过我想了解一下，您目前的系统在处理大批量数据时，响应速度怎么样？' },
+      { role: 'user', content: '这个我不太清楚，反正我们用着没什么问题。' },
+    ],
+    feedback: { type: 'error', issue: '前两轮回应过于消极且缺乏专业态度，未能有效建立对话基础。直接回避了对方的深入提问，错失了展示专业知识的机会。', suggestion: '建议在第一轮用开放性问题回应，如"您说的还行是指哪些方面？"；第二轮即使不了解细节也应展现主动性："这个我需要确认一下，不过我可以安排技术同事详细测试并提供报告给您。"' },
+  },
+  {
+    messages: [
+      { role: 'AI', content: '好的，那您方便告诉我，贵公司目前团队规模大概有多少人在使用这个系统呢？' },
+      { role: 'user', content: '大概有50多人吧，但这个跟你们的产品有什么关系呢？' },
+      { role: 'AI', content: '非常感谢您的信息。50人规模的团队，如果能提升10%的工作效率，一年能节省不少成本呢。' },
+      { role: 'user', content: '你们的产品价格是多少？我先看看再说。' },
+    ],
+    feedback: { type: 'improvement', issue: '能够提供基本信息并提出合理反问，但在价值讨论阶段过早转向价格，显得急躁。', suggestion: '建议先了解更多价值信息："在讨论价格之前，我想先了解一下贵公司具体的需求点，这样才能给您推荐最合适的方案。"' },
+  },
 ];
 
-export const scriptedConversation: ActConversation[] = [
+/** Scripted conversation: segmented within each act */
+export const scriptedConversationSegments: ActConversation[] = [
   {
     actNumber: 1,
     title: '初次接触与需求挖掘',
-    messages: [
-      { role: 'AI', content: '张经理您好，我是XX公司的采销顾问小李。感谢您百忙之中抽出时间，今天主要想了解一下贵公司在供应链方面的情况。' },
-      { role: 'user', content: '你好，你们公司我听说过，不过我们目前合作的供应商还比较稳定。', feedback: { type: 'improvement', issue: '过早表达拒绝倾向，没有给对方展示价值的机会', suggestion: '可以更开放地回应："你好，欢迎。我们确实有一些合作伙伴了，不过也一直在关注行业内的新方案，你们有什么特别的优势吗？"' } },
-      { role: 'AI', content: '理解，稳定的合作关系确实很重要。不过我想请教一下，贵公司目前在采购成本控制方面有没有遇到什么挑战？' },
-      { role: 'user', content: '成本方面确实一直在想办法优化，特别是物流成本这一块上涨比较多。', feedback: { type: 'good' } },
+    segments: [
+      {
+        messages: [
+          { role: 'AI', content: '张经理您好，我是XX公司的采销顾问小李。感谢您百忙之中抽出时间，今天主要想了解一下贵公司在供应链方面的情况。' },
+          { role: 'user', content: '你好，你们公司我听说过，不过我们目前合作的供应商还比较稳定。' },
+          { role: 'AI', content: '理解，稳定的合作关系确实很重要。不过我想请教一下，贵公司目前在采购成本控制方面有没有遇到什么挑战？' },
+          { role: 'user', content: '成本方面确实一直在想办法优化，特别是物流成本这一块上涨比较多。' },
+        ],
+        feedback: { type: 'improvement', issue: '第一轮回应过早表达拒绝倾向，但第二轮能够开放地分享实际痛点，整体表现中规中矩。', suggestion: '建议第一轮更开放地回应："你好，欢迎。我们确实有一些合作伙伴了，不过也一直在关注行业内的新方案，你们有什么特别的优势吗？"' },
+      },
     ],
   },
   {
     actNumber: 2,
     title: '方案呈现与异议处理',
-    messages: [
-      { role: 'AI', content: '根据您刚才提到的物流成本问题，我们的集中仓储配送方案可以帮助降低15%-20%的物流成本。我给您看一下详细方案。' },
-      { role: 'user', content: '降15%到20%？这个数字是怎么算出来的？我觉得有点夸张了。', feedback: { type: 'good' } },
-      { role: 'AI', content: '这个数据来自我们和同行业三家企业的实际合作结果。我可以提供详细的对比报告供您参考。' },
-      { role: 'user', content: '报告可以看看，但你们的服务费用是不是也很高？算上服务费还能省这么多吗？', feedback: { type: 'error', issue: '直接质疑价格，陷入了价格导向的谈判陷阱', suggestion: '应先聚焦价值："服务费用是一方面，但我更想了解一下整体的ROI情况，如果综合算下来确实能提升效率和降低成本，那费用结构我们可以详细讨论。"' } },
+    segments: [
+      {
+        messages: [
+          { role: 'AI', content: '根据您刚才提到的物流成本问题，我们的集中仓储配送方案可以帮助降低15%-20%的物流成本。我给您看一下详细方案。' },
+          { role: 'user', content: '降15%到20%？这个数字是怎么算出来的？我觉得有点夸张了。' },
+        ],
+        feedback: { type: 'good' },
+      },
+      {
+        messages: [
+          { role: 'AI', content: '这个数据来自我们和同行业三家企业的实际合作结果。我可以提供详细的对比报告供您参考。' },
+          { role: 'user', content: '报告可以看看，但你们的服务费用是不是也很高？算上服务费还能省这么多吗？' },
+        ],
+        feedback: { type: 'error', issue: '直接质疑价格，陷入了价格导向的谈判陷阱，未能先聚焦整体价值。', suggestion: '应先聚焦价值："服务费用是一方面，但我更想了解一下整体的ROI情况，如果综合算下来确实能提升效率和降低成本，那费用结构我们可以详细讨论。"' },
+      },
     ],
   },
   {
     actNumber: 3,
     title: '促成成交与关系维护',
-    messages: [
-      { role: 'AI', content: '综合来看，以贵公司目前的采购规模，我们的方案每年可以为您节省约50万元。您觉得我们是否可以安排一次试点合作？' },
-      { role: 'user', content: '50万确实有吸引力，那你们的合同期限是怎么设定的？', feedback: { type: 'good' } },
-      { role: 'AI', content: '我们通常建议先从3个月的试点期开始，让您零风险体验效果。试点期结束后，我们可以根据实际数据来决定后续合作方式。' },
-      { role: 'user', content: '可以的，那你把合同和详细方案发给我，我这边走一下内部审批流程。', feedback: { type: 'improvement', issue: '缺少后续跟进的主动安排', suggestion: '成交环节应主动把握节奏："好的，我今天下午就把合同和方案发您。另外我建议我们下周三做一次正式的kick-off会议，我也可以提前和您的团队做个对接，确保推进顺畅。"' } },
+    segments: [
+      {
+        messages: [
+          { role: 'AI', content: '综合来看，以贵公司目前的采购规模，我们的方案每年可以为您节省约50万元。您觉得我们是否可以安排一次试点合作？' },
+          { role: 'user', content: '50万确实有吸引力，那你们的合同期限是怎么设定的？' },
+          { role: 'AI', content: '我们通常建议先从3个月的试点期开始，让您零风险体验效果。试点期结束后，我们可以根据实际数据来决定后续合作方式。' },
+          { role: 'user', content: '可以的，那你把合同和详细方案发给我，我这边走一下内部审批流程。' },
+        ],
+        feedback: { type: 'improvement', issue: '成交意愿表达不错，但缺少后续跟进的主动安排，显得被动。', suggestion: '应主动把握节奏："好的，我今天下午就把合同和方案发您。另外我建议我们下周三做一次正式的kick-off会议，我也可以提前和您的团队做个对接，确保推进顺畅。"' },
+      },
     ],
   },
 ];
