@@ -6,7 +6,7 @@ import TabBar from '@/components/TabBar';
 import RadarChart from '@/components/RadarChart';
 import ImprovementSection from '@/components/ImprovementSection';
 import ConversationWithFeedback from '@/components/ConversationWithFeedback';
-import { abilityScores, evaluationText, strengthsData, weaknessesData, historyRecords } from '@/data/mockData';
+import { abilityScores, evaluationText, strengthsData, weaknessesData, historyRecords, scriptedConversationSegments } from '@/data/mockData';
 import { ActResult } from '@/types';
 
 const { Text } = Typography;
@@ -52,7 +52,7 @@ const ActAnalysis = ({ act }: { act: ActResult }) => (
     </Card>
 
     {/* 本幕对话记录 */}
-    <ConversationWithFeedback mode="scripted" />
+    <ConversationWithFeedback segments={scriptedConversationSegments.find(a => a.actNumber === act.actNumber)?.segments} />
   </div>
 );
 

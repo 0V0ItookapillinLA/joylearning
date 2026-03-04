@@ -101,28 +101,32 @@ const countSegmentFeedback = (segments: ConversationSegment[]) => ({
 
 interface Props {
   mode?: 'free' | 'scripted';
+  /** Pass segments directly to render a flat list (used inside act tabs) */
+  segments?: ConversationSegment[];
 }
 
-const ConversationWithFeedback = ({ mode = 'free' }: Props) => {
+const ConversationWithFeedback = ({ mode = 'free', segments: propSegments }: Props) => {
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
   const [filterType, setFilterType] = useState<FeedbackType>(null);
 
   const toggleExpand = (key: string) => setExpandedKey(expandedKey === key ? null : key);
   const toggleFilter = (type: FeedbackType) => { setFilterType(filterType === type ? null : type); setExpandedKey(null); };
 
-  // Gather all segments for counting
-  const allSegments: ConversationSegment[] = mode === 'scripted'
-    ? scriptedConversationSegments.flatMap(a => a.segments)
-    : freeConversationSegments;
-  const counts = countSegmentFeedback(allSegments);
+  // If segments passed directly, use flat mode
+  const baseSegments: ConversationSegment[] = propSegments
+    ? propSegments
+    : mode === 'scripted'
+      ? scriptedConversationSegments.flatMap(a => a.segments)
+      : freeConversationSegments;
+  const counts = countSegmentFeedback(baseSegments);
 
-  // Free mode: flat segment list with filter
-  const filteredFreeSegments = filterType
-    ? freeConversationSegments.filter(s => s.feedback?.type === filterType)
-    : freeConversationSegments;
+  const filteredSegments = filterType
+    ? baseSegments.filter(s => s.feedback?.type === filterType)
+    : baseSegments;
 
-  // Scripted mode: segments per act, with filter
-  const filteredActs = mode === 'scripted'
+  // Scripted mode without propSegments: group by act
+  const useActGrouping = mode === 'scripted' && !propSegments;
+  const filteredActs = useActGrouping
     ? scriptedConversationSegments.map(act => {
         const filtered = filterType ? act.segments.filter(s => s.feedback?.type === filterType) : act.segments;
         return { ...act, segments: filtered };
@@ -149,20 +153,7 @@ const ConversationWithFeedback = ({ mode = 'free' }: Props) => {
         </Tag>
       </div>
 
-      {mode === 'free' ? (
-        <div className="space-y-3">
-          {filteredFreeSegments.map((segment, idx) => (
-            <SegmentBlock
-              key={idx}
-              segment={segment}
-              segmentIndex={idx}
-              globalKey={`free-${idx}`}
-              expandedKey={expandedKey}
-              onToggle={toggleExpand}
-            />
-          ))}
-        </div>
-      ) : (
+      {useActGrouping ? (
         <div className="space-y-5">
           {filteredActs.map(act => (
             <div key={act.actNumber}>
@@ -187,6 +178,19 @@ const ConversationWithFeedback = ({ mode = 'free' }: Props) => {
                 ))}
               </div>
             </div>
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {filteredSegments.map((segment, idx) => (
+            <SegmentBlock
+              key={idx}
+              segment={segment}
+              segmentIndex={idx}
+              globalKey={`seg-${idx}`}
+              expandedKey={expandedKey}
+              onToggle={toggleExpand}
+            />
           ))}
         </div>
       )}
