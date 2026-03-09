@@ -254,7 +254,7 @@ const PracticeTextChat = () => {
         </main>
 
         {/* Bottom Input */}
-        <div className="sticky bottom-0 bg-background/80 backdrop-blur-lg border-t border-border/30 p-3 safe-bottom">
+        <div className="sticky bottom-0 glass-strong border-t border-border/30 p-3 safe-bottom">
           <div className="flex items-center gap-2">
             <Button
               type="text"
