@@ -30,7 +30,7 @@ const Header = ({
   };
   
   return (
-    <header className="sticky top-0 bg-background/80 backdrop-blur-lg z-40 border-b border-border/50">
+    <header className="sticky top-0 z-40 glass-strong">
       <div className="flex items-center justify-between h-14 px-4 max-w-md mx-auto">
         <div className="w-12">
           {showBack && (
@@ -43,7 +43,11 @@ const Header = ({
           )}
         </div>
         
-        <h1 className="text-lg font-semibold text-foreground">{title}</h1>
+        <h1 className="text-base font-semibold text-foreground tracking-wide">
+          {title === 'JoyLearning' ? (
+            <><span className="text-primary">Joy</span>Learning</>
+          ) : title}
+        </h1>
         
         <div className="w-12 flex justify-end">
           {rightAction === 'menu' && (
