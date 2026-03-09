@@ -19,7 +19,7 @@ const TabBar = () => {
           {tabs.map((tab) => {
             const isActive =
               location.pathname === tab.path ||
-              (tab.path === '/courses' && (location.pathname.startsWith('/plan') || location.pathname === '/')) ||
+              (tab.path === '/courses' && location.pathname.startsWith('/plan')) ||
               (tab.path === '/profile' && (location.pathname.startsWith('/profile') || location.pathname.startsWith('/history')));
 
             const Icon = tab.icon;
