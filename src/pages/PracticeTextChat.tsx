@@ -220,10 +220,10 @@ const PracticeTextChat = () => {
                 {/* Inline Coaching Feedback - After user messages */}
                 {msg.coaching && (
                   <div className="mt-3 ml-2 mr-2 animate-fade-in">
-                    <div className="bg-gradient-to-br from-accent to-card rounded-xl p-4 border border-primary/20 shadow-sm">
+                    <div className="gradient-ai-soft rounded-xl p-4 border border-primary/15 shadow-sm ai-glow">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-primary text-sm">💡</span>
-                        <Text className="text-xs font-semibold text-primary">Mr. Sen 实时点评</Text>
+                        <span className="text-sm">💡</span>
+                        <Text className="text-xs font-semibold text-ai-purple">Mr. Sen 实时点评</Text>
                       </div>
                       <div className="space-y-2">
                         <div>
