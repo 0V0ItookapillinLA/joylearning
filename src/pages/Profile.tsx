@@ -11,7 +11,7 @@ import RecommendedCourses from '@/components/RecommendedCourses';
 import { userProfile, abilityScores, evaluationText, historyRecords } from '@/data/mockData';
 import avatarUser from '@/assets/avatar-user.png';
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
 const Profile = () => {
   const [searchParams] = useSearchParams();
@@ -33,7 +33,7 @@ const Profile = () => {
       children: (
         <div className="space-y-4">
           {/* Overall Evaluation */}
-          <Card className="!rounded-xl shadow-card" styles={{ body: { padding: 16 } }}>
+          <Card className="!rounded-xl shadow-card !border-0" styles={{ body: { padding: 16 } }}>
             <Space align="center" className="mb-3">
               <BarChartOutlined className="text-primary" />
               <Text strong>综合评价</Text>
@@ -49,7 +49,7 @@ const Profile = () => {
           </Card>
           
           {/* Radar Chart */}
-          <Card className="!rounded-xl shadow-card" styles={{ body: { padding: 16 } }}>
+          <Card className="!rounded-xl shadow-card !border-0" styles={{ body: { padding: 16 } }}>
             <Space align="center" className="mb-4">
               <AimOutlined className="text-primary" />
               <Text strong>综合能力模型</Text>
@@ -58,10 +58,7 @@ const Profile = () => {
             <RadarChart data={abilityScores} />
           </Card>
           
-          {/* Recommended Courses */}
           <RecommendedCourses />
-          
-          {/* Trend Chart */}
           <TrendChart />
         </div>
       ),
@@ -72,7 +69,11 @@ const Profile = () => {
       children: (
         <div className="space-y-3">
           {historyRecords.map((record, index) => (
-            <div key={record.id} style={{ animationDelay: `${index * 0.05}s` }}>
+            <div 
+              key={record.id} 
+              className="animate-fade-in"
+              style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'both' }}
+            >
               <HistoryCard record={record} />
             </div>
           ))}
@@ -85,29 +86,38 @@ const Profile = () => {
     <div className="min-h-screen bg-background pb-24">
       <Header title="JoyLearning" showBack={false} rightAction="menu" />
       
-      {/* User Info */}
-      <div className="max-w-md mx-auto px-4 py-5">
-        <div className="flex items-center gap-4">
-          <Avatar 
-            src={avatarUser} 
-            size={56}
-            alt={userProfile.name}
-          />
-          <div className="flex-1">
-            <Text strong className="text-foreground">
-              {userProfile.name}
-              <Text type="secondary" className="font-normal ml-1">
-                (账号：{userProfile.account})
+      {/* User Info - AI themed */}
+      <div className="max-w-md mx-auto px-4 pt-4 pb-2">
+        <div className="gradient-ai-soft rounded-2xl p-5 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-ai-purple/8 blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-ai-cyan/8 blur-3xl" />
+          
+          <div className="flex items-center gap-4 relative z-10">
+            <div className="relative">
+              <div className="absolute -inset-1 rounded-full opacity-50" style={{ background: 'var(--gradient-ai)' }} />
+              <Avatar 
+                src={avatarUser} 
+                size={56}
+                alt={userProfile.name}
+                className="relative"
+              />
+            </div>
+            <div className="flex-1">
+              <Text strong className="text-foreground text-base">
+                {userProfile.name}
+                <Text type="secondary" className="font-normal ml-1 text-sm">
+                  ({userProfile.account})
+                </Text>
               </Text>
-            </Text>
-            <div 
-              className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={() => navigate('/checkin')}
-            >
-              <Text className="text-sm text-primary">
-                学习时长 <Text strong className="text-primary">{userProfile.studyHours}</Text> 小时
-              </Text>
-              <RightOutlined className="text-primary text-xs" />
+              <div 
+                className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity mt-0.5"
+                onClick={() => navigate('/checkin')}
+              >
+                <Text className="text-sm text-primary">
+                  学习时长 <Text strong className="text-primary">{userProfile.studyHours}</Text> 小时
+                </Text>
+                <RightOutlined className="text-primary text-xs" />
+              </div>
             </div>
           </div>
         </div>
