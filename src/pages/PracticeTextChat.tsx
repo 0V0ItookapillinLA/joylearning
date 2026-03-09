@@ -104,7 +104,7 @@ const PracticeTextChat = () => {
     setInput('');
 
     // Simulate AI response
-    await sendMessage(input, currentScene);
+    await sendMessage(input, { id: currentScene.id, title: currentScene.title, description: currentScene.guide, goal: '' });
 
     msgCounter.current += 1;
     const mockResponses = [

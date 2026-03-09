@@ -31,6 +31,7 @@ const App = () => (
           <Route path="/practice/onboarding" element={<PracticeOnboarding />} />
           <Route path="/practice/detail" element={<PracticeDetail />} />
           <Route path="/practice" element={<PracticePage />} />
+          <Route path="/practice/text" element={<PracticeTextChat />} />
           <Route path="/practice/complete" element={<PracticeComplete />} />
           <Route path="/checkin" element={<CheckInCalendar />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
