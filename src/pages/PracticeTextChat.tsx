@@ -133,7 +133,7 @@ const PracticeTextChat = () => {
     <div className="fixed inset-0 bg-background flex justify-center">
       <div className="w-full max-w-md flex flex-col relative">
         {/* Header */}
-        <header className="sticky top-0 z-40 bg-gradient-to-r from-accent via-background to-accent/50 border-b border-border/30">
+        <header className="sticky top-0 z-40 glass-strong">
           <div className="flex items-center justify-between h-12 px-4">
             <button
               onClick={handleEnd}
