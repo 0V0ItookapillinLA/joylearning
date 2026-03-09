@@ -10,6 +10,7 @@ import HistoryDetail from "./pages/HistoryDetail";
 import PracticeOnboarding from "./pages/PracticeOnboarding";
 import PracticeDetail from "./pages/PracticeDetail";
 import PracticePage from "./pages/PracticePage";
+import PracticeTextChat from "./pages/PracticeTextChat";
 import PracticeComplete from "./pages/PracticeComplete";
 import CheckInCalendar from "./pages/CheckInCalendar";
 import NotFound from "./pages/NotFound";
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/practice/onboarding" element={<PracticeOnboarding />} />
           <Route path="/practice/detail" element={<PracticeDetail />} />
           <Route path="/practice" element={<PracticePage />} />
+          <Route path="/practice/text" element={<PracticeTextChat />} />
           <Route path="/practice/complete" element={<PracticeComplete />} />
           <Route path="/checkin" element={<CheckInCalendar />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
