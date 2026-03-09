@@ -133,7 +133,7 @@ const PracticeTextChat = () => {
     <div className="fixed inset-0 bg-background flex justify-center">
       <div className="w-full max-w-md flex flex-col relative">
         {/* Header */}
-        <header className="sticky top-0 z-40 bg-gradient-to-r from-accent via-background to-accent/50 border-b border-border/30">
+        <header className="sticky top-0 z-40 glass-strong">
           <div className="flex items-center justify-between h-12 px-4">
             <button
               onClick={handleEnd}
@@ -220,10 +220,10 @@ const PracticeTextChat = () => {
                 {/* Inline Coaching Feedback - After user messages */}
                 {msg.coaching && (
                   <div className="mt-3 ml-2 mr-2 animate-fade-in">
-                    <div className="bg-gradient-to-br from-accent to-card rounded-xl p-4 border border-primary/20 shadow-sm">
+                    <div className="gradient-ai-soft rounded-xl p-4 border border-primary/15 shadow-sm ai-glow">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-primary text-sm">💡</span>
-                        <Text className="text-xs font-semibold text-primary">Mr. Sen 实时点评</Text>
+                        <span className="text-sm">💡</span>
+                        <Text className="text-xs font-semibold text-ai-purple">Mr. Sen 实时点评</Text>
                       </div>
                       <div className="space-y-2">
                         <div>
@@ -254,7 +254,7 @@ const PracticeTextChat = () => {
         </main>
 
         {/* Bottom Input */}
-        <div className="sticky bottom-0 bg-background/80 backdrop-blur-lg border-t border-border/30 p-3 safe-bottom">
+        <div className="sticky bottom-0 glass-strong border-t border-border/30 p-3 safe-bottom">
           <div className="flex items-center gap-2">
             <Button
               type="text"
