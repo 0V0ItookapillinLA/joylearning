@@ -28,14 +28,14 @@ const TabBar = () => {
               <NavLink
                 key={tab.path}
                 to={tab.path}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all ${
+                className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full transition-all whitespace-nowrap ${
                   isActive
                     ? 'bg-foreground text-background'
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                <Icon style={{ fontSize: 18 }} />
-                <span className="text-sm font-medium">{tab.label}</span>
+                <Icon style={{ fontSize: 16 }} />
+                <span className="text-xs font-medium">{tab.label}</span>
               </NavLink>
             );
           })}
