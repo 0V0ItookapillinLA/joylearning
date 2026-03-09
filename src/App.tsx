@@ -10,6 +10,7 @@ import HistoryDetail from "./pages/HistoryDetail";
 import PracticeOnboarding from "./pages/PracticeOnboarding";
 import PracticeDetail from "./pages/PracticeDetail";
 import PracticePage from "./pages/PracticePage";
+import PracticeTextChat from "./pages/PracticeTextChat";
 import PracticeComplete from "./pages/PracticeComplete";
 import CheckInCalendar from "./pages/CheckInCalendar";
 import NotFound from "./pages/NotFound";
