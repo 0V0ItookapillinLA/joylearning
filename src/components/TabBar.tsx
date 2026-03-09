@@ -1,11 +1,12 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { VideoCameraOutlined, UserOutlined } from '@ant-design/icons';
+import { HomeOutlined, VideoCameraOutlined, UserOutlined } from '@ant-design/icons';
 import avatarAi from '@/assets/avatar-ai.png';
 
 const TabBar = () => {
   const location = useLocation();
 
   const tabs = [
+    { path: '/', icon: HomeOutlined, label: '首页' },
     { path: '/courses', icon: VideoCameraOutlined, label: '课程中心' },
     { path: '/profile', icon: UserOutlined, label: '我的' },
   ];
