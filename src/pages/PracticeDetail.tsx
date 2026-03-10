@@ -243,7 +243,14 @@ const PracticeDetail = () => {
                 onClick={handleStart}
                 className="flex-1 !h-12 !rounded-full"
               >
-                进入场景练习
+                语音练习
+              </Button>
+              <Button
+                size="large"
+                onClick={() => navigate('/practice/text')}
+                className="flex-1 !h-12 !rounded-full !border-primary !text-primary"
+              >
+                文本练习
               </Button>
             </div>
           </div>
