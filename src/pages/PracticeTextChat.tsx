@@ -163,7 +163,7 @@ const PracticeTextChat = () => {
             />
             {/* Sheet */}
             <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center" style={{ height: '70vh' }}>
-              <div className="w-full max-w-md bg-card rounded-t-2xl shadow-2xl flex flex-col animate-slide-up">
+              <div className="w-full max-w-md bg-card rounded-t-2xl shadow-2xl flex flex-col animate-slide-in-bottom">
                 {/* Handle bar */}
                 <div className="flex justify-center pt-3 pb-1">
                   <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
