@@ -61,7 +61,11 @@ const LearningItemCard = ({ item }: LearningItemCardProps) => {
   const handleClick = () => {
     if (item.status === 'locked') return;
     if (item.type === 'practice') {
-      navigate('/practice/detail');
+      if (item.practiceMode === 'text') {
+        navigate('/practice/text');
+      } else {
+        navigate('/practice/detail');
+      }
     }
   };
 
