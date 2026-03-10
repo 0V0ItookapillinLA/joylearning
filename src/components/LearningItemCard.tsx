@@ -1,5 +1,5 @@
 import { Card, Button, Tag } from 'antd';
-import { PlayCircleOutlined, TeamOutlined, FileTextOutlined, ClockCircleOutlined, CheckCircleOutlined, LoadingOutlined, LockOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, TeamOutlined, FileTextOutlined, ClockCircleOutlined, CheckCircleOutlined, LoadingOutlined, LockOutlined, AudioOutlined, EditOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { LearningItem } from '@/types';
 
@@ -61,7 +61,11 @@ const LearningItemCard = ({ item }: LearningItemCardProps) => {
   const handleClick = () => {
     if (item.status === 'locked') return;
     if (item.type === 'practice') {
-      navigate('/practice/detail');
+      if (item.practiceMode === 'text') {
+        navigate('/practice/text');
+      } else {
+        navigate('/practice/detail');
+      }
     }
   };
 
@@ -83,6 +87,15 @@ const LearningItemCard = ({ item }: LearningItemCardProps) => {
               <Tag color={config.color} className="!m-0 !text-xs">
                 {config.label}
               </Tag>
+              {item.type === 'practice' && item.practiceMode && (
+                <Tag 
+                  icon={item.practiceMode === 'text' ? <EditOutlined /> : <AudioOutlined />}
+                  color="purple" 
+                  className="!m-0 !text-xs"
+                >
+                  {item.practiceMode === 'text' ? '文本' : '语音'}
+                </Tag>
+              )}
               <span>{item.duration}</span>
               <Tag 
                 icon={status.icon} 

@@ -25,6 +25,7 @@ export interface LearningItem {
   type: ItemType;
   duration: string;
   status: ItemStatus;
+  practiceMode?: 'voice' | 'text';
 }
 
 export type PracticeMode = 'free' | 'scripted';
