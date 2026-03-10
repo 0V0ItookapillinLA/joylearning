@@ -87,6 +87,15 @@ const LearningItemCard = ({ item }: LearningItemCardProps) => {
               <Tag color={config.color} className="!m-0 !text-xs">
                 {config.label}
               </Tag>
+              {item.type === 'practice' && item.practiceMode && (
+                <Tag 
+                  icon={item.practiceMode === 'text' ? <EditOutlined /> : <AudioOutlined />}
+                  color="purple" 
+                  className="!m-0 !text-xs"
+                >
+                  {item.practiceMode === 'text' ? '文本' : '语音'}
+                </Tag>
+              )}
               <span>{item.duration}</span>
               <Tag 
                 icon={status.icon} 
