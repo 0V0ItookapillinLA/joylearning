@@ -1,5 +1,5 @@
 import { Card, Button, Tag } from 'antd';
-import { PlayCircleOutlined, TeamOutlined, FileTextOutlined, ClockCircleOutlined, CheckCircleOutlined, LoadingOutlined, LockOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, TeamOutlined, FileTextOutlined, ClockCircleOutlined, CheckCircleOutlined, LoadingOutlined, LockOutlined, AudioOutlined, EditOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { LearningItem } from '@/types';
 
