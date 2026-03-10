@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Input, Avatar, Typography } from 'antd';
-import { SendOutlined, BulbOutlined, UpOutlined, DownOutlined, LoadingOutlined } from '@ant-design/icons';
+import { SendOutlined, BulbOutlined, UpOutlined, DownOutlined, LoadingOutlined, CloseOutlined } from '@ant-design/icons';
 import avatarInterviewer from '@/assets/avatar-interviewer.png';
 import avatarUser from '@/assets/avatar-user.png';
 import { useAIPractice } from '@/hooks/useAIPractice';
@@ -103,7 +103,6 @@ const PracticeTextChat = () => {
     setChatMessages(prev => [...prev, userMsg]);
     setInput('');
 
-    // Simulate AI response
     await sendMessage(input, { id: currentScene.id, title: currentScene.title, description: currentScene.guide, goal: '' });
 
     msgCounter.current += 1;
@@ -133,7 +132,7 @@ const PracticeTextChat = () => {
     <div className="fixed inset-0 bg-background flex justify-center">
       <div className="w-full max-w-md flex flex-col relative">
         {/* Header */}
-        <header className="sticky top-0 z-40 glass-strong">
+        <header className="sticky top-0 z-40 bg-background border-b border-border/30">
           <div className="flex items-center justify-between h-12 px-4">
             <button
               onClick={handleEnd}
@@ -146,7 +145,7 @@ const PracticeTextChat = () => {
               <Text strong className="text-sm">李女士</Text>
             </div>
             <button
-              onClick={() => setShowTaskDesc(!showTaskDesc)}
+              onClick={() => setShowTaskDesc(true)}
               className="text-sm text-primary font-medium min-h-0 min-w-0"
             >
               任务说明
@@ -154,19 +153,68 @@ const PracticeTextChat = () => {
           </div>
         </header>
 
-        {/* Task Description Overlay */}
+        {/* Task Description - Bottom Sheet (70% screen) */}
         {showTaskDesc && (
-          <div className="absolute top-12 left-0 right-0 z-30 px-4 pt-2 animate-fade-in">
-            <div className="bg-card rounded-xl p-4 shadow-lg border border-border/50">
-              <Text strong className="text-sm block mb-2">任务说明</Text>
-              <Text className="text-sm leading-relaxed block text-muted-foreground">
-                推动客户同意进入下一步合作。需要完成客户寒暄、需求挖掘、方案推荐三个环节。评估维度包括需求澄清、方案匹配、异议处理、推进结果、沟通表达。
-              </Text>
-              <Button type="text" size="small" onClick={() => setShowTaskDesc(false)} className="mt-2 !text-primary">
-                收起
-              </Button>
+          <>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 bg-foreground/40 z-50 animate-fade-in"
+              onClick={() => setShowTaskDesc(false)}
+            />
+            {/* Sheet */}
+            <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center" style={{ height: '70vh' }}>
+              <div className="w-full max-w-md bg-card rounded-t-2xl shadow-2xl flex flex-col animate-slide-up">
+                {/* Handle bar */}
+                <div className="flex justify-center pt-3 pb-1">
+                  <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
+                </div>
+                {/* Header */}
+                <div className="flex items-center justify-between px-5 py-3 border-b border-border/30">
+                  <Text strong className="text-base">任务说明</Text>
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={<CloseOutlined />}
+                    onClick={() => setShowTaskDesc(false)}
+                  />
+                </div>
+                {/* Content */}
+                <div className="flex-1 overflow-y-auto px-5 py-4">
+                  <div className="space-y-4">
+                    <div>
+                      <Text strong className="text-sm block mb-2">场景说明</Text>
+                      <Text className="text-sm leading-relaxed block text-muted-foreground">
+                        客户是白酒品牌方/经销商负责人，当前面临促销波峰波谷明显、仓配弹性不足、破损丢损等问题。你需要通过三幕对话（寒暄→需求挖掘→方案推荐），推动客户同意进入下一步合作。
+                      </Text>
+                    </div>
+                    <div>
+                      <Text strong className="text-sm block mb-2">任务目标</Text>
+                      <Text className="text-sm leading-relaxed block text-muted-foreground">
+                        推动客户同意进入下一步合作。需要完成客户寒暄、需求挖掘、方案推荐三个环节。
+                      </Text>
+                    </div>
+                    <div>
+                      <Text strong className="text-sm block mb-2">评估维度</Text>
+                      <div className="space-y-2">
+                        {[
+                          { name: '需求澄清', desc: '问到关键数据，能复述确认客户诉求', pct: '20%' },
+                          { name: '方案匹配', desc: '能把痛点映射到能力点，表达清晰', pct: '20%' },
+                          { name: '异议处理', desc: '不硬怼，先理解再回应，有证据/方案', pct: '20%' },
+                          { name: '推进结果', desc: '能提出下一步并获得客户明确态度', pct: '20%' },
+                          { name: '沟通表达', desc: '语气专业、结构清晰、控制节奏', pct: '20%' },
+                        ].map((item, i) => (
+                          <div key={i} className="flex items-start gap-2 bg-muted rounded-lg p-3">
+                            <Text strong className="text-xs whitespace-nowrap">{item.name} ({item.pct})</Text>
+                            <Text className="text-xs text-muted-foreground">{item.desc}</Text>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          </>
         )}
 
         {/* Communication Guide */}
@@ -217,21 +265,21 @@ const PracticeTextChat = () => {
                   </div>
                 </div>
 
-                {/* Inline Coaching Feedback - After user messages */}
+                {/* Inline Coaching Feedback */}
                 {msg.coaching && (
                   <div className="mt-3 ml-2 mr-2 animate-fade-in">
-                    <div className="gradient-ai-soft rounded-xl p-4 border border-primary/15 shadow-sm ai-glow">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-sm">💡</span>
-                        <Text className="text-xs font-semibold text-ai-purple">Mr. Sen 实时点评</Text>
+                    <div className="bg-card rounded-xl p-4 border border-border/50 shadow-sm">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-xs text-primary font-bold">S</span>
+                        <Text className="text-sm font-semibold text-primary">Mr. Sen 实时点评</Text>
                       </div>
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         <div>
-                          <Text className="text-xs font-medium text-foreground block mb-0.5">指导建议：</Text>
+                          <Text strong className="text-sm text-foreground block mb-1">指导建议：</Text>
                           <Text className="text-sm leading-relaxed text-foreground/80">{msg.coaching.guidance}</Text>
                         </div>
                         <div>
-                          <Text className="text-xs font-medium text-foreground block mb-0.5">润色表达：</Text>
+                          <Text strong className="text-sm text-foreground block mb-1">润色表达：</Text>
                           <Text className="text-sm leading-relaxed text-foreground/80">{msg.coaching.polished}</Text>
                         </div>
                       </div>
@@ -254,7 +302,7 @@ const PracticeTextChat = () => {
         </main>
 
         {/* Bottom Input */}
-        <div className="sticky bottom-0 glass-strong border-t border-border/30 p-3 safe-bottom">
+        <div className="sticky bottom-0 bg-background border-t border-border/30 p-3 safe-bottom">
           <div className="flex items-center gap-2">
             <Button
               type="text"
