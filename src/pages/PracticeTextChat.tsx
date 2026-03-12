@@ -156,6 +156,15 @@ const PracticeTextChat = () => {
           </div>
         </header>
 
+        {/* Scene Progress Bar */}
+        <div className="px-4 pt-2">
+          <SceneProgressBar
+            currentScene={currentSceneIndex}
+            totalScenes={scenes.length}
+            sceneProgress={chatMessages.length > 0 ? Math.min(chatMessages.length * 15, 90) : 5}
+          />
+        </div>
+
         {/* Task Description - Bottom Sheet (70% screen) */}
         {showTaskDesc && (
           <>
