@@ -186,8 +186,17 @@ const PracticePage = () => {
           </span>
         </div>
 
-        {/* Scene Announcement - Top */}
+        {/* Scene Progress Bar */}
         <div className="absolute top-16 left-4 right-4 z-20">
+          <SceneProgressBar
+            currentScene={currentSceneIndex}
+            totalScenes={scenes.length}
+            sceneProgress={messages.length > 0 ? Math.min(messages.length * 20, 90) : 5}
+          />
+        </div>
+
+        {/* Scene Announcement */}
+        <div className="absolute top-28 left-4 right-4 z-20">
           <Card
             className={`!rounded-xl shadow-xl overflow-hidden transition-all duration-300 ${
               isSceneExpanded ? '' : '!p-0'
