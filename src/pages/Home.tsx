@@ -529,11 +529,6 @@ const Home = () => {
           </div>
         </div>
 
-        {/* AI Daily Training Card - Fixed at top of screen, always visible */}
-        <div className="absolute top-16 left-4 right-4 z-30">
-          <AITrainingCard />
-        </div>
-
         <TabBar />
       </div>
     </div>
