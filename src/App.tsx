@@ -4,6 +4,7 @@ import AntdProvider from "@/components/AntdProvider";
 import Home from "./pages/Home";
 import CourseCenter from "./pages/CourseCenter";
 import PlanDetail from "./pages/PlanDetail";
+import GrowthChart from "./pages/GrowthChart";
 import ChatPage from "./pages/ChatPage";
 import Profile from "./pages/Profile";
 import HistoryDetail from "./pages/HistoryDetail";
