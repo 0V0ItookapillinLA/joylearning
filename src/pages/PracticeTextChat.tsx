@@ -61,6 +61,7 @@ const PracticeTextChat = () => {
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
   const [isGuideExpanded, setIsGuideExpanded] = useState(true);
   const [showTaskDesc, setShowTaskDesc] = useState(false);
+  const [showStuckHelper, setShowStuckHelper] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const msgCounter = useRef(0);
 
