@@ -60,7 +60,6 @@ const Profile = () => {
           </Card>
           
           <RecommendedCourses />
-          <AIGrowthAnalysis />
           
           {/* Growth Chart Entry */}
           <div
@@ -73,8 +72,6 @@ const Profile = () => {
             </div>
             <RightOutlined className="text-muted-foreground text-xs" />
           </div>
-
-          <TrendChart />
         </div>
       ),
     },

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Typography } from 'antd';
-import { ArrowLeftOutlined, TrophyOutlined, ClockCircleOutlined, AimOutlined, RobotOutlined, RiseOutlined, WarningOutlined, BulbOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, TrophyOutlined, ClockCircleOutlined, AimOutlined } from '@ant-design/icons';
 import TabBar from '@/components/TabBar';
 import RadarChart from '@/components/RadarChart';
 import { abilityScores } from '@/data/mockData';
