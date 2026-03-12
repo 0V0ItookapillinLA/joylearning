@@ -116,6 +116,12 @@ const ChatPage = () => {
                   }`}
                   style={!isAssistant ? { background: 'var(--gradient-ai)' } : undefined}
                 >
+                  {/* AI label tag */}
+                  {isAssistant && index > 0 && (
+                    <div className="flex items-center gap-1 mb-1">
+                      <span className="text-xs text-ai-purple font-medium">💬 AI 点评</span>
+                    </div>
+                  )}
                   <p className="text-sm leading-relaxed">
                     {displayText}
                     {isTyping && <span className="inline-block w-0.5 h-4 ml-0.5 bg-primary animate-pulse" />}
@@ -129,10 +135,13 @@ const ChatPage = () => {
             <div className="flex gap-3 animate-fade-in">
               <Avatar src={avatarAi} size={36} className="flex-shrink-0" />
               <div className="bg-card shadow-card rounded-2xl rounded-tl-sm px-4 py-3 border border-border/30">
-                <div className="flex gap-1">
-                  <span className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-pulse" style={{ animationDelay: '0ms' }} />
-                  <span className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-pulse" style={{ animationDelay: '150ms' }} />
-                  <span className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-pulse" style={{ animationDelay: '300ms' }} />
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">🧠 正在分析你的话术</span>
+                  <span className="flex gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-ai-purple animate-pulse" style={{ animationDelay: '0ms' }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-ai-purple animate-pulse" style={{ animationDelay: '300ms' }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-ai-purple animate-pulse" style={{ animationDelay: '600ms' }} />
+                  </span>
                 </div>
               </div>
             </div>
