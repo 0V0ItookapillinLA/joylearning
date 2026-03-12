@@ -311,7 +311,18 @@ const PracticeTextChat = () => {
             )}
             <div ref={messagesEndRef} />
           </div>
-        </main>
+          </main>
+
+          {/* Stuck Helper - above input */}
+          {showStuckHelper && (
+            <div className="px-4 pb-2">
+              <StuckHelper
+                sceneId={currentScene.id}
+                visible={showStuckHelper}
+                onClose={() => setShowStuckHelper(false)}
+              />
+            </div>
+          )}
 
         {/* Bottom Input */}
         <div className="sticky bottom-0 bg-background border-t border-border/30 p-3 safe-bottom">
