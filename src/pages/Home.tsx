@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Heart, MessageCircle, Share2, Bookmark, Play, Music2, Plus } from 'lucide-react';
 import TabBar from '@/components/TabBar';
+import AITrainingCard from '@/components/AITrainingCard';
 
 interface FeedItem {
   id: string;
