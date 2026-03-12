@@ -8,6 +8,7 @@ import RadarChart from '@/components/RadarChart';
 import TrendChart from '@/components/TrendChart';
 import HistoryCard from '@/components/HistoryCard';
 import RecommendedCourses from '@/components/RecommendedCourses';
+import AIGrowthAnalysis from '@/components/AIGrowthAnalysis';
 import { userProfile, abilityScores, evaluationText, historyRecords } from '@/data/mockData';
 import avatarUser from '@/assets/avatar-user.png';
 
@@ -59,6 +60,20 @@ const Profile = () => {
           </Card>
           
           <RecommendedCourses />
+          <AIGrowthAnalysis />
+          
+          {/* Growth Chart Entry */}
+          <div
+            className="gradient-ai-soft rounded-xl p-4 flex items-center justify-between cursor-pointer hover:shadow-ai transition-shadow"
+            onClick={() => navigate('/growth')}
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-lg">📈</span>
+              <Text strong className="text-foreground text-sm">查看我的成长曲线</Text>
+            </div>
+            <RightOutlined className="text-muted-foreground text-xs" />
+          </div>
+
           <TrendChart />
         </div>
       ),

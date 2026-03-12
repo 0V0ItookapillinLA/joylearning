@@ -4,6 +4,7 @@ import AntdProvider from "@/components/AntdProvider";
 import Home from "./pages/Home";
 import CourseCenter from "./pages/CourseCenter";
 import PlanDetail from "./pages/PlanDetail";
+import GrowthChart from "./pages/GrowthChart";
 import ChatPage from "./pages/ChatPage";
 import Profile from "./pages/Profile";
 import HistoryDetail from "./pages/HistoryDetail";
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/practice/text" element={<PracticeTextChat />} />
           <Route path="/practice/complete" element={<PracticeComplete />} />
           <Route path="/checkin" element={<CheckInCalendar />} />
+          <Route path="/growth" element={<GrowthChart />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

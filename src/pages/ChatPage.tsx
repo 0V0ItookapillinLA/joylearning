@@ -116,6 +116,12 @@ const ChatPage = () => {
                   }`}
                   style={!isAssistant ? { background: 'var(--gradient-ai)' } : undefined}
                 >
+                  {/* AI label tag */}
+                  {isAssistant && index > 0 && (
+                    <div className="flex items-center gap-1 mb-1">
+                      <span className="text-xs text-ai-purple font-medium">💬 AI 点评</span>
+                    </div>
+                  )}
                   <p className="text-sm leading-relaxed">
                     {displayText}
                     {isTyping && <span className="inline-block w-0.5 h-4 ml-0.5 bg-primary animate-pulse" />}
@@ -129,10 +135,13 @@ const ChatPage = () => {
             <div className="flex gap-3 animate-fade-in">
               <Avatar src={avatarAi} size={36} className="flex-shrink-0" />
               <div className="bg-card shadow-card rounded-2xl rounded-tl-sm px-4 py-3 border border-border/30">
-                <div className="flex gap-1">
-                  <span className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-pulse" style={{ animationDelay: '0ms' }} />
-                  <span className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-pulse" style={{ animationDelay: '150ms' }} />
-                  <span className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-pulse" style={{ animationDelay: '300ms' }} />
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">🧠 正在分析你的话术</span>
+                  <span className="flex gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-ai-purple animate-pulse" style={{ animationDelay: '0ms' }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-ai-purple animate-pulse" style={{ animationDelay: '300ms' }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-ai-purple animate-pulse" style={{ animationDelay: '600ms' }} />
+                  </span>
                 </div>
               </div>
             </div>
@@ -141,6 +150,26 @@ const ChatPage = () => {
         </div>
       </main>
       
+      {/* Quick Suggestion Buttons */}
+      <div className="fixed bottom-44 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-md z-40">
+        <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
+          {[
+            { emoji: '💡', label: '给我示范', text: '给我示范一下标准话术' },
+            { emoji: '🔄', label: '换个说法', text: '这句话换个说法怎么说' },
+            { emoji: '📝', label: '改进建议', text: '我哪里可以改进' },
+          ].map(s => (
+            <button
+              key={s.label}
+              onClick={() => { setInput(s.text); }}
+              disabled={isLoading}
+              className="flex-shrink-0 px-3 py-1.5 rounded-full bg-card border border-border/50 text-xs text-foreground shadow-card hover:shadow-ai transition-shadow whitespace-nowrap"
+            >
+              {s.emoji} {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Input */}
       <div className="fixed bottom-24 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-md z-40">
         <div className="glass-strong rounded-2xl shadow-ai p-3">

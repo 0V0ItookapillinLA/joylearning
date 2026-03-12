@@ -10,6 +10,8 @@ export interface Plan {
   estimatedHours: number;
   status: PlanStatus;
   bannerTitle: string;
+  aiMatchScore?: number;
+  progress?: number;
 }
 
 export interface Chapter {
@@ -26,6 +28,7 @@ export interface LearningItem {
   duration: string;
   status: ItemStatus;
   practiceMode?: 'voice' | 'text';
+  aiDifficulty?: number;
 }
 
 export type PracticeMode = 'free' | 'scripted';

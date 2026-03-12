@@ -9,6 +9,8 @@ export const plans: Plan[] = [
     estimatedHours: 4,
     status: 'not_started',
     bannerTitle: '新人\n应知应会',
+    aiMatchScore: 92,
+    progress: 0,
   },
   {
     id: '2',
@@ -18,6 +20,30 @@ export const plans: Plan[] = [
     estimatedHours: 3,
     status: 'in_progress',
     bannerTitle: '全量采销\nAI陪练',
+    aiMatchScore: 87,
+    progress: 45,
+  },
+  {
+    id: '3',
+    title: '客户异议处理进阶',
+    description: '深度掌握各类客户异议的应对策略...',
+    chapters: 8,
+    estimatedHours: 2.5,
+    status: 'not_started',
+    bannerTitle: '异议处理\n进阶',
+    aiMatchScore: 95,
+    progress: 0,
+  },
+  {
+    id: '4',
+    title: '供应商谈判实战',
+    description: '从破冰到签约的全流程谈判技巧...',
+    chapters: 6,
+    estimatedHours: 2,
+    status: 'completed',
+    bannerTitle: '谈判\n实战',
+    aiMatchScore: 78,
+    progress: 100,
   },
 ];
 
@@ -30,15 +56,15 @@ export const chapters: Chapter[] = [
 ];
 
 export const learningItems: LearningItem[] = [
-  { id: '1', title: '新人零售采销知识培训课', type: 'learning', duration: '36:00min', status: 'not_started' },
-  { id: '2', title: '新人零售采销知识培训课', type: 'learning', duration: '36:00min', status: 'in_progress' },
-  { id: '3', title: '新人零售采销知识培训课', type: 'learning', duration: '36:00min', status: 'completed' },
-  { id: '4', title: '多场景零售采销话术AI陪练', type: 'practice', duration: '36:00min', status: 'not_started', practiceMode: 'voice' },
-  { id: '5', title: '多场景零售采销话术AI陪练', type: 'practice', duration: '36:00min', status: 'in_progress', practiceMode: 'text' },
-  { id: '6', title: '多场景零售采销话术AI陪练', type: 'practice', duration: '36:00min', status: 'completed', practiceMode: 'voice' },
-  { id: '7', title: '场景零售采销话术AI考试', type: 'exam', duration: '36:00min', status: 'locked' },
-  { id: '8', title: '场景零售采销话术AI考试', type: 'exam', duration: '36:00min', status: 'in_progress' },
-  { id: '9', title: '场景零售采销话术AI考试', type: 'exam', duration: '36:00min', status: 'completed' },
+  { id: '1', title: '新人零售采销知识培训课', type: 'learning', duration: '36:00min', status: 'not_started', aiDifficulty: 2 },
+  { id: '2', title: '新人零售采销知识培训课', type: 'learning', duration: '36:00min', status: 'in_progress', aiDifficulty: 3 },
+  { id: '3', title: '新人零售采销知识培训课', type: 'learning', duration: '36:00min', status: 'completed', aiDifficulty: 2 },
+  { id: '4', title: '多场景零售采销话术AI陪练', type: 'practice', duration: '36:00min', status: 'not_started', practiceMode: 'voice', aiDifficulty: 4 },
+  { id: '5', title: '多场景零售采销话术AI陪练', type: 'practice', duration: '36:00min', status: 'in_progress', practiceMode: 'text', aiDifficulty: 3 },
+  { id: '6', title: '多场景零售采销话术AI陪练', type: 'practice', duration: '36:00min', status: 'completed', practiceMode: 'voice', aiDifficulty: 4 },
+  { id: '7', title: '场景零售采销话术AI考试', type: 'exam', duration: '36:00min', status: 'locked', aiDifficulty: 5 },
+  { id: '8', title: '场景零售采销话术AI考试', type: 'exam', duration: '36:00min', status: 'in_progress', aiDifficulty: 4 },
+  { id: '9', title: '场景零售采销话术AI考试', type: 'exam', duration: '36:00min', status: 'completed', aiDifficulty: 5 },
 ];
 
 export const historyRecords: HistoryRecord[] = [
