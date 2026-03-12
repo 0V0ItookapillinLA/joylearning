@@ -132,7 +132,7 @@ const PracticeTextChat = () => {
 
     msgCounter.current += 1;
     const userMsgId = msgCounter.current;
-    const coaching = coachingFeedbacks[userMsgId] || null;
+    const coaching = generateCoaching(input);
 
     const userMsg: ChatMessage = {
       id: userMsgId,
