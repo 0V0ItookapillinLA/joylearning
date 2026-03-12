@@ -28,6 +28,7 @@ export interface LearningItem {
   duration: string;
   status: ItemStatus;
   practiceMode?: 'voice' | 'text';
+  aiDifficulty?: number;
 }
 
 export type PracticeMode = 'free' | 'scripted';

@@ -56,15 +56,15 @@ export const chapters: Chapter[] = [
 ];
 
 export const learningItems: LearningItem[] = [
-  { id: '1', title: '新人零售采销知识培训课', type: 'learning', duration: '36:00min', status: 'not_started' },
-  { id: '2', title: '新人零售采销知识培训课', type: 'learning', duration: '36:00min', status: 'in_progress' },
-  { id: '3', title: '新人零售采销知识培训课', type: 'learning', duration: '36:00min', status: 'completed' },
-  { id: '4', title: '多场景零售采销话术AI陪练', type: 'practice', duration: '36:00min', status: 'not_started', practiceMode: 'voice' },
-  { id: '5', title: '多场景零售采销话术AI陪练', type: 'practice', duration: '36:00min', status: 'in_progress', practiceMode: 'text' },
-  { id: '6', title: '多场景零售采销话术AI陪练', type: 'practice', duration: '36:00min', status: 'completed', practiceMode: 'voice' },
-  { id: '7', title: '场景零售采销话术AI考试', type: 'exam', duration: '36:00min', status: 'locked' },
-  { id: '8', title: '场景零售采销话术AI考试', type: 'exam', duration: '36:00min', status: 'in_progress' },
-  { id: '9', title: '场景零售采销话术AI考试', type: 'exam', duration: '36:00min', status: 'completed' },
+  { id: '1', title: '新人零售采销知识培训课', type: 'learning', duration: '36:00min', status: 'not_started', aiDifficulty: 2 },
+  { id: '2', title: '新人零售采销知识培训课', type: 'learning', duration: '36:00min', status: 'in_progress', aiDifficulty: 3 },
+  { id: '3', title: '新人零售采销知识培训课', type: 'learning', duration: '36:00min', status: 'completed', aiDifficulty: 2 },
+  { id: '4', title: '多场景零售采销话术AI陪练', type: 'practice', duration: '36:00min', status: 'not_started', practiceMode: 'voice', aiDifficulty: 4 },
+  { id: '5', title: '多场景零售采销话术AI陪练', type: 'practice', duration: '36:00min', status: 'in_progress', practiceMode: 'text', aiDifficulty: 3 },
+  { id: '6', title: '多场景零售采销话术AI陪练', type: 'practice', duration: '36:00min', status: 'completed', practiceMode: 'voice', aiDifficulty: 4 },
+  { id: '7', title: '场景零售采销话术AI考试', type: 'exam', duration: '36:00min', status: 'locked', aiDifficulty: 5 },
+  { id: '8', title: '场景零售采销话术AI考试', type: 'exam', duration: '36:00min', status: 'in_progress', aiDifficulty: 4 },
+  { id: '9', title: '场景零售采销话术AI考试', type: 'exam', duration: '36:00min', status: 'completed', aiDifficulty: 5 },
 ];
 
 export const historyRecords: HistoryRecord[] = [
