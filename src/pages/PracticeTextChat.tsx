@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Input, Avatar, Typography } from 'antd';
-import { SendOutlined, BulbOutlined, UpOutlined, DownOutlined, LoadingOutlined, CloseOutlined } from '@ant-design/icons';
+import { SendOutlined, BulbOutlined, UpOutlined, DownOutlined, LoadingOutlined, CloseOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import avatarInterviewer from '@/assets/avatar-interviewer.png';
 import avatarUser from '@/assets/avatar-user.png';
 import { useAIPractice } from '@/hooks/useAIPractice';
+import StuckHelper from '@/components/StuckHelper';
+import SceneProgressBar from '@/components/SceneProgressBar';
 
 const { Text } = Typography;
 
@@ -59,6 +61,7 @@ const PracticeTextChat = () => {
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
   const [isGuideExpanded, setIsGuideExpanded] = useState(true);
   const [showTaskDesc, setShowTaskDesc] = useState(false);
+  const [showStuckHelper, setShowStuckHelper] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const msgCounter = useRef(0);
 
@@ -152,6 +155,15 @@ const PracticeTextChat = () => {
             </button>
           </div>
         </header>
+
+        {/* Scene Progress Bar */}
+        <div className="px-4 pt-2">
+          <SceneProgressBar
+            currentScene={currentSceneIndex}
+            totalScenes={scenes.length}
+            sceneProgress={chatMessages.length > 0 ? Math.min(chatMessages.length * 15, 90) : 5}
+          />
+        </div>
 
         {/* Task Description - Bottom Sheet (70% screen) */}
         {showTaskDesc && (
@@ -299,11 +311,30 @@ const PracticeTextChat = () => {
             )}
             <div ref={messagesEndRef} />
           </div>
-        </main>
+          </main>
+
+          {/* Stuck Helper - above input */}
+          {showStuckHelper && (
+            <div className="px-4 pb-2">
+              <StuckHelper
+                sceneId={currentScene.id}
+                visible={showStuckHelper}
+                onClose={() => setShowStuckHelper(false)}
+              />
+            </div>
+          )}
 
         {/* Bottom Input */}
         <div className="sticky bottom-0 bg-background border-t border-border/30 p-3 safe-bottom">
           <div className="flex items-center gap-2">
+            <Button
+              type="text"
+              shape="circle"
+              icon={<QuestionCircleOutlined className="text-[hsl(var(--ai-purple))]" />}
+              className="!bg-accent !w-10 !h-10 flex-shrink-0"
+              onClick={() => setShowStuckHelper(!showStuckHelper)}
+              title="卡住了/给我示范"
+            />
             <Button
               type="text"
               shape="circle"

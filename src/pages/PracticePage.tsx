@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, message } from 'antd';
-import { BulbOutlined, LeftOutlined, UpOutlined, DownOutlined, CloseOutlined, VideoCameraOutlined, AudioOutlined, AudioMutedOutlined } from '@ant-design/icons';
+import { BulbOutlined, LeftOutlined, UpOutlined, DownOutlined, CloseOutlined, VideoCameraOutlined, AudioOutlined, AudioMutedOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import avatarInterviewer from '@/assets/avatar-interviewer.png';
 import { useAIPractice } from '@/hooks/useAIPractice';
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
+import StuckHelper from '@/components/StuckHelper';
+import SceneProgressBar from '@/components/SceneProgressBar';
 
 interface Scene {
   id: number;
@@ -44,6 +46,7 @@ const PracticePage = () => {
   const [aiSubtitle, setAiSubtitle] = useState('');
   const [sceneTransitioning, setSceneTransitioning] = useState(false);
   const [finalTranscript, setFinalTranscript] = useState('');
+  const [showStuckHelper, setShowStuckHelper] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Speech recognition hook
@@ -183,8 +186,17 @@ const PracticePage = () => {
           </span>
         </div>
 
-        {/* Scene Announcement - Top */}
+        {/* Scene Progress Bar */}
         <div className="absolute top-16 left-4 right-4 z-20">
+          <SceneProgressBar
+            currentScene={currentSceneIndex}
+            totalScenes={scenes.length}
+            sceneProgress={messages.length > 0 ? Math.min(messages.length * 20, 90) : 5}
+          />
+        </div>
+
+        {/* Scene Announcement */}
+        <div className="absolute top-28 left-4 right-4 z-20">
           <Card
             className={`!rounded-xl shadow-xl overflow-hidden transition-all duration-300 ${
               isSceneExpanded ? '' : '!p-0'
@@ -216,8 +228,19 @@ const PracticePage = () => {
           </Card>
         </div>
 
+        {/* Stuck Helper Overlay - Middle */}
+        {showStuckHelper && (
+          <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 z-30">
+            <StuckHelper
+              sceneId={currentScene.id}
+              visible={showStuckHelper}
+              onClose={() => setShowStuckHelper(false)}
+            />
+          </div>
+        )}
+
         {/* Hint Overlay - Middle */}
-        {showHint && (
+        {showHint && !showStuckHelper && (
           <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 z-30">
             <Card className="!rounded-xl shadow-xl" styles={{ body: { padding: 16 } }}>
               <div className="flex items-start justify-between gap-2 mb-2">
@@ -281,6 +304,17 @@ const PracticePage = () => {
         )}
 
         <div className="flex items-center justify-between gap-2">
+          {/* Stuck / Demo Button */}
+          <Button 
+            type="text"
+            shape="circle"
+            size="large"
+            icon={<QuestionCircleOutlined />}
+            onClick={() => setShowStuckHelper(!showStuckHelper)}
+            className="!w-12 !h-12 !bg-muted"
+            title="卡住了/给我示范"
+          />
+
           {/* Hint Button */}
           <Button 
             type="text"
