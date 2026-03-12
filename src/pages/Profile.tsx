@@ -8,6 +8,7 @@ import RadarChart from '@/components/RadarChart';
 import TrendChart from '@/components/TrendChart';
 import HistoryCard from '@/components/HistoryCard';
 import RecommendedCourses from '@/components/RecommendedCourses';
+import AIGrowthAnalysis from '@/components/AIGrowthAnalysis';
 import { userProfile, abilityScores, evaluationText, historyRecords } from '@/data/mockData';
 import avatarUser from '@/assets/avatar-user.png';
 
