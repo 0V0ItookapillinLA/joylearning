@@ -150,6 +150,26 @@ const ChatPage = () => {
         </div>
       </main>
       
+      {/* Quick Suggestion Buttons */}
+      <div className="fixed bottom-44 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-md z-40">
+        <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
+          {[
+            { emoji: '💡', label: '给我示范', text: '给我示范一下标准话术' },
+            { emoji: '🔄', label: '换个说法', text: '这句话换个说法怎么说' },
+            { emoji: '📝', label: '改进建议', text: '我哪里可以改进' },
+          ].map(s => (
+            <button
+              key={s.label}
+              onClick={() => { setInput(s.text); }}
+              disabled={isLoading}
+              className="flex-shrink-0 px-3 py-1.5 rounded-full bg-card border border-border/50 text-xs text-foreground shadow-card hover:shadow-ai transition-shadow whitespace-nowrap"
+            >
+              {s.emoji} {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Input */}
       <div className="fixed bottom-24 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-md z-40">
         <div className="glass-strong rounded-2xl shadow-ai p-3">

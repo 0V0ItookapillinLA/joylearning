@@ -1,39 +1,65 @@
+import { useState } from 'react';
 import Header from '@/components/Header';
 import TabBar from '@/components/TabBar';
-import PlanCard from '@/components/PlanCard';
+import AIRecommendCard from '@/components/AIRecommendCard';
+import CourseGridCard from '@/components/CourseGridCard';
 import { plans } from '@/data/mockData';
+import { PlanStatus } from '@/types';
+
+type FilterKey = 'all' | PlanStatus;
+
+const filters: { key: FilterKey; label: string }[] = [
+  { key: 'all', label: '全部' },
+  { key: 'in_progress', label: '进行中' },
+  { key: 'completed', label: '已完成' },
+];
 
 const CourseCenter = () => {
+  const [activeFilter, setActiveFilter] = useState<FilterKey>('all');
+
+  const filteredPlans = activeFilter === 'all'
+    ? plans
+    : plans.filter(p => p.status === activeFilter);
+
   return (
     <div className="min-h-screen bg-background pb-24">
       <Header title="JoyLearning" showBack={false} />
-      
-      {/* AI-themed hero section */}
-      <div className="max-w-md mx-auto px-4 pt-4 pb-2">
-        <div className="gradient-ai-soft rounded-2xl p-5 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-ai-purple/10 blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-ai-cyan/10 blur-3xl" />
-          <div className="relative">
-            <h2 className="text-lg font-bold text-foreground mb-1">🤖 AI 赋能学习</h2>
-            <p className="text-sm text-muted-foreground">智能陪练 · 实时点评 · 个性化提升</p>
-          </div>
-        </div>
-      </div>
 
-      <main className="max-w-md mx-auto px-4 py-3">
-        <div className="space-y-4">
-          {plans.map((plan, index) => (
-            <div 
-              key={plan.id} 
-              className="animate-fade-in-up"
-              style={{ animationDelay: `${index * 0.1}s`, animationFillMode: 'both' }}
+      <main className="max-w-md mx-auto px-4 py-4 space-y-4">
+        {/* AI Recommendation */}
+        <AIRecommendCard />
+
+        {/* Filter tabs */}
+        <div className="flex items-center gap-2">
+          {filters.map(f => (
+            <button
+              key={f.key}
+              onClick={() => setActiveFilter(f.key)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                activeFilter === f.key
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground'
+              }`}
             >
-              <PlanCard plan={plan} />
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        {/* 2x2 Grid */}
+        <div className="grid grid-cols-2 gap-3">
+          {filteredPlans.map((plan, index) => (
+            <div
+              key={plan.id}
+              className="animate-fade-in"
+              style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'both' }}
+            >
+              <CourseGridCard plan={plan} />
             </div>
           ))}
         </div>
       </main>
-      
+
       <TabBar />
     </div>
   );
