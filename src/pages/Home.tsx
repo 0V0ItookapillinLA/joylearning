@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Heart, MessageCircle, Share2, Bookmark, Play, Music2, Plus } from 'lucide-react';
 import TabBar from '@/components/TabBar';
-import AITrainingCard from '@/components/AITrainingCard';
 
 interface FeedItem {
   id: string;
@@ -528,11 +527,6 @@ const Home = () => {
               </h1>
             </div>
           </div>
-        </div>
-
-        {/* AI Daily Training Card - Fixed at top of screen, always visible */}
-        <div className="absolute top-16 left-4 right-4 z-30">
-          <AITrainingCard />
         </div>
 
         <TabBar />
