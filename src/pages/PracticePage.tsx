@@ -46,6 +46,7 @@ const PracticePage = () => {
   const [aiSubtitle, setAiSubtitle] = useState('');
   const [sceneTransitioning, setSceneTransitioning] = useState(false);
   const [finalTranscript, setFinalTranscript] = useState('');
+  const [showStuckHelper, setShowStuckHelper] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Speech recognition hook
