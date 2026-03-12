@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Input, Avatar, Typography } from 'antd';
-import { SendOutlined, BulbOutlined, UpOutlined, DownOutlined, LoadingOutlined, CloseOutlined } from '@ant-design/icons';
+import { SendOutlined, BulbOutlined, UpOutlined, DownOutlined, LoadingOutlined, CloseOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import avatarInterviewer from '@/assets/avatar-interviewer.png';
 import avatarUser from '@/assets/avatar-user.png';
 import { useAIPractice } from '@/hooks/useAIPractice';
+import StuckHelper from '@/components/StuckHelper';
+import SceneProgressBar from '@/components/SceneProgressBar';
 
 const { Text } = Typography;
 
