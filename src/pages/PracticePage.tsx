@@ -228,8 +228,19 @@ const PracticePage = () => {
           </Card>
         </div>
 
+        {/* Stuck Helper Overlay - Middle */}
+        {showStuckHelper && (
+          <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 z-30">
+            <StuckHelper
+              sceneId={currentScene.id}
+              visible={showStuckHelper}
+              onClose={() => setShowStuckHelper(false)}
+            />
+          </div>
+        )}
+
         {/* Hint Overlay - Middle */}
-        {showHint && (
+        {showHint && !showStuckHelper && (
           <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 z-30">
             <Card className="!rounded-xl shadow-xl" styles={{ body: { padding: 16 } }}>
               <div className="flex items-start justify-between gap-2 mb-2">
