@@ -10,23 +10,61 @@ import SceneProgressBar from '@/components/SceneProgressBar';
 
 const { Text } = Typography;
 
-// Mock real-time coaching feedback
-const coachingFeedbacks: Record<number, { guidance: string; polished: string } | null> = {
-  1: null,
-  2: {
-    guidance: '避免直接否定，先肯定工作态度，再客观指出具体问题，引导他反思。',
-    polished: '"李女士，您一直很努力，想和您一起回顾一下最近的合作，看看如何进一步提升。"',
-  },
-  3: null,
-  4: {
-    guidance: '在报价时不要急于给出底价，先强调价值再谈价格，留有谈判空间。',
-    polished: '"关于价格方面，我们的方案在同行中性价比是最高的，而且我们提供的增值服务能为您节省额外成本。"',
-  },
-  5: null,
-  6: {
-    guidance: '面对客户犹豫时，提供限时优惠或成功案例来推动决策。',
-    polished: '"理解您需要考虑，这样吧，本月签约的客户我们有专属的老客户优惠方案，要不我先给您做个详细的成本对比？"',
-  },
+// Dynamic coaching feedback generator based on user input
+const generateCoaching = (userText: string): { guidance: string; polished: string } => {
+  const feedbackPool = [
+    {
+      keywords: ['价格', '报价', '多少钱', '费用', '成本'],
+      guidance: '在报价时不要急于给出底价，先强调价值再谈价格，留有谈判空间。',
+      polished: '"关于价格方面，我们的方案在同行中性价比最高，而且增值服务能为您节省额外成本。"',
+    },
+    {
+      keywords: ['不行', '不好', '不满意', '差', '问题'],
+      guidance: '避免直接否定，先肯定对方立场，再客观指出具体问题，引导对方反思。',
+      polished: '"您提到的这个情况我很理解，我们一起来看看怎么优化，争取达到更好的效果。"',
+    },
+    {
+      keywords: ['考虑', '想想', '再说', '犹豫', '不确定'],
+      guidance: '面对客户犹豫时，提供限时优惠或成功案例来推动决策，制造紧迫感。',
+      polished: '"理解您需要考虑，本月签约有专属优惠方案，要不我先给您做个详细的成本对比？"',
+    },
+    {
+      keywords: ['合作', '方案', '介绍', '服务'],
+      guidance: '介绍方案时要聚焦客户痛点，用数据说话，避免泛泛而谈。',
+      polished: '"针对您提到的仓配弹性问题，我们有三个解决方案，先看看哪个最匹配您的需求。"',
+    },
+    {
+      keywords: ['你好', '您好', '嗨', '在吗'],
+      guidance: '寒暄时适当带出专业话题，自然过渡到业务讨论，避免闲聊太久。',
+      polished: '"您好李女士，最近行业动态挺多的，正好有些新方案想跟您分享，您看方便吗？"',
+    },
+  ];
+
+  // Match based on keywords
+  const matched = feedbackPool.find(f => f.keywords.some(k => userText.includes(k)));
+  if (matched) return { guidance: matched.guidance, polished: matched.polished };
+
+  // Default feedback for any message
+  const defaults = [
+    {
+      guidance: '表达时注意结构化，先说结论再展开细节，让对方更容易跟上你的思路。',
+      polished: '"我的建议是这样的——首先…其次…最后…您觉得这个方向可以吗？"',
+    },
+    {
+      guidance: '回复时可以先复述对方的关键诉求，表示你在认真倾听，再给出你的回应。',
+      polished: '"您刚才提到的核心问题是…对吗？针对这一点，我的想法是…"',
+    },
+    {
+      guidance: '尝试用提问代替陈述，引导对方说出更多需求，有助于后续精准推荐方案。',
+      polished: '"您目前最希望解决的是哪方面的问题？是成本控制还是效率提升？"',
+    },
+    {
+      guidance: '注意语气的专业度，避免过于随意的口语表达，保持职业化沟通风格。',
+      polished: '"感谢您的反馈，我来针对您提到的几个关键点逐一回复。"',
+    },
+  ];
+
+  return defaults[Math.floor(Math.random() * defaults.length)];
 };
 
 interface ChatMessage {
