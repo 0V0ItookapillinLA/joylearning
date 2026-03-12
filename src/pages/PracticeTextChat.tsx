@@ -305,7 +305,7 @@ const PracticeTextChat = () => {
                     size={36}
                     className="flex-shrink-0 mt-0.5"
                   />
-                  <div className="flex flex-col gap-1.5 max-w-[75%]">
+                    <div className="flex flex-col gap-1.5 max-w-[75%]">
                     <div
                       className={`rounded-2xl px-4 py-3 ${
                         msg.role === 'user'
@@ -314,49 +314,38 @@ const PracticeTextChat = () => {
                       }`}
                     >
                       <p className="text-sm leading-relaxed">{msg.content}</p>
+                      {/* Coaching inside bubble */}
+                      {msg.coaching && (
+                        <>
+                          <button
+                            onClick={() => {
+                              setChatMessages(prev => prev.map(m =>
+                                m.id === msg.id ? { ...m, coachingExpanded: !m.coachingExpanded } : m
+                              ));
+                            }}
+                            className="w-full flex items-center gap-2 mt-2.5 pt-2 border-t border-primary-foreground/20 text-[11px] font-medium text-primary-foreground/70 hover:text-primary-foreground/90 transition-colors"
+                          >
+                            <span className="w-4 h-4 rounded-full bg-primary-foreground/20 flex items-center justify-center text-[10px] text-primary-foreground font-bold flex-shrink-0">S</span>
+                            <span>AI 点评</span>
+                            <span className="ml-auto text-[10px]">{msg.coachingExpanded ? '▲' : '▼'}</span>
+                          </button>
+                          {msg.coachingExpanded && (
+                            <div className="mt-2 space-y-2 animate-fade-in">
+                              <div>
+                                <span className="text-[11px] font-semibold text-primary-foreground/80 block mb-0.5">指导建议</span>
+                                <p className="text-xs leading-relaxed text-primary-foreground/70">{msg.coaching.guidance}</p>
+                              </div>
+                              <div>
+                                <span className="text-[11px] font-semibold text-primary-foreground/80 block mb-0.5">润色表达</span>
+                                <p className="text-xs leading-relaxed text-primary-foreground/70">{msg.coaching.polished}</p>
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      )}
                     </div>
-                    {/* Coaching trigger button */}
-                    {msg.coaching && (
-                      <button
-                        onClick={() => {
-                          setChatMessages(prev => prev.map(m =>
-                            m.id === msg.id ? { ...m, coachingExpanded: !m.coachingExpanded } : m
-                          ));
-                        }}
-                        className={`self-end flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium transition-all ${
-                          msg.coachingExpanded
-                            ? 'bg-primary/15 text-primary'
-                            : 'bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary'
-                        }`}
-                      >
-                        <span className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center text-[10px] text-primary font-bold">S</span>
-                        AI 点评
-                      </button>
-                    )}
                   </div>
                 </div>
-
-                {/* Inline Coaching Feedback - expandable */}
-                {msg.coaching && msg.coachingExpanded && (
-                  <div className="mt-2 ml-2 mr-2 animate-fade-in">
-                    <div className="bg-card rounded-xl p-4 border border-border/50 shadow-sm">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-xs text-primary font-bold">S</span>
-                        <Text className="text-sm font-semibold text-primary">Mr. Sen 实时点评</Text>
-                      </div>
-                      <div className="space-y-3">
-                        <div>
-                          <Text strong className="text-sm text-foreground block mb-1">指导建议：</Text>
-                          <Text className="text-sm leading-relaxed text-foreground/80">{msg.coaching.guidance}</Text>
-                        </div>
-                        <div>
-                          <Text strong className="text-sm text-foreground block mb-1">润色表达：</Text>
-                          <Text className="text-sm leading-relaxed text-foreground/80">{msg.coaching.polished}</Text>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             ))}
 
