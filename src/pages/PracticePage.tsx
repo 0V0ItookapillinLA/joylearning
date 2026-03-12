@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, message } from 'antd';
-import { BulbOutlined, LeftOutlined, UpOutlined, DownOutlined, CloseOutlined, VideoCameraOutlined, AudioOutlined, AudioMutedOutlined } from '@ant-design/icons';
+import { BulbOutlined, LeftOutlined, UpOutlined, DownOutlined, CloseOutlined, VideoCameraOutlined, AudioOutlined, AudioMutedOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import avatarInterviewer from '@/assets/avatar-interviewer.png';
 import { useAIPractice } from '@/hooks/useAIPractice';
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
+import StuckHelper from '@/components/StuckHelper';
+import SceneProgressBar from '@/components/SceneProgressBar';
 
 interface Scene {
   id: number;
