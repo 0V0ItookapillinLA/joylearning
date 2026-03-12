@@ -319,6 +319,14 @@ const PracticeTextChat = () => {
             <Button
               type="text"
               shape="circle"
+              icon={<QuestionCircleOutlined className="text-[hsl(var(--ai-purple))]" />}
+              className="!bg-accent !w-10 !h-10 flex-shrink-0"
+              onClick={() => setShowStuckHelper(!showStuckHelper)}
+              title="卡住了/给我示范"
+            />
+            <Button
+              type="text"
+              shape="circle"
               icon={<BulbOutlined className="text-primary" />}
               className="!bg-accent !w-10 !h-10 flex-shrink-0"
               onClick={() => setIsGuideExpanded(!isGuideExpanded)}
