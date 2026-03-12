@@ -305,20 +305,40 @@ const PracticeTextChat = () => {
                     size={36}
                     className="flex-shrink-0 mt-0.5"
                   />
-                  <div
-                    className={`max-w-[75%] rounded-2xl px-4 py-3 ${
-                      msg.role === 'user'
-                        ? 'bg-primary text-primary-foreground rounded-tr-sm'
-                        : 'bg-card shadow-card border border-border/30 rounded-tl-sm'
-                    }`}
-                  >
-                    <p className="text-sm leading-relaxed">{msg.content}</p>
+                  <div className="flex flex-col gap-1.5 max-w-[75%]">
+                    <div
+                      className={`rounded-2xl px-4 py-3 ${
+                        msg.role === 'user'
+                          ? 'bg-primary text-primary-foreground rounded-tr-sm'
+                          : 'bg-card shadow-card border border-border/30 rounded-tl-sm'
+                      }`}
+                    >
+                      <p className="text-sm leading-relaxed">{msg.content}</p>
+                    </div>
+                    {/* Coaching trigger button */}
+                    {msg.coaching && (
+                      <button
+                        onClick={() => {
+                          setChatMessages(prev => prev.map(m =>
+                            m.id === msg.id ? { ...m, coachingExpanded: !m.coachingExpanded } : m
+                          ));
+                        }}
+                        className={`self-end flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium transition-all ${
+                          msg.coachingExpanded
+                            ? 'bg-primary/15 text-primary'
+                            : 'bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary'
+                        }`}
+                      >
+                        <span className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center text-[10px] text-primary font-bold">S</span>
+                        AI 点评
+                      </button>
+                    )}
                   </div>
                 </div>
 
-                {/* Inline Coaching Feedback */}
-                {msg.coaching && (
-                  <div className="mt-3 ml-2 mr-2 animate-fade-in">
+                {/* Inline Coaching Feedback - expandable */}
+                {msg.coaching && msg.coachingExpanded && (
+                  <div className="mt-2 ml-2 mr-2 animate-fade-in">
                     <div className="bg-card rounded-xl p-4 border border-border/50 shadow-sm">
                       <div className="flex items-center gap-2 mb-3">
                         <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-xs text-primary font-bold">S</span>
