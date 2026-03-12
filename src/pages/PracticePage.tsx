@@ -304,6 +304,17 @@ const PracticePage = () => {
         )}
 
         <div className="flex items-center justify-between gap-2">
+          {/* Stuck / Demo Button */}
+          <Button 
+            type="text"
+            shape="circle"
+            size="large"
+            icon={<QuestionCircleOutlined />}
+            onClick={() => setShowStuckHelper(!showStuckHelper)}
+            className="!w-12 !h-12 !bg-muted"
+            title="卡住了/给我示范"
+          />
+
           {/* Hint Button */}
           <Button 
             type="text"

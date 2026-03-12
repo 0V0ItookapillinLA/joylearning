@@ -528,6 +528,13 @@ const Home = () => {
               </h1>
             </div>
           </div>
+
+          {/* AI Daily Training Card - Floating overlay on first slide */}
+          {currentIndex === 0 && (
+            <div className="absolute bottom-28 left-4 right-20 z-20 animate-fade-in" style={{ bottom: '7.5rem' }}>
+              <AITrainingCard />
+            </div>
+          )}
         </div>
 
         <TabBar />
