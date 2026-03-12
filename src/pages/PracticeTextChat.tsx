@@ -72,6 +72,7 @@ interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   coaching?: { guidance: string; polished: string } | null;
+  coachingExpanded?: boolean;
 }
 
 const scenes = [
