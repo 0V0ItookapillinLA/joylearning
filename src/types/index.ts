@@ -10,6 +10,8 @@ export interface Plan {
   estimatedHours: number;
   status: PlanStatus;
   bannerTitle: string;
+  aiMatchScore?: number;
+  progress?: number;
 }
 
 export interface Chapter {
