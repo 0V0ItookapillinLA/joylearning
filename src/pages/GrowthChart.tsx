@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Typography } from 'antd';
-import { ArrowLeftOutlined, TrophyOutlined, ClockCircleOutlined, AimOutlined, RobotOutlined, RiseOutlined, WarningOutlined, BulbOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, TrophyOutlined, ClockCircleOutlined, AimOutlined } from '@ant-design/icons';
 import TabBar from '@/components/TabBar';
 import RadarChart from '@/components/RadarChart';
 import { abilityScores } from '@/data/mockData';
@@ -117,31 +117,6 @@ const GrowthChart = () => {
           </div>
         </Card>
 
-        {/* AI Growth Analysis */}
-        <Card className="!rounded-xl !border-0 shadow-card" styles={{ body: { padding: 16 } }}>
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl gradient-ai flex items-center justify-center flex-shrink-0">
-              <RobotOutlined className="text-primary-foreground text-lg" />
-            </div>
-            <div className="flex-1">
-              <Text strong className="text-foreground block mb-2">AI 成长分析</Text>
-              <div className="space-y-2">
-                <div className="flex items-start gap-2">
-                  <RiseOutlined className="text-status-complete mt-0.5" />
-                  <Text className="text-sm text-foreground">异议处理能力提升明显（+7分）</Text>
-                </div>
-                <div className="flex items-start gap-2">
-                  <WarningOutlined className="text-destructive mt-0.5" />
-                  <Text className="text-sm text-foreground">谈判技巧进步较慢，建议增加练习</Text>
-                </div>
-                <div className="flex items-start gap-2">
-                  <BulbOutlined className="text-primary mt-0.5" />
-                  <Text className="text-sm text-foreground">推荐完成「客户异议处理进阶」课程</Text>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Card>
       </main>
 
       <TabBar />
