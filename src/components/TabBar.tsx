@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { HomeOutlined, VideoCameraOutlined, UserOutlined } from '@ant-design/icons';
+import { HomeOutlined, CompassOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import avatarAi from '@/assets/avatar-ai.png';
 
 const TabBar = () => {
@@ -7,7 +7,8 @@ const TabBar = () => {
 
   const tabs = [
     { path: '/', icon: HomeOutlined, label: '首页' },
-    { path: '/courses', icon: VideoCameraOutlined, label: '发现' },
+    { path: '/courses', icon: CompassOutlined, label: '发现' },
+    { path: '/community', icon: TeamOutlined, label: '社区' },
     { path: '/profile', icon: UserOutlined, label: '我的' },
   ];
 
@@ -15,12 +16,14 @@ const TabBar = () => {
     <nav className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-md">
       <div className="flex items-center gap-3">
         {/* Main pill – glassmorphism */}
-        <div className="flex-1 glass-strong rounded-full shadow-ai flex items-center justify-around py-2 px-2">
+        <div className="flex-1 glass-strong rounded-full shadow-ai flex items-center justify-around py-2 px-1">
           {tabs.map((tab) => {
             const isActive =
               location.pathname === tab.path ||
-              (tab.path === '/courses' && location.pathname.startsWith('/plan')) ||
-              (tab.path === '/profile' && (location.pathname.startsWith('/profile') || location.pathname.startsWith('/history')));
+              (tab.path === '/' && location.pathname === '/videos') ||
+              (tab.path === '/courses' && (location.pathname.startsWith('/plan') || location.pathname.startsWith('/scenario'))) ||
+              (tab.path === '/community' && location.pathname === '/checkin') ||
+              (tab.path === '/profile' && (location.pathname.startsWith('/profile') || location.pathname.startsWith('/history') || location.pathname.startsWith('/growth')));
 
             const Icon = tab.icon;
 
@@ -28,13 +31,13 @@ const TabBar = () => {
               <NavLink
                 key={tab.path}
                 to={tab.path}
-                className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full transition-all whitespace-nowrap ${
+                className={`flex items-center gap-1 px-3 py-2.5 rounded-full transition-all whitespace-nowrap ${
                   isActive
                     ? 'bg-foreground text-background'
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                <Icon style={{ fontSize: 16 }} />
+                <Icon style={{ fontSize: 15 }} />
                 <span className="text-xs font-medium">{tab.label}</span>
               </NavLink>
             );
