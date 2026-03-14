@@ -14,6 +14,7 @@ import PracticePage from "./pages/PracticePage";
 import PracticeTextChat from "./pages/PracticeTextChat";
 import PracticeComplete from "./pages/PracticeComplete";
 import CheckInCalendar from "./pages/CheckInCalendar";
+import ScenarioDetail from "./pages/ScenarioDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/practice/text" element={<PracticeTextChat />} />
           <Route path="/practice/complete" element={<PracticeComplete />} />
           <Route path="/checkin" element={<CheckInCalendar />} />
+          <Route path="/scenario/:id" element={<ScenarioDetail />} />
           <Route path="/growth" element={<GrowthChart />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
