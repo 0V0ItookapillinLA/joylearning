@@ -7,7 +7,7 @@ const TabBar = () => {
 
   const tabs = [
     { path: '/', icon: HomeOutlined, label: '首页' },
-    { path: '/courses', icon: VideoCameraOutlined, label: '课程中心' },
+    { path: '/courses', icon: VideoCameraOutlined, label: '发现' },
     { path: '/profile', icon: UserOutlined, label: '我的' },
   ];
 

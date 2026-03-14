@@ -102,3 +102,28 @@ export interface UserProfile {
   studyHours: number;
   overallScore: number;
 }
+
+export interface PracticeScenario {
+  id: string;
+  name: string;
+  avatar: string;
+  role: string;
+  description: string;
+  tags: string[];
+  difficulty: number;
+  practiceCount: number;
+  category: 'negotiation' | 'supplier' | 'development' | 'crisis';
+}
+
+export interface PublicPracticeRecord {
+  id: string;
+  userName: string;
+  userAvatar: string;
+  scenarioId: string;
+  scenarioName: string;
+  highlight: string;
+  score: number;
+  date: string;
+  likes: number;
+  practiceMode: PracticeMode;
+}

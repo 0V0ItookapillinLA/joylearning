@@ -14,6 +14,7 @@ import PracticePage from "./pages/PracticePage";
 import PracticeTextChat from "./pages/PracticeTextChat";
 import PracticeComplete from "./pages/PracticeComplete";
 import CheckInCalendar from "./pages/CheckInCalendar";
+import ScenarioDetail from "./pages/ScenarioDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
